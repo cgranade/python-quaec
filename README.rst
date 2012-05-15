@@ -13,8 +13,7 @@ Installing QuaEC
 On Unix-like systems, **QuaEC** can be made available globally by running::
 
     $ cd /path/to/quaec/
-    $ sudo
-    $ python setup.py install
+    $ sudo python setup.py install
 
 On Windows, run ``cmd.exe``, then run the setup script::
 
