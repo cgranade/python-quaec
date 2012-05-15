@@ -1,0 +1,220 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Predicates and Filters &mdash; QuaEC v0.1alpha1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1alpha1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="QuaEC v0.1alpha1 documentation" href="index.html" />
+    <link rel="next" title="Misc. Utility Functions and Classes" href="utils.html" />
+    <link rel="prev" title="Circuit Manipulation and Simulation" href="circuits.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="utils.html" title="Misc. Utility Functions and Classes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="circuits.html" title="Circuit Manipulation and Simulation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">QuaEC v0.1alpha1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="predicates-and-filters">
+<h1>Predicates and Filters<a class="headerlink" href="#predicates-and-filters" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="qecc-predicate">
+<h2><a class="reference internal" href="#qecc.Predicate" title="qecc.Predicate"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Predicate</span></tt></a><a class="headerlink" href="#qecc-predicate" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="xref py py-mod docutils literal"><span class="pre">qecc</span></tt> package provides a class <tt class="xref py py-class docutils literal"><span class="pre">Predicate</span></tt> to represent a
+predicate function; that is, a function which returns a <a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">bool</span></tt></a>.</p>
+<dl class="class">
+<dt id="qecc.Predicate">
+<em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">Predicate</tt><big>(</big><em>fn</em><big>)</big><a class="headerlink" href="#qecc.Predicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class representing a predicate function on one or more arguments.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Predicate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Instances can also be constructed by logical operations on existing
+Predicate instances:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">Predicate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">p</span> <span class="o">&amp;</span> <span class="n">q</span><span class="p">)(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">p</span> <span class="o">|</span> <span class="n">q</span><span class="p">)(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="o">~</span><span class="n">p</span><span class="p">)(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="qecc.Predicate.combine">
+<tt class="descname">combine</tt><big>(</big><em>other</em>, <em>outer_fn</em><big>)</big><a class="headerlink" href="#qecc.Predicate.combine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new <tt class="xref py py-class docutils literal"><span class="pre">Predicate</span></tt> that combines this predicate with
+another predicate using a given function to combine the results.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">gt_2</span> <span class="o">=</span> <span class="n">Predicate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">even</span> <span class="o">=</span> <span class="n">Predicate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nand</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="ow">not</span> <span class="p">(</span><span class="n">x</span> <span class="ow">and</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">gt_2</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">even</span><span class="p">,</span> <span class="n">nand</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">map</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="go">[True, True, True, False]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="specific-predicate-functions">
+<h3>Specific Predicate Functions<a class="headerlink" href="#specific-predicate-functions" title="Permalink to this headline">¶</a></h3>
+<p>Several useful predefined predicates are provided by <tt class="xref py py-mod docutils literal"><span class="pre">qecc</span></tt>.</p>
+<dl class="class">
+<dt id="qecc.SetMembershipPredicate">
+<em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">SetMembershipPredicate</tt><big>(</big><em>S</em><big>)</big><a class="headerlink" href="#qecc.SetMembershipPredicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an iterable <tt class="docutils literal"><span class="pre">S</span></tt>, constructs a predicate that returns <tt class="xref docutils literal"><span class="pre">True</span></tt>
+if and only if its argument is in <tt class="docutils literal"><span class="pre">S</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">SetMembershipPredicate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">map</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="go">[False, True, True, True, True, False]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="qecc.PauliMembershipPredicate">
+<em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">PauliMembershipPredicate</tt><big>(</big><em>S</em>, <em>ignore_phase=True</em><big>)</big><a class="headerlink" href="#qecc.PauliMembershipPredicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a set <tt class="docutils literal"><span class="pre">S</span></tt> of Pauli operators represented as <a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a>
+instances, constructs a predicate that returns
+<tt class="xref docutils literal"><span class="pre">True</span></tt> for a Pauli <tt class="docutils literal"><span class="pre">P</span></tt> if and only if <tt class="docutils literal"><span class="pre">P</span></tt> is in <tt class="docutils literal"><span class="pre">S</span></tt>.</p>
+<p>If the keyword argument <tt class="docutils literal"><span class="pre">ignore_phase</span></tt> is <tt class="xref docutils literal"><span class="pre">True</span></tt>, then the
+comparison to determine whether <tt class="docutils literal"><span class="pre">P</span></tt> is in <tt class="docutils literal"><span class="pre">S</span></tt> only considers the
+operator part of <tt class="docutils literal"><span class="pre">P</span></tt>.</p>
+</dd></dl>
+
+<p>In addition, utility functions are provided for constructing predicates based
+on commutation properties of the Pauli group.</p>
+<dl class="function">
+<dt id="qecc.commutes_with">
+<tt class="descclassname">qecc.</tt><tt class="descname">commutes_with</tt><big>(</big><em>*paulis</em><big>)</big><a class="headerlink" href="#qecc.commutes_with" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a predicate that checks whether a Pauli <tt class="docutils literal"><span class="pre">P</span></tt> commutes with each of
+a given list of Pauli operators.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="qecc.in_group_generated_by">
+<tt class="descclassname">qecc.</tt><tt class="descname">in_group_generated_by</tt><big>(</big><em>*paulis</em><big>)</big><a class="headerlink" href="#qecc.in_group_generated_by" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a predicate that selects Pauli operators in the group generated by
+a given list of generators.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="usage-examples">
+<h3>Usage Examples<a class="headerlink" href="#usage-examples" title="Permalink to this headline">¶</a></h3>
+<p>Predicate functions can be used to quickly generate collections of
+<a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> operators having a given set of properties.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">filter</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">commutes_with</span><span class="p">(</span><span class="s">&#39;XX&#39;</span><span class="p">,</span> <span class="s">&#39;ZZ&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">in_group_generated_by</span><span class="p">(</span><span class="s">&#39;XX&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">pauli_group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="p">)</span>
+<span class="go">[i^0 YY, i^0 ZZ]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Predicates and Filters</a><ul>
+<li><a class="reference internal" href="#qecc-predicate"><tt class="docutils literal"><span class="pre">qecc.Predicate</span></tt></a><ul>
+<li><a class="reference internal" href="#specific-predicate-functions">Specific Predicate Functions</a></li>
+<li><a class="reference internal" href="#usage-examples">Usage Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="circuits.html"
+                        title="previous chapter">Circuit Manipulation and Simulation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="utils.html"
+                        title="next chapter">Misc. Utility Functions and Classes</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/predicates.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="utils.html" title="Misc. Utility Functions and Classes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="circuits.html" title="Circuit Manipulation and Simulation"
+             >previous</a> |</li>
+        <li><a href="index.html">QuaEC v0.1alpha1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Chris Granade and Ben Criger. Licensed under the Creative Commons NonCommercial-ShareAlike 3.0 Unported License.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
