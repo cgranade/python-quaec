@@ -10,6 +10,8 @@ Thumbs.db
 ## Build directories ##
 doc/_build
 
+## setup.py generated files ##
+
 # The following ignores are drawn from github@github:gitignore/Python.gitignore.
 *.py[cod]
 
