@@ -103,6 +103,12 @@ class Predicate(object):
 class AllPredicate(Predicate):
     """
     Predicate class representing the logical AND of several other predicates.
+    
+    Given two predicates ``p`` and ``q``,
+    
+    >>> p_and_q = qecc.AllPredicate(p, q)
+    
+    is equivalent to ``p_and_q = p & q``.
     """
     
     def __init__(self, *preds):
@@ -115,11 +121,17 @@ class AllPredicate(Predicate):
         if isinstance(other, AllPredicate):
             return AllPredicate(*(self.preds + other.preds))
         else:
-            return AllPredicate(*(self.preds + [other]))
+            return AllPredicate(*(self.preds + (other,)))
         
 class AnyPredicate(Predicate):
     """
     Predicate class representing the logical OR of several other predicates.
+    
+    Given two predicates ``p`` and ``q``,
+    
+    >>> p_or_q = qecc.AllPredicate(p, q)
+    
+    is equivalent to ``p_and_q = p | q``.
     """
     
     def __init__(self, *preds):
@@ -132,7 +144,7 @@ class AnyPredicate(Predicate):
         if isinstance(other, AnyPredicate):
             return AnyPredicate(*(self.preds + other.preds))
         else:
-            return AnyPredicate(*(self.preds + [other]))
+            return AnyPredicate(*(self.preds + (other,)))
         
 class SetMembershipPredicate(Predicate):
     """
@@ -150,6 +162,10 @@ class SetMembershipPredicate(Predicate):
         
     def __call__(self, x):
         return x in self.S
+    
+    def __repr__(self):
+        return "Predicate: f(x) = True if x in {0}".format(repr(self.S))
+        
 
 class PauliMembershipPredicate(SetMembershipPredicate):
     """
