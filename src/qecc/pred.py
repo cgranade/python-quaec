@@ -33,7 +33,9 @@ import itertools as it
 # The following names will get imported by
 # "from pred import *".
 __all__ = [
-    'Predicate', 'SetMembershipPredicate', 'PauliMembershipPredicate',
+    'Predicate',
+    'AllPredicate', 'AnyPredicate',
+    'SetMembershipPredicate', 'PauliMembershipPredicate',
     'commutes_with', 'in_group_generated_by'
 ]
 
@@ -87,16 +89,50 @@ class Predicate(object):
         return Predicate(new_predicate)
         
     def __and__(self, other):
-        return Predicate(self.combine(other, op.and_))
+        return AllPredicate(self, other)
         
     def __or__(self, other):
-        return Predicate(self.combine(other, op.or_))
+        return AnyPredicate(self, other)
         
     def __invert__(self):
         def not_fn(*args, **kwargs):
             return not self(*args, **kwargs)
             
         return Predicate(not_fn)
+ 
+class AllPredicate(Predicate):
+    """
+    Predicate class representing the logical AND of several other predicates.
+    """
+    
+    def __init__(self, *preds):
+        self.preds = preds
+        
+    def __call__(self, *args, **kwargs):
+        return all(p(*args, **kwargs) for p in self.preds)
+        
+    def __and__(self, other):
+        if isinstance(other, AllPredicate):
+            return AllPredicate(*(self.preds + other.preds))
+        else:
+            return AllPredicate(*(self.preds + [other]))
+        
+class AnyPredicate(Predicate):
+    """
+    Predicate class representing the logical OR of several other predicates.
+    """
+    
+    def __init__(self, *preds):
+        self.preds = preds
+        
+    def __call__(self, *args, **kwargs):
+        return any(p(*args, **kwargs) for p in self.preds)
+        
+    def __or__(self, other):
+        if isinstance(other, AnyPredicate):
+            return AnyPredicate(*(self.preds + other.preds))
+        else:
+            return AnyPredicate(*(self.preds + [other]))
         
 class SetMembershipPredicate(Predicate):
     """
