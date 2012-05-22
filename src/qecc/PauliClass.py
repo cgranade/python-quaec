@@ -35,7 +35,7 @@ import pred
 __all__ = [
     'Pauli',
     'ensure_pauli', 'com', 'pauli_group', 'from_generators', 'is_in_normalizer',
-    'elem_gen', 'elem_gens', 'eye_p', 'ns_mod_s'
+    'elem_gen', 'elem_gens', 'eye_p', 'ns_mod_s', 'pad'
     ]
         
 ## CONSTANTS ##
@@ -369,6 +369,38 @@ def ns_mod_s(*stab_gens):
         pauli_group(nq)
         )
     
+def pad(setP, setQ):
+    r"""
+    Given two sets of generators setP and setQ, this function first confirms 
+    that they encode the same number of logical qubits :math:`k`, then adds
+    identity Paulis to the smaller generator, so that the two sets act on
+    the same number of qubits :math:`n`, and have the same number of elements.
+    """
+    len_P=len(setP)
+    print len_P
+    n_P=len(setP[0])
+    print n_P
+    len_Q=len(setQ)
+    print len_Q
+    n_Q=len(setQ[0])
+    print n_Q
+    #First Step: lengthen elements of original short list.
+    if n_P<n_Q:
+        for p in range(len(setP)):
+            print setP
+            setP[p].op+='I'*(n_Q-n_P)
+            print setP
+    elif n_Q<n_P:
+        for q in range(len(setQ)):
+            print setQ
+            setQ[q].op+='I'*(n_P-n_Q)
+            print setQ
+    #Next, pad with eye_ps:
+    if len_P<len_Q:
+        setP.extend([eye_p(n_Q)]*(len_Q-len_P))
+    elif len_Q<len_P:
+        setQ.extend([eye_p(n_P)]*(len_P-len_Q))
+    return setP,setQ
 ## MAIN ##
 
 if __name__ == "__main__":
