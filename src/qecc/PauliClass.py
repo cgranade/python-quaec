@@ -24,7 +24,7 @@
 
 ## IMPORTS ##
 
-from itertools import product, chain, combinations
+from itertools import product, chain, permutations, combinations, ifilter, ifilterfalse, imap
 from copy import copy
 import bsf
 
@@ -35,7 +35,7 @@ import pred
 __all__ = [
     'Pauli',
     'ensure_pauli', 'com', 'pauli_group', 'from_generators', 'is_in_normalizer',
-    'elem_gen', 'elem_gens', 'eye_p', 'ns_mod_s', 'pad'
+    'elem_gen', 'elem_gens', 'eye_p', 'ns_mod_s', 'pad', 'all_commuters'
     ]
         
 ## CONSTANTS ##
@@ -368,6 +368,19 @@ def ns_mod_s(*stab_gens):
         pred.commutes_with(*stab_gens) & ~pred.in_group_generated_by(*stab_gens),
         pauli_group(nq)
         )
+
+def all_commuters(n_bits,n_gens):
+    r"""
+    Given two natural numbers n_bits and n_gens, will return a list of all 
+    lists of Paulis on n_bits qubits which are n_gens long and mutually commute.
+    Permutations are explicitly allowed, since they result in different 
+    transcoding Cliffords/circuits.
+    """
+    group_without_identity = list(ifilterfalse(lambda p: p==eye_p(n_bits),pauli_group(n_bits)))
+    length_n_gens_subsets=permutations(group_without_identity, n_gens)
+    for subset in length_n_gens_subsets:
+        if all(com(*pairs)==0 for pairs in combinations(subset,2)):
+            yield subset
     
 def pad(setP, setQ):
     r"""
