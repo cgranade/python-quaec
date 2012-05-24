@@ -210,6 +210,17 @@ class Pauli(object):
         else:
             return False
 
+    def __ne__(self,other):
+        """
+        Tests if two input Paulis, :obj:`self` and :obj:`other`, are not equal.
+
+        :rtype: bool
+        """
+        if self.op==other.op and self.ph==other.ph:
+            return False
+        else:
+            return True
+
     def __len__(self):
         """
         Yields the number of qubits on which the Pauli ``self`` acts.
@@ -364,7 +375,7 @@ def ns_mod_s(*stab_gens):
     """
     nq = len(stab_gens[0])
     
-    return itertools.ifilter(
+    return ifilter(
         pred.commutes_with(*stab_gens) & ~pred.in_group_generated_by(*stab_gens),
         pauli_group(nq)
         )
