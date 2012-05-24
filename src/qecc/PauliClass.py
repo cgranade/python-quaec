@@ -382,7 +382,7 @@ def all_commuters(n_bits,n_gens):
         if all(com(*pairs)==0 for pairs in combinations(subset,2)):
             yield subset
     
-def pad(setP, setQ):
+def pad(setP, setQ, lower_right=None):
     r"""
     Given two sets of generators setP and setQ, this function first confirms 
     that they encode the same number of logical qubits :math:`k`, then adds
@@ -408,11 +408,17 @@ def pad(setP, setQ):
             print setQ
             setQ[q].op+='I'*(n_P-n_Q)
             print setQ
-    #Next, pad with eye_ps:
+    #Next, pad with appropriate operators:
     if len_P<len_Q:
-        setP.extend([eye_p(n_Q)]*(len_Q-len_P))
+        if lower_right==None:
+            setP.extend([eye_p(n_Q)]*(len_Q-len_P))
+        else:
+            setP.extend(map(lambda p: eye_p(n_P)&p,lower_right))
     elif len_Q<len_P:
-        setQ.extend([eye_p(n_P)]*(len_P-len_Q))
+        if lower_right==None:
+            setQ.extend([eye_p(n_P)]*(len_P-len_Q))
+        else:
+            setQ.extend(map(lambda p: eye_p(n_Q)&p,lower_right))
     return setP,setQ
 ## MAIN ##
 
