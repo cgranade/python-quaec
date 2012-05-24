@@ -35,7 +35,7 @@ import pred
 __all__ = [
     'Pauli',
     'ensure_pauli', 'com', 'pauli_group', 'from_generators', 'is_in_normalizer',
-    'elem_gen', 'elem_gens', 'eye_p', 'ns_mod_s', 'pad', 'all_commuters'
+    'elem_gen', 'elem_gens', 'eye_p', 'ns_mod_s', 'pad', 'mutually_commuting_sets'
     ]
         
 ## CONSTANTS ##
@@ -369,15 +369,23 @@ def ns_mod_s(*stab_gens):
         pauli_group(nq)
         )
 
-def all_commuters(n_bits,n_gens):
+def mutually_commuting_sets(n_bits, n_gens, perms=True):
     r"""
-    Given two natural numbers n_bits and n_gens, will return a list of all 
-    lists of Paulis on n_bits qubits which are n_gens long and mutually commute.
-    Permutations are explicitly allowed, since they result in different 
-    transcoding Cliffords/circuits.
+    Given two natural numbers ``n_bits`` and ``n_gens``, will return an iterator
+    onto all lists of Paulis on ``n_bits`` qubits which are ``n_gens`` long and
+    which mutually commute.
+    
+    If ``perms`` is ``True``, then permutations are treated as distinct.
+    
+    :param int n_bits: Number of qubits on which each operator acts.
+    :param int n_gens: Number of generators in each list yielded.
+    :param bool perms: Controls whether all permutations of each mutually
+        commuting set are returned.
     """
-    group_without_identity = list(ifilterfalse(lambda p: p==eye_p(n_bits),pauli_group(n_bits)))
-    length_n_gens_subsets=permutations(group_without_identity, n_gens)
+    
+    group_without_identity = ifilterfalse(lambda p: p==eye_p(n_bits),pauli_group(n_bits))
+    length_n_gens_subsets = (permutations if perms else combinations)(group_without_identity, n_gens)
+    
     for subset in length_n_gens_subsets:
         if all(com(*pairs)==0 for pairs in combinations(subset,2)):
             yield subset
@@ -389,26 +397,27 @@ def pad(setP, setQ, lower_right=None):
     identity Paulis to the smaller generator, so that the two sets act on
     the same number of qubits :math:`n`, and have the same number of elements.
     """
+    
+    # Ensure that we have lists, and make a copy.
+    setP, setQ = list(setP), list(setQ)
+    
     len_P=len(setP)
-    print len_P
     n_P=len(setP[0])
-    print n_P
     len_Q=len(setQ)
-    print len_Q
     n_Q=len(setQ[0])
-    print n_Q
-    #First Step: lengthen elements of original short list.
+    
+    # Check that the numbers of logical qubits match.
+    if n_P - len_P != n_Q - len_Q:
+        raise ValueError('The two generating sets describe stabilizer codes with different numbers of logical qubits.')
+    
+    # First Step: lengthen elements of original short list.
     if n_P<n_Q:
         for p in range(len(setP)):
-            print setP
             setP[p].op+='I'*(n_Q-n_P)
-            print setP
     elif n_Q<n_P:
         for q in range(len(setQ)):
-            print setQ
             setQ[q].op+='I'*(n_P-n_Q)
-            print setQ
-    #Next, pad with appropriate operators:
+    # Next, pad with appropriate operators:
     if len_P<len_Q:
         if lower_right==None:
             setP.extend([eye_p(n_Q)]*(len_Q-len_P))
@@ -419,7 +428,9 @@ def pad(setP, setQ, lower_right=None):
             setQ.extend([eye_p(n_P)]*(len_P-len_Q))
         else:
             setQ.extend(map(lambda p: eye_p(n_Q)&p,lower_right))
-    return setP,setQ
+            
+    return setP, setQ
+    
 ## MAIN ##
 
 if __name__ == "__main__":
