@@ -40,20 +40,34 @@ upon.
 >>> len(qecc.Pauli('XYZI'))
 4
 
-Utility Functions
-~~~~~~~~~~~~~~~~~
-
-.. autofunction:: qecc.com
+Iterating Over Subgroups
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autofunction:: qecc.pauli_group
 
 .. autofunction:: qecc.from_generators
 
-.. autofunction:: qecc.is_in_normalizer
+Utility Functions
+~~~~~~~~~~~~~~~~~
+
+.. autofunction:: qecc.com
 
 .. autofunction:: qecc.elem_gens
 
 .. autofunction:: qecc.eye_p
+
+.. autofunction:: qecc.pad
+
+Searching Over Pauli Group Elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+QuaEC provides useful tools for searching over elements of the Pauli group.
+A few particlar searches are provided built-in, while other searches can be
+efficiently built using the predicates described in :doc:`predicates`.
+
+.. autofunction:: qecc.is_in_normalizer
+
+.. autofunction:: qecc.mutually_commuting_sets
 
 :class:`qecc.Clifford` - Class representing Clifford group elements
 -------------------------------------------------------------------
