@@ -369,21 +369,34 @@ def ns_mod_s(*stab_gens):
         pauli_group(nq)
         )
 
-def mutually_commuting_sets(n_bits, n_gens, perms=True):
+def mutually_commuting_sets(n_gens, n_bits=None, group_iter=None, perms=True):
     r"""
     Given two natural numbers ``n_bits`` and ``n_gens``, will return an iterator
-    onto all lists of Paulis on ``n_bits`` qubits which are ``n_gens`` long and
-    which mutually commute.
+    onto all tuples of ``n_gens`` non-trivial Paulis on ``n_bits`` qubits which
+    mutually commute.
+    
+    Alternatively, if ``group_iter`` is specified, then elements are drawn from
+    that iterator instead.
     
     If ``perms`` is ``True``, then permutations are treated as distinct.
     
     :param int n_bits: Number of qubits on which each operator acts.
     :param int n_gens: Number of generators in each list yielded.
+    :param iterable group_iter: Group from which elements are drawn; defaults
+        to the entire Pauli group.
     :param bool perms: Controls whether all permutations of each mutually
         commuting set are returned.
+    :returns: An iterator onto tuples of mutually commuting non-identity
+         elements of ``group_iter``.
     """
     
-    group_without_identity = ifilterfalse(lambda p: p==eye_p(n_bits),pauli_group(n_bits))
+    if group_iter is None and n_bits is None:
+        raise ValueError('Either a group or a number of qubits must be specified.')
+    
+    if group_iter is None:
+        group_iter = pauli_group(n_bits)
+        
+    group_without_identity = ifilterfalse(lambda p: p==eye_p(n_bits), group_iter)
     length_n_gens_subsets = (permutations if perms else combinations)(group_without_identity, n_gens)
     
     for subset in length_n_gens_subsets:
