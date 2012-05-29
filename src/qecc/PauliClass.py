@@ -24,18 +24,20 @@
 
 ## IMPORTS ##
 
-from itertools import product, chain, permutations, combinations, ifilter, ifilterfalse, imap
+from itertools import product, chain, permutations, combinations, ifilter, ifilterfalse, imap, starmap, izip
 from copy import copy
 import bsf
-
+from operator import mul
 import pred
 
 ## ALL ##
 
 __all__ = [
     'Pauli',
-    'ensure_pauli', 'com', 'pauli_group', 'from_generators', 'is_in_normalizer',
-    'elem_gen', 'elem_gens', 'eye_p', 'ns_mod_s', 'pad', 'mutually_commuting_sets'
+    'ensure_pauli', 'com', 'pauli_group', 'from_generators',
+    'is_in_normalizer', 'elem_gen', 'elem_gens', 'eye_p', 'ns_mod_s',
+    'pad', 'mutually_commuting_sets', 'custom_commuter',
+    'clifford_bottoms'
     ]
         
 ## CONSTANTS ##
@@ -114,7 +116,15 @@ class Pauli(object):
         newP.ph = newP.ph % 4
             
         return newP
-        
+
+    def __pow__(self,num):
+        if num % 2 == 0:
+            return eye_p(len(self))
+        elif num % 2 == 1:
+            return self
+        else:
+            raise ValueError("Paulis can only be exponentiated with integers")
+            
     def __repr__(self):
         """
         Representation for Paulis, printing Paulis in the format ``i^{phase} {op}``.
@@ -380,6 +390,17 @@ def ns_mod_s(*stab_gens):
         pauli_group(nq)
         )
 
+def custom_commuter(commuters, anticommuters, nq):
+    r"""
+    Returns a Pauli that commutes with commuters, and anticommutes
+    with anticommuters, without being an element of either group.
+    """
+    return next(ifilter(
+        pred.commutes_with(*commuters) & ~pred.commutes_with(*anticommuters) & ~pred.in_group_generated_by(*commuters)& ~pred.in_group_generated_by(*anticommuters),
+        pauli_group(nq)
+        ))
+
+
 def mutually_commuting_sets(n_gens, n_bits=None, group_iter=None, perms=True):
     r"""
     Given two natural numbers ``n_bits`` and ``n_gens``, will return an iterator
@@ -433,28 +454,44 @@ def pad(setP, setQ, lower_right=None):
     # Check that the numbers of logical qubits match.
     if n_P - len_P != n_Q - len_Q:
         raise ValueError('The two generating sets describe stabilizer codes with different numbers of logical qubits.')
-    
+    if len_P==len_Q:
+        return setP, setQ
+    setA=[]
+    setB=[]
     # First Step: lengthen elements of original short list.
     if n_P<n_Q:
         for p in range(len(setP)):
-            setP[p].op+='I'*(n_Q-n_P)
+            setA.append(Pauli(setP[p].op+'I'*(n_Q-n_P)))
     elif n_Q<n_P:
         for q in range(len(setQ)):
-            setQ[q].op+='I'*(n_P-n_Q)
+            setB.append(Pauli(setQ[q].op+'I'*(n_P-n_Q)))
     # Next, pad with appropriate operators:
     if len_P<len_Q:
         if lower_right==None:
-            setP.extend([eye_p(n_Q)]*(len_Q-len_P))
+            setA.extend([eye_p(n_Q)]*(len_Q-len_P))
         else:
-            setP.extend(map(lambda p: eye_p(n_P)&p,lower_right))
+            setA.extend(map(lambda p: eye_p(n_P)&p,lower_right))
     elif len_Q<len_P:
         if lower_right==None:
-            setQ.extend([eye_p(n_P)]*(len_P-len_Q))
+            setB.extend([eye_p(n_P)]*(len_P-len_Q))
         else:
-            setQ.extend(map(lambda p: eye_p(n_Q)&p,lower_right))
+            setB.extend(map(lambda p: eye_p(n_Q)&p,lower_right))
             
-    return setP, setQ
-    
+    return setA, setB
+
+def clifford_bottoms(c_top):
+    r"""
+    This function yields the next set of nq paulis that mutually 
+    commute, and anti-commute with selected elements from c_top. 
+    """
+    nq=len(c_top)
+    top_group = from_generators(c_top)
+    proto_zs=[]
+    for jj in range(nq):
+        proto_zs.append(custom_commuter(filter(lambda p : p!= c_top[jj],c_top+proto_zs),filter(lambda p : p==c_top[jj], c_top),nq))
+    for commuter in product(top_group,repeat=nq):
+        yield starmap(mul,izip(proto_zs,commuter))
+        
 ## MAIN ##
 
 if __name__ == "__main__":

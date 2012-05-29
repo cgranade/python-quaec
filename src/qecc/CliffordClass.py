@@ -23,7 +23,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-## RELAOD FIX ##
+## RELOAD FIX ##
 # This is a pretty poor way of fixing it, but should work for now.
     
 import PauliClass as _pc
@@ -47,8 +47,9 @@ from numpy import hstack, newaxis
 
 __all__ = [
     'Clifford',
-    'eye_c', 'cnot', 'replace_one_character', 'cz', 'hadamard', 'phase', 
-    'permutation', 'swap', 'pauli_gate', 'paulify', 'gen_cliff'
+    'eye_c', 'cnot', 'replace_one_character', 'cz', 'hadamard',
+    'phase', 'permutation', 'swap', 'pauli_gate', 'paulify',
+     'gen_cliff', 'transcoding_cliffords'
 ]
 
 ## CONSTANTS ##
@@ -62,10 +63,12 @@ EmptyClifford = object() # FIXME: We need a better singleton object here.
 
 class Clifford(object):
     r"""
-    Class representing an element of the Cifford group on :math:`n` qubits.
+    Class representing an element of the Cifford group on :math:`n`
+     qubits.
     
     :param xbars: A list of operators :math:`\bar{X}_i` such that the
-        represented Clifford operation :math:`C` acts as :math:`C(X_i) = \bar{X}_i`.
+        represented Clifford operation :math:`C` acts as 
+        :math:`C(X_i) = \bar{X}_i`.
     :param zbars: See ``xbars``.
     :type xbars: list of :class:`qecc.Pauli` instances
     :type zbars: list of :class:`qecc.Pauli` instances
@@ -99,8 +102,8 @@ class Clifford(object):
 
     def is_valid(self):
         """
-        Checks that the output of the represented Clifford gate obeys the proper
-        commutation relations.
+        Checks that the output of the represented Clifford gate obeys
+         the proper commutation relations.
         """
         for P in sum(elem_gens(len(self)), []):
             for Q in sum(elem_gens(len(self)), []):
@@ -113,21 +116,22 @@ class Clifford(object):
     def conjugate_pauli(self,pauli):
         r"""
 
-        Given an instance of :class:`qecc.Pauli` representing the operator
-        :math:`P`, calculates the mapping :math:`CPC^{\dagger}`.
+        Given an instance of :class:`qecc.Pauli` representing the
+         operator :math:`P`, calculates the mapping 
+         :math:`CPC^{\dagger}`.
 
         :arg pauli: Representation of the Pauli operator :math:`P`.
         :type pauli: qecc.Pauli
-        :returns: Representation of the Pauli operator :math:`CPC^{\dagger}`,
+        :returns: Representation of the Pauli operator 
+        :math:`CPC^{\dagger}`,
             where :math:`C` is the Clifford operator represented by this
             instance.
         :rtype: qecc.Pauli
         """
         
         if not isinstance(pauli,Pauli):
-            # If we don't have a Pauli, maybe we have an iterable over Paulis?
+            # If we don't have a Pauli, maybe we have an iterable.
             try:
-
                 dummy = iter(pauli)
                 # Yep. It was an iterable.
                 return map(self.conjugate_pauli, pauli)
@@ -137,8 +141,8 @@ class Clifford(object):
         #Initialize the output Pauli to the identity:
         rolling_pauli=Pauli('I'*len(pauli))        
         for idx,op in enumerate(pauli.op):
-            #For every X/Z the input Pauli contains, multiply by the corresponding
-            #output Pauli from self. 
+            #For every X/Z the input Pauli contains, multiply by the
+            # corresponding output Pauli from self. 
             if op == 'X':
                 rolling_pauli=rolling_pauli*self.xout[idx]
             elif op == 'Z':
@@ -154,8 +158,9 @@ class Clifford(object):
 
 
     def __mul__(self,other):
-        """multiplies two Cliffords, self and other, by conjugating the output Paulis from other,
-        according to the relations given by self, yielding self*other. """
+        """multiplies two Cliffords, self and other, by conjugating the
+         output Paulis from other, according to the relations given by
+          self, yielding self*other. """
         if not isinstance(other,Clifford):
             return NotImplemented 
         Xs=[]
@@ -172,7 +177,8 @@ class Clifford(object):
         return NotImplemented
 
     def __and__(self,other):
-        """Takes the tensor product of two Cliffords *self* and *other*."""
+        """Takes the tensor product of two Cliffords *self* and
+         *other*."""
         if other is EmptyClifford:
             return self
             
@@ -182,7 +188,8 @@ class Clifford(object):
         nq_other=len(other)
         id_self_size=eye_p(nq_self)
         id_other_size=eye_p(nq_other)
-        #We embed each Clifford into a larger space, and concatenate the output lists.
+        """We embed each Clifford into a larger space, and concatenate
+         the output lists."""
         exones=[]
         extwos=[]
         zedones=[]
@@ -202,8 +209,8 @@ class Clifford(object):
 
     def as_bsm(self):
         """
-        Returns a representation of the Clifford operator as a binary symplectic
-        matrix.
+        Returns a representation of the Clifford operator as a binary
+         symplectic matrix.
         
         :rtype: :class:`qecc.BinarySymplecticMatrix`
         """
@@ -216,7 +223,8 @@ class Clifford(object):
 ## FUNCTIONS ##
 def eye_c(nq):
     """
-    Yields the identity Clifford, defined to map every generator of the Pauli group to itself.
+    Yields the identity Clifford, defined to map every generator of the 
+    Pauli group to itself.
 
     :rtype: Clifford
     """
@@ -224,7 +232,8 @@ def eye_c(nq):
     
 def replace_one_character(string,location,new_character):
     """
-    Replaces the character in ``string`` at ``location`` with ``new_character``.
+    Replaces the character in ``string`` at ``location`` with
+     ``new_character``.
 
     :rtype: str
     """
@@ -232,7 +241,8 @@ def replace_one_character(string,location,new_character):
     
 def cnot(nq,ctrl,targ):
     """
-    Yields the ``nq``-qubit CNOT Clifford controlled on ``ctrl``, acting a Pauli :math:`X` on ``targ``.
+    Yields the ``nq``-qubit CNOT Clifford controlled on ``ctrl``,
+     acting a Pauli :math:`X` on ``targ``.
 
     :rtype: :class:`qecc.Clifford`
     """
@@ -246,7 +256,8 @@ def cnot(nq,ctrl,targ):
     
 def cz(nq, q1, q2):
     """
-    Yields the ``nq``-qubit C-Z Clifford, acting on qubits ``q1`` and ``q2``.
+    Yields the ``nq``-qubit C-Z Clifford, acting on qubits ``q1`` and
+     ``q2``.
 
     :rtype: :class:`qecc.Clifford`
     """
@@ -259,7 +270,8 @@ def cz(nq, q1, q2):
     
 def hadamard(nq,q):
     """
-    Yields the ``nq``-qubit Clifford, switching :math:`X` and :math:`Z` on qubit ``q``, yielding a minus sign on :math:`Y`.
+    Yields the ``nq``-qubit Clifford, switching :math:`X` and :math:`Z`
+     on qubit ``q``, yielding a minus sign on :math:`Y`.
 
     :rtype: :class:`qecc.Clifford`
     """
@@ -338,7 +350,8 @@ def paulify(clinput):
         return Pauli((exact*zedact).op)
 
 def gen_cliff(paulis_in,paulis_out):
-    """The canonical form of the Clifford that takes the list paulis_in to the list paulis_out."""
+    """The canonical form of the Clifford that takes the list paulis_in
+     to the list paulis_out."""
     nq=len(paulis_in)/2
     
     xins=paulis_in[0:nq]
@@ -351,4 +364,51 @@ def gen_cliff(paulis_in,paulis_out):
     H    = Clifford(xins,zins)    
     Hinv = (H.as_bsm().inv().as_clifford())
     return G*Hinv
+
+def transcoding_cliffords(paulis_in,paulis_out):
+    r"""
+    This function produces an iterator onto all Cliffords that take
+    the pauli set 'paulis_in' to the set 'paulis_out', looping over all
+    possible sets of constraints on the remaining degrees of freedom. 
+    """
+    nq_in=len(paulis_in[0])
+    nq_out=len(paulis_out[0])
+    gens_in=len(paulis_in)
+    gens_out=len(paulis_out)
+    #Set up temporary lists so that the larger Paulis are on the left.
+    if nq_in>=nq_out:
+        paulis_temp_left=paulis_in
+        paulis_temp_right=paulis_out
+        nq_tl=nq_in
+        nq_tr=nq_out
+        gens_tl=gens_in
+        gens_tr=gens_out
+    elif nq_in<nq_out:
+        paulis_temp_left=paulis_out
+        paulis_temp_right=paulis_in
+        nq_tl=nq_out
+        nq_tr=nq_in
+        gens_tl=gens_out
+        gens_tr=gens_in
+    #Construct left_to_2n, a list of Paulis that complete the input Cliffords on the left.
+    #First, get a mutually commuting set of nq_in generators, then round up using a
+    #single clifford_bottom.
+    if gens_tl < nq_tl:
+        left_to_n=list(next(mutually_commuting_sets(nq_tl-gens_tl,nq_tl,group_iter=ns_mod_s(*paulis_temp_left))))
+        left_to_2n=left_to_n+list(next(clifford_bottoms(paulis_temp_left+left_to_n)))
+    else:
+        left_to_2n=list(next(clifford_bottoms(paulis_temp_left)))
+    #The right side constraints are what we have to iterate over.
+    pads_mid_right=mutually_commuting_sets(gens_tl-gens_tr,nq_tl-nq_tr)
+    for pad_mr in pads_mid_right:
+        paulis_temp_left, paulis_temp_right = pad(paulis_temp_left,paulis_temp_right,lower_right=pad_mr)
+        if len(paulis_temp_right) < nq_tr:
+            for mcs in mutually_commuting_sets(nq_tr-len(paulis_temp_right),nq_tr,group_iter=ns_mod_s(*paulis_temp_right)):
+                paulis_temp_right.extend(mcs)
+        for bottom_half in clifford_bottoms(paulis_temp_right):
+            paulis_2n_right=paulis_temp_right+list(bottom_half)
+            if nq_in>=nq_out:
+                yield gen_cliff(list(chain(paulis_temp_left,left_to_2n)),paulis_2n_right)
+            else:
+                yield gen_cliff(paulis_2n_right,list(chain(paulis_temp_left,left_to_2n)))
     
