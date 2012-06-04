@@ -476,7 +476,10 @@ def pad(setP, setQ, lower_right=None):
             setB.extend([eye_p(n_P)]*(len_P-len_Q))
         else:
             setB.extend(map(lambda p: eye_p(n_Q)&p,lower_right))
-            
+    if len_P>len_Q:
+        setA=setP
+    elif len_Q>len_P:
+        setB=setQ         
     return setA, setB
 
 def clifford_bottoms(c_top):
@@ -489,8 +492,8 @@ def clifford_bottoms(c_top):
     proto_zs=[]
     for jj in range(nq):
         proto_zs.append(custom_commuter(filter(lambda p : p!= c_top[jj],c_top+proto_zs),filter(lambda p : p==c_top[jj], c_top),nq))
-    for commuter in product(top_group,repeat=nq):
-        yield starmap(mul,izip(proto_zs,commuter))
+    for commuter in product(*zip([eye_p(nq)]*nq,c_top)):
+        yield map(mul,proto_zs,commuter)
         
 ## MAIN ##
 

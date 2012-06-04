@@ -49,7 +49,7 @@ __all__ = [
     'Clifford',
     'eye_c', 'cnot', 'replace_one_character', 'cz', 'hadamard',
     'phase', 'permutation', 'swap', 'pauli_gate', 'paulify',
-     'gen_cliff', 'transcoding_cliffords'
+     'gen_cliff', 'transcoding_cliffords', 'min_len_transcoding_clifford'
 ]
 
 ## CONSTANTS ##
@@ -404,11 +404,17 @@ def transcoding_cliffords(paulis_in,paulis_out):
         paulis_temp_left, paulis_temp_right = pad(paulis_temp_left,paulis_temp_right,lower_right=pad_mr)
         if len(paulis_temp_right) < nq_tr:
             for mcs in mutually_commuting_sets(nq_tr-len(paulis_temp_right),nq_tr,group_iter=ns_mod_s(*paulis_temp_right)):
-                paulis_temp_right.extend(mcs)
-        for bottom_half in clifford_bottoms(paulis_temp_right):
+                paulis_n=paulis_temp_right+mcs
+        else:
+            paulis_n=paulis_temp_right
+        for bottom_half in clifford_bottoms(paulis_n):
             paulis_2n_right=paulis_temp_right+list(bottom_half)
+            print list(chain(paulis_temp_left,left_to_2n)),paulis_2n_right
             if nq_in>=nq_out:
                 yield gen_cliff(list(chain(paulis_temp_left,left_to_2n)),paulis_2n_right)
             else:
                 yield gen_cliff(paulis_2n_right,list(chain(paulis_temp_left,left_to_2n)))
-    
+
+def min_len_transcoding_clifford(paulis_in,paulis_out):
+    circuit_iter=map(lambda p: p.as_bsm().circuit_decomposition(), transcoding_cliffords(paulis_in,paulis_out))
+    return min(*circuit_iter)
