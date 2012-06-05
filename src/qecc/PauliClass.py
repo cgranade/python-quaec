@@ -30,6 +30,8 @@ import bsf
 from operator import mul
 import pred
 
+from paulicollections import PauliList
+
 ## ALL ##
 
 __all__ = [
@@ -263,7 +265,7 @@ class Pauli(object):
         if com(self, group_gens[0]) == 0:
             # That generator commutes, and so we pass it along
             # unmodified.
-            return [group_gens[0]] + self.centralizer_gens(group_gens[1:])
+            return PauliList(group_gens[0], *self.centralizer_gens(group_gens[1:]))
         else:
             # That generator anticommutes, and so we must modify it by
             # multiplication with another anticommuting generator, if one
@@ -274,14 +276,14 @@ class Pauli(object):
                     found = True
                     g_prime = group_gens[idx] * group_gens[0]
                     assert com(self, g_prime) == 0
-                    return [g_prime] + self.centralizer_gens(group_gens[1:])
+                    return PauliList(g_prime, *self.centralizer_gens(group_gens[1:]))
             if not found:
                 # Generator 0 anticommuted, and so we know two things
                 # from our search:
                 #     - All other generators commute.
                 #     - The anticommuting generator (0) has no match, and must
                 #       be excluded.
-                return group_gens[1:]
+                return PauliList(*group_gens[1:])
 
 ## FUNCTIONS ##
        
