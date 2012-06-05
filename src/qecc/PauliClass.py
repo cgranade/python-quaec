@@ -254,7 +254,34 @@ class Pauli(object):
         :rtype: an instance of the :class:`qecc.Pauli` class.
         """    
         return Pauli(self.op, 4-self.ph)
-
+        
+    def centralizer_gens(self, group_gens=None):
+        if group_gens is None:
+            Xs, Zs = elem_gens(len(self))
+            group_gens = Xs + Zs
+        
+        if com(self, group_gens[0]) == 0:
+            # That generator commutes, and so we pass it along
+            # unmodified.
+            return [group_gens[0]] + self.centralizer_gens(group_gens[1:])
+        else:
+            # That generator anticommutes, and so we must modify it by
+            # multiplication with another anticommuting generator, if one
+            # exists.
+            found = False
+            for idx in range(1, len(group_gens)):
+                if com(self, group_gens[idx]) == 1:
+                    found = True
+                    g_prime = group_gens[idx] * group_gens[0]
+                    assert com(self, g_prime) == 0
+                    return [g_prime] + self.centralizer_gens(group_gens[1:])
+            if not found:
+                # Generator 0 anticommuted, and so we know two things
+                # from our search:
+                #     - All other generators commute.
+                #     - The anticommuting generator (0) has no match, and must
+                #       be excluded.
+                return group_gens[1:]
 
 ## FUNCTIONS ##
        
