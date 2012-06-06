@@ -24,7 +24,7 @@
 
 ## IMPORTS ##
 
-from PauliClass import Pauli, ensure_pauli, from_generators, elem_gens
+from PauliClass import *
 
 ## ALL ##
 

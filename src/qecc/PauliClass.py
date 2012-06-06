@@ -344,7 +344,7 @@ def from_generators(gens):
     
     for prod in powerset(gens):
         if len(prod)>0:
-            yield reduce(lambda P, Q: P*Q, prod)#, eye_p(len(gens)))
+            yield reduce(lambda P, Q: P*Q, prod)
         else:
             yield eye_p(len(gens[0]))
         
@@ -517,13 +517,13 @@ def clifford_bottoms(c_top):
     commute, and anti-commute with selected elements from c_top. 
     """
     nq=len(c_top)
-    top_group = from_generators(c_top)
-    proto_zs=[]
+    possible_zs=[]
     for jj in range(nq):
-        proto_zs.append(custom_commuter(filter(lambda p : p!= c_top[jj],c_top+proto_zs),filter(lambda p : p==c_top[jj], c_top),nq))
-    for commuter in product(*zip([eye_p(nq)]*nq,c_top)):
-        yield map(mul,proto_zs,commuter)
-        
+        applicable_centralizer_gens=PauliList(*(c_top[:jj]+c_top[jj+1:])).centralizer_gens()
+        possible_zs.append(filter(lambda a:com(a,c_top[jj])==1,from_generators(applicable_centralizer_gens)))
+    for possible_set in product(*possible_zs):
+        if all(imap(lambda twolist: pred.commutes_with(twolist[0])(twolist[1]),combinations(possible_set,2))):
+            yield possible_set
 ## MAIN ##
 
 if __name__ == "__main__":
