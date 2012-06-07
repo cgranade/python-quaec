@@ -11,6 +11,7 @@ Thumbs.db
 doc/_build
 
 ## setup.py generated files ##
+MANIFEST
 
 # The following ignores are drawn from github@github:gitignore/Python.gitignore.
 *.py[cod]

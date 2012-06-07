@@ -107,7 +107,7 @@ class Pauli(object):
         p2 = other
 
         if not(len(p1)==len(p2)):
-            raise Error("These Paulis are not the same length")
+            raise ValueError("These Paulis are not the same length")
             
         newP = Pauli('', p1.ph + p2.ph)
         for paulicounter in range(len(p1)):

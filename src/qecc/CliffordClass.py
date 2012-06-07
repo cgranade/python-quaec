@@ -49,7 +49,8 @@ __all__ = [
     'Clifford',
     'eye_c', 'cnot', 'replace_one_character', 'cz', 'hadamard',
     'phase', 'permutation', 'swap', 'pauli_gate', 'paulify',
-     'gen_cliff', 'transcoding_cliffords', 'min_len_transcoding_clifford'
+    'generic_clifford',
+    'gen_cliff', 'transcoding_cliffords', 'min_len_transcoding_clifford'
 ]
 
 ## CONSTANTS ##
@@ -75,6 +76,8 @@ class Clifford(object):
     """
     
     def __init__(self, xbars, zbars):
+        # TODO: add xbars_in and zbars_in as optional arguments, then pass them
+        #       to generic_clifford. 
         for output_xz in xbars+zbars:
             if not isinstance(output_xz,Pauli):
                 raise TypeError("Output operators must be Paulis.")
@@ -349,9 +352,25 @@ def paulify(clinput):
                 zedact.op = replace_one_character(zedact.op, idx_z, 'X')
         return Pauli((exact*zedact).op)
 
-def gen_cliff(paulis_in,paulis_out):
-    """The canonical form of the Clifford that takes the list paulis_in
-     to the list paulis_out."""
+def generic_clifford(paulis_in, paulis_out):
+    """
+    Given two lists of :class:`qecc.Pauli` instances, ``paulis_in`` and
+    ``paulis_out``, produces an instance ``C`` of :class:`qecc.Clifford` such that
+    ``C(paulis_in[i]) == paulis_out[i]`` for all ``i`` in ``range(2 * nq)``,
+    where ``nq`` is the length of each element of the two lists.
+    
+    Each of ``paulis_in`` and ``paulis_out`` is assumed to be ordered such that
+    the slice ``[0:nq]`` produces a list of logical :math:`X` operators, and
+    such that the slice ``[nq:2*nq]`` produces the logical :math:`Z` operators.
+    
+    :param paulis_in: A list of length ``2 * nq`` logical Pauli operators
+        specifying the input constraints for the desired Clifford operation.
+    :param paulis_out: A list of length ``2 * nq`` logical Pauli operators
+        specifying the output constraints for the desired Clifford operation.
+    :return: A Clifford operator mapping the input constraints to the output
+        constraints.
+    :rtype: qecc.Clifford
+    """
     nq=len(paulis_in)/2
     
     xins=paulis_in[0:nq]
@@ -364,6 +383,9 @@ def gen_cliff(paulis_in,paulis_out):
     H    = Clifford(xins,zins)    
     Hinv = (H.as_bsm().inv().as_clifford())
     return G*Hinv
+    
+# For backwards compatibility, we define gen_cliff as an alias.
+gen_cliff = generic_clifford
 
 def transcoding_cliffords(paulis_in,paulis_out):
     r"""
