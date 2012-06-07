@@ -24,6 +24,7 @@
 
 # All of the modules must be completely imported before we can start importing
 # specific names, due to circular dependencies between the various modules.
+import singletons as _sing
 import PauliClass as _pc
 import paulicollections as _pc
 import CliffordClass as _cc
@@ -33,6 +34,7 @@ import pred as _p
 import circuit as _circ
 
 __modules = [_pc, _pc, _cc, _bsf, _xpts, _p, _circ]
+# Note that we exclude _sing here to prevent changing the id of each singleton.
 
 # Note that the utils module is not exposed, as we wish for that module to
 # contain private functions.
@@ -45,6 +47,7 @@ map(reload, __modules)
 
 # We now expose the particular names we want to expose, relying on the __all__
 # variable in each module to define which names to expose.
+from singletons import *
 from PauliClass import *
 from paulicollections import *
 from CliffordClass import *

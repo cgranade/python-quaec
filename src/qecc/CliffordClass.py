@@ -43,6 +43,8 @@ from PauliClass import *
 from bsf import *
 from numpy import hstack, newaxis
 
+from singletons import EmptyClifford, Unspecified
+
 ## ALL ##
 
 __all__ = [
@@ -60,8 +62,6 @@ VALID_PHS = range(4)
 
 ## CLASSES ##
 
-EmptyClifford = object() # FIXME: We need a better singleton object here.
-
 class Clifford(object):
     r"""
     Class representing an element of the Cifford group on :math:`n`
@@ -77,9 +77,10 @@ class Clifford(object):
     
     def __init__(self, xbars, zbars):
         # TODO: add xbars_in and zbars_in as optional arguments, then pass them
-        #       to generic_clifford. 
+        #       to generic_clifford.
+        # TODO: check that at least one output is specified.
         for output_xz in xbars+zbars:
-            if not isinstance(output_xz,Pauli):
+            if (output_xz is not Unspecified) and (not isinstance(output_xz,Pauli)):
                 raise TypeError("Output operators must be Paulis.")
         self.xout=xbars
         self.zout=zbars
@@ -90,8 +91,9 @@ class Clifford(object):
         Yields the number of qubits on which the Clifford ``self`` acts.
 
         """
-        exes=self.xout
-        return len(exes[0])
+        for P in self.xout + self.zout:
+            if P is not Unspecified:
+                return len(P)
 
     def __repr__(self):
         """Prints a Clifford in Pauli notation (yielding a list of 
@@ -206,9 +208,13 @@ class Clifford(object):
         return Clifford(exones+extwos,zedones+zedtwos)
 
     def __call__(self, other):
-        if not isinstance(other,Clifford):
+        if not isinstance(other, Pauli):
             return NotImplemented
         return self.conjugate_pauli(other)
+        
+    def constraint_completions(self):
+        # TODO: write this method!
+        pass
 
     def as_bsm(self):
         """
