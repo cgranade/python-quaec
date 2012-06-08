@@ -40,7 +40,7 @@ except:
 
 import operator as op
 
-from copy import copy
+from copy import copy, deepcopy
 from itertools import product, chain, combinations
 from PauliClass import *
 from bsf import *
@@ -57,7 +57,8 @@ __all__ = [
     'eye_c', 'cnot', 'replace_one_character', 'cz', 'hadamard',
     'phase', 'permutation', 'swap', 'pauli_gate', 'paulify',
     'generic_clifford',
-    'gen_cliff', 'transcoding_cliffords', 'min_len_transcoding_clifford'
+    'gen_cliff', 'transcoding_cliffords', 'min_len_transcoding_clifford',
+    'clifford_group'
 ]
 
 ## CONSTANTS ##
@@ -223,6 +224,7 @@ class Clifford(object):
     def constraint_completions(self):
         """
         """
+        # Note: disregards phases.
         XKIND, ZKIND = range(2)
         
         # Start by finding the first unspecified output.
@@ -261,7 +263,7 @@ class Clifford(object):
         # all satisfactions of the remaining constraints recursively.
         Xgs, Zgs = elem_gens(nq)
         for P in solve_commutation_constraints(commutation_constraints, anticommutation_constraints, search_in_gens=Xgs+Zgs):
-            P_bars[unspecified_kind][unspecified_idx] = P
+            P_bars[unspecified_kind][unspecified_idx] = P.mul_phase(-P.ph)
             # I wish I had "yield from" here. Ah, well. We have to recurse
             # manually instead.
             C = Clifford(*P_bars)
@@ -498,3 +500,22 @@ def transcoding_cliffords(paulis_in,paulis_out):
 def min_len_transcoding_clifford(paulis_in,paulis_out):
     circuit_iter=map(lambda p: p.as_bsm().circuit_decomposition(), transcoding_cliffords(paulis_in,paulis_out))
     return min(*circuit_iter)
+    
+def clifford_group(nq, consider_phases=False):
+    idx = 0
+    for P in pauli_group(nq):
+        if P.wt() > 0:
+            C = Clifford([P] + [Unspecified]*(nq -1), [Unspecified]*nq)
+            for completion in C.constraint_completions():
+                if consider_phases:
+                    P_bars = [completion.xout, completion.zout]
+                    # phase_array is chosen to disregard global phases by
+                    # absorbing them into xout[0].
+                    for phase_array in product(range(4), repeat=2*nq - 1):
+                        phase_array = (0,) + phase_array
+                        for idx_kind, idx_qubit in product(range(2), range(nq)):
+                            P_bars[idx_kind][idx_qubit].ph = phase_array[nq*idx_kind + idx_qubit]
+                        yield Clifford(*P_bars)
+                else:
+                    yield completion
+            

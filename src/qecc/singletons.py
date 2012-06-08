@@ -41,7 +41,11 @@ class Singleton(type):
         
 ## CLASSES ##
 
-class EmptyCliffordType(object):
+class SingletonBase(object):    
+    def __copy__(self): return self
+    def __deepcopy__(self, memo): return self
+
+class EmptyCliffordType(SingletonBase):
     """
     TODO
     """
@@ -52,7 +56,7 @@ class EmptyCliffordType(object):
     
 EmptyClifford = EmptyCliffordType()
     
-class UnspecifiedType(object):
+class UnspecifiedType(SingletonBase):
     """
     Marks that a given constraint is unspecified.
     """
