@@ -40,6 +40,7 @@ except:
 
 import operator as op
 
+from copy import copy
 from itertools import product, chain, combinations
 from PauliClass import *
 from bsf import *
@@ -89,8 +90,8 @@ class Clifford(object):
         # Prevent fully unspecified operators.
         if all(P is Unspecified for P in xbars + zbars):
             raise ValueError("At least one output must be specified.")
-        self.xout=xbars
-        self.zout=zbars
+        self.xout=copy(xbars)
+        self.zout=copy(zbars)
 
     def __len__(self):
         """
@@ -244,7 +245,8 @@ class Clifford(object):
         
         # We must always commute with disjoint qubits.
         commutation_constraints = reduce(op.add,
-            (XZ_pairs[idx] for idx in xrange(nq) if idx != unspecified_idx)
+            (XZ_pairs[idx] for idx in xrange(nq) if idx != unspecified_idx),
+            tuple()
             )
             
         # On the same qubit, we must anticommute with the opposite operator.
@@ -257,7 +259,8 @@ class Clifford(object):
         
         # Now we iterate over satisfactions of the constraints, yielding
         # all satisfactions of the remaining constraints recursively.
-        for P in solve_commutation_constraints(commutation_constraints, anticommutation_constraints):
+        Xgs, Zgs = elem_gens(nq)
+        for P in solve_commutation_constraints(commutation_constraints, anticommutation_constraints, search_in_gens=Xgs+Zgs):
             P_bars[unspecified_kind][unspecified_idx] = P
             # I wish I had "yield from" here. Ah, well. We have to recurse
             # manually instead.

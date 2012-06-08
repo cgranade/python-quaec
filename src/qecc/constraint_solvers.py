@@ -63,7 +63,7 @@ def solve_commutation_constraints(
     # We finish putting arguments in the right form by defaulting to searching
     # over the Pauli group on $n$ qubits.
     if search_in_gens is None:
-        nq = len(commutation_constraints[0])
+        nq = len(commutation_constraints[0] if len(commutation_constraints) > 0 else anticommutation_constraints[0])
         Xs, Zs = elem_gens(nq)
         search_in_gens = Xs + Zs
     
@@ -77,5 +77,6 @@ def solve_commutation_constraints(
         lambda acc: (lambda P: com(P, acc) == 1),
         anticommutation_constraints
         ))
+    assert len(search_in_gens) > 0
     return ifilter(anticommutation_predicate, from_generators(search_in_gens))
 

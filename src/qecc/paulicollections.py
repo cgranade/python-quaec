@@ -84,7 +84,8 @@ class PauliList(list):
             group_gens = Xs + Zs
             
         if len(self) == 0:
-            return PauliList()
+            # C({}) = G
+            return PauliList(group_gens)
             
         centralizer_0 = self[0].centralizer_gens(group_gens=group_gens)
             
