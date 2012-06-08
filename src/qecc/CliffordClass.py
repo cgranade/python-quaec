@@ -47,6 +47,7 @@ from bsf import *
 from numpy import hstack, newaxis
 
 from constraint_solvers import solve_commutation_constraints
+from unitary_reps import clifford_as_unitary
 
 from singletons import EmptyClifford, Unspecified
 
@@ -282,6 +283,10 @@ class Clifford(object):
             out = hstack([v.x, v.z])[..., newaxis]
             return out
         return BinarySymplecticMatrix(hstack(map(to_col, self.xout + self.zout)))
+        
+    def as_unitary(self):
+        return clifford_as_unitary(self)
+        
     
 ## FUNCTIONS ##
 def eye_c(nq):

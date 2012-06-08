@@ -31,6 +31,7 @@ from operator import mul
 import pred
 
 from paulicollections import PauliList
+from unitary_reps import pauli_as_unitary
 
 ## ALL ##
 
@@ -238,6 +239,9 @@ class Pauli(object):
         Yields the number of qubits on which the Pauli ``self`` acts.
         """
         return len(self.op)
+           
+    def as_unitary(self):
+        return pauli_as_unitary(self)
                 
     def wt(self):
         """
