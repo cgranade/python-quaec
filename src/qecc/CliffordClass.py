@@ -38,10 +38,14 @@ except:
 
 ## IMPORTS ##
 
+import operator as op
+
 from itertools import product, chain, combinations
 from PauliClass import *
 from bsf import *
 from numpy import hstack, newaxis
+
+from constraint_solvers import solve_commutation_constraints
 
 from singletons import EmptyClifford, Unspecified
 
@@ -82,6 +86,9 @@ class Clifford(object):
         for output_xz in xbars+zbars:
             if (output_xz is not Unspecified) and (not isinstance(output_xz,Pauli)):
                 raise TypeError("Output operators must be Paulis.")
+        # Prevent fully unspecified operators.
+        if all(P is Unspecified for P in xbars + zbars):
+            raise ValueError("At least one output must be specified.")
         self.xout=xbars
         self.zout=zbars
 
@@ -213,8 +220,50 @@ class Clifford(object):
         return self.conjugate_pauli(other)
         
     def constraint_completions(self):
-        # TODO: write this method!
-        pass
+        """
+        """
+        XKIND, ZKIND = range(2)
+        
+        # Start by finding the first unspecified output.
+        nq = len(self)
+        X_bars, Z_bars = self.xout, self.zout
+        P_bars = [X_bars, Z_bars] # <- Useful for indexing by kinds.
+        XZ_pairs = zip(X_bars, Z_bars)
+        try:
+            unspecified_idx, unspecified_kind = iter(
+                (idx, kind)
+                for idx, kind
+                in product(xrange(nq), range(2))
+                if XZ_pairs[idx][kind] is Unspecified
+            ).next()
+        except StopIteration:
+            # If there are no unspecified constraints, then self is the only
+            # satisfying completion.
+            yield self
+            return
+        
+        # We must always commute with disjoint qubits.
+        commutation_constraints = reduce(op.add,
+            (XZ_pairs[idx] for idx in xrange(nq) if idx != unspecified_idx)
+            )
+            
+        # On the same qubit, we must anticommute with the opposite operator.
+        anticommutation_constraints = [XZ_pairs[unspecified_idx][XKIND if unspecified_kind == ZKIND else ZKIND]]
+        
+        # Filter out Unspecified constraints.
+        specified_pred = lambda P: P is not Unspecified
+        commutation_constraints = filter(specified_pred, commutation_constraints)
+        anticommutation_constraints = filter(specified_pred, anticommutation_constraints)
+        
+        # Now we iterate over satisfactions of the constraints, yielding
+        # all satisfactions of the remaining constraints recursively.
+        for P in solve_commutation_constraints(commutation_constraints, anticommutation_constraints):
+            P_bars[unspecified_kind][unspecified_idx] = P
+            # I wish I had "yield from" here. Ah, well. We have to recurse
+            # manually instead.
+            C = Clifford(*P_bars)
+            for completion in C.constraint_completions():
+                yield completion
 
     def as_bsm(self):
         """

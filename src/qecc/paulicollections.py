@@ -25,6 +25,7 @@
 ## IMPORTS ##
 
 from PauliClass import *
+from collections import Sequence
 
 ## ALL ##
 
@@ -45,7 +46,11 @@ class PauliList(list):
     """
 
     def __init__(self, *paulis):
-        paulis = map(ensure_pauli, paulis)
+        if len(paulis) == 1 and isinstance(paulis[0], Sequence):
+            paulis = map(ensure_pauli, paulis[0])
+        else:
+            paulis = map(ensure_pauli, paulis)
+            
         # FIXME: figure out why super(list, self).__init__ doesn't work.
         list.__init__(self, paulis)
         
