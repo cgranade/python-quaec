@@ -516,8 +516,7 @@ def clifford_group(nq, consider_phases=False):
                     P_bars = [completion.xout, completion.zout]
                     # phase_array is chosen to disregard global phases by
                     # absorbing them into xout[0].
-                    for phase_array in product(range(4), repeat=2*nq - 1):
-                        phase_array = (0,) + phase_array
+                    for phase_array in product([0, 2], repeat=2*nq):
                         for idx_kind, idx_qubit in product(range(2), range(nq)):
                             P_bars[idx_kind][idx_qubit].ph = phase_array[nq*idx_kind + idx_qubit]
                         yield Clifford(*P_bars)
