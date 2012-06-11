@@ -45,11 +45,14 @@ from itertools import product, chain, combinations
 from PauliClass import *
 from bsf import *
 from numpy import hstack, newaxis
+from exceptions import *
 
 from constraint_solvers import solve_commutation_constraints
 from unitary_reps import clifford_as_unitary
 
 from singletons import EmptyClifford, Unspecified
+
+import warnings
 
 ## ALL ##
 
@@ -72,58 +75,104 @@ VALID_PHS = range(4)
 class Clifford(object):
     r"""
     Class representing an element of the Cifford group on :math:`n`
-     qubits.
+    qubits.
     
     :param xbars: A list of operators :math:`\bar{X}_i` such that the
         represented Clifford operation :math:`C` acts as 
-        :math:`C(X_i) = \bar{X}_i`.
+        :math:`C(X_i) = \bar{X}_i`. Note that in order for the represented
+        operator to be an automorphism, each :math:`\bar{X}_i` must have phase
+        either 0 or 2. A warning will result if this condition is not met.
     :param zbars: See ``xbars``.
     :type xbars: list of :class:`qecc.Pauli` instances
     :type zbars: list of :class:`qecc.Pauli` instances
     """
     
     def __init__(self, xbars, zbars):
-        # TODO: add xbars_in and zbars_in as optional arguments, then pass them
-        #       to generic_clifford.
-        # TODO: check that at least one output is specified.
-        for output_xz in xbars+zbars:
-            if (output_xz is not Unspecified) and (not isinstance(output_xz,Pauli)):
-                raise TypeError("Output operators must be Paulis.")
+        # Require that all specified operators be Paulis.
+        # Moreover, we should warn the caller if the output phase is not either
+        # 0 or 2, since such operators are not automorphisms of the Pauli group.
+        for output_xz in chain(xbars, zbars):
+            if output_xz is not Unspecified:
+                if not isinstance(output_xz,Pauli):
+                    raise TypeError("Output operators must be Paulis.")
+                if output_xz.ph not in [0, 2]:
+                    warnings.warn(
+                        'The output phase of a Clifford operator has been specified as {}, such that the operator is not a valid automorphism.\n'.format(
+                            output_xz.ph
+                        ) +
+                        'To avoid this warning, please choose all output phases to be from the set {0, 2}.'
+                    )
+                
         # Prevent fully unspecified operators.
         if all(P is Unspecified for P in xbars + zbars):
             raise ValueError("At least one output must be specified.")
+            
+        # Copy the lists to break dependencies with the call site.
         self.xout=copy(xbars)
         self.zout=copy(zbars)
 
     def __len__(self):
         """
-
         Yields the number of qubits on which the Clifford ``self`` acts.
-
         """
         for P in self.xout + self.zout:
             if P is not Unspecified:
                 return len(P)
 
     def __repr__(self):
-        """Prints a Clifford in Pauli notation (yielding a list of 
-        input Paulis, and a list of output Paulis.)"""
+        return "<Clifford operator on {nq} qubit{s} at 0x{id:x}>".format(
+            nq=len(self),
+            id=id(self),
+            s='s' if len(self) > 1 else ''
+        )
+
+    def __str__(self):
+        """
+        Returns a string representing a Clifford in Pauli notation (yielding a
+        list of input Paulis, and a list of output Paulis.)
+        """
         left_side_x,left_side_z=elem_gens(len(self))
         right_side=self.xout+self.zout
         return '\n'.join(
-                '{gen} |-> {out}'.format(gen=gen, out=out)
+                '{gen.op} |-> {outsign}{out}'.format(
+                    gen=gen,
+                    out=out.op if out is not Unspecified else "Unspecified",
+                    outsign=[" +", "+i", " -", "-i"][out.ph] if out is not Unspecified else ""
+                    )
                 for gen, out in zip(left_side_x + left_side_z, self.xout + self.zout)
             )
 
-    def is_valid(self):
+    def is_valid(self, quiet=True):
         """
-        Checks that the output of the represented Clifford gate obeys
-         the proper commutation relations.
+        Returns ``True`` if this instance represents a valid automorphism. In
+        particular, this method returns ``True`` if all output phase assignments
+        are either 0 or 2, and if all of the commutation relations on its
+        outputs are obeyed. Unspecified outputs are ignored.
+        
+        :param bool quiet: If set to ``True``, this method will not print out
+            any information, but will return ``True`` or ``False`` as described
+            above. Otherwise, if the operator is not a valid Clifford operator,
+            diagnostic information will be printed.
         """
+        if any(P.ph not in [0, 2] for P in chain(self.xout, self.zout) if P is not Unspecified):
+            if not quiet:
+                print "At least one output operator has a phase other than 0 or 2."
+                
+            return False
+        
         for P in sum(elem_gens(len(self)), []):
             for Q in sum(elem_gens(len(self)), []):
-                if com(self.conjugate_pauli(P), self.conjugate_pauli(Q)) != com(P, Q):
-                    print P, Q, self.conjugate_pauli(P), self.conjugate_pauli(Q)
+                UP = self.conjugate_pauli(P)
+                UQ = self.conjugate_pauli(Q)
+                
+                if UP is not Unspecified and UQ is not Unspecified and com(UP, UQ) != com(P, Q):
+                    if not quiet:
+                        print "c({P}, {Q}) == {cPQ}, but c(U({P}), U({Q})) == c({UP}, {UQ}) == {cUPUQ}.".format(
+                                P=P, Q=Q,
+                                cPQ=com(P,Q),
+                                UP=UP, UQ=UQ,
+                                cUPUQ=com(UP, UQ)
+                            )
                     return False
                     
         return True
@@ -132,15 +181,15 @@ class Clifford(object):
         r"""
 
         Given an instance of :class:`qecc.Pauli` representing the
-         operator :math:`P`, calculates the mapping 
-         :math:`CPC^{\dagger}`.
+        operator :math:`P`, calculates the mapping 
+        :math:`CPC^{\dagger}`, where :math:`C` is the operator represented by
+        this instance.
 
         :arg pauli: Representation of the Pauli operator :math:`P`.
         :type pauli: qecc.Pauli
         :returns: Representation of the Pauli operator 
-        :math:`CPC^{\dagger}`,
-            where :math:`C` is the Clifford operator represented by this
-            instance.
+            :math:`CPC^{\dagger}`, where :math:`C` is the Clifford operator
+            represented by this instance.
         :rtype: qecc.Pauli
         """
         
@@ -224,14 +273,45 @@ class Clifford(object):
         
     def constraint_completions(self):
         """
+        Yields an iterator onto possible Clifford operators whose outputs agree
+        with this operator for all outputs that are specified. Note that all
+        yielded operators assign the phase 0 to all outputs, by convention.
+        
+        If this operator is fully specified, the iterator will yield exactly one
+        element, which will be equal to this operator.
+        
+        For example:
+        
+        >>> import qecc as q
+        >>> C = q.Clifford([q.Pauli('XI'), q.Pauli('IX')], [q.Unspecified, q.Unspecified])
+        >>> it = C.constraint_completions()
+        >>> print it.next()
+        XI |->  +XI
+        IX |->  +IX
+        ZI |->  +ZI
+        IZ |->  +IZ
+        >>> print it.next()
+        XI |->  +XI
+        IX |->  +IX
+        ZI |->  +ZI
+        IZ |->  +IY
+        >>> print len(list(C.constraint_completions()))
+        8
+        
+        If this operator is not a valid Clifford operator, then this method will
+        raise an :class:`qecc.InvalidCliffordError` upon iteraton.
         """
-        # Note: disregards phases.
+        # Check for validity first.
+        if not self.is_valid():
+            raise InvalidCliffordError("The specified constraints are invalid or are contradictory.")
+        
+        # Useful constants.
         XKIND, ZKIND = range(2)
         
         # Start by finding the first unspecified output.
         nq = len(self)
         X_bars, Z_bars = self.xout, self.zout
-        P_bars = [X_bars, Z_bars] # <- Useful for indexing by kinds.
+        P_bars = map(copy, [X_bars, Z_bars]) # <- Useful for indexing by kinds.
         XZ_pairs = zip(X_bars, Z_bars)
         try:
             unspecified_idx, unspecified_kind = iter(
@@ -264,17 +344,19 @@ class Clifford(object):
         # all satisfactions of the remaining constraints recursively.
         Xgs, Zgs = elem_gens(nq)
         for P in solve_commutation_constraints(commutation_constraints, anticommutation_constraints, search_in_gens=Xgs+Zgs):
-            P_bars[unspecified_kind][unspecified_idx] = P.mul_phase(-P.ph)
+            P_bars[unspecified_kind][unspecified_idx] = Pauli(P.op, phase=0)
             # I wish I had "yield from" here. Ah, well. We have to recurse
             # manually instead.
             C = Clifford(*P_bars)
             for completion in C.constraint_completions():
                 yield completion
+                
+        return
 
     def as_bsm(self):
         """
         Returns a representation of the Clifford operator as a binary
-         symplectic matrix.
+        symplectic matrix.
         
         :rtype: :class:`qecc.BinarySymplecticMatrix`
         """
@@ -285,6 +367,12 @@ class Clifford(object):
         return BinarySymplecticMatrix(hstack(map(to_col, self.xout + self.zout)))
         
     def as_unitary(self):
+        """
+        Returns a :class:`numpy.ndarray` containing a unitary matrix
+        representation of this Clifford operator.
+        
+        Raises a :class:`RuntimeError` if NumPy cannot be imported.
+        """
         return clifford_as_unitary(self)
         
     
@@ -507,6 +595,19 @@ def min_len_transcoding_clifford(paulis_in,paulis_out):
     return min(*circuit_iter)
     
 def clifford_group(nq, consider_phases=False):
+    r"""
+    Given a number of qubits :math:`n`, returns an iterator that produces all
+    elements of :math:`\mathcal{C}_n`, the Clifford group on :math:`n` qubits.
+    
+    :param int nq: The number of qubits upon which each yielded element will
+        act.
+    :param bool consider_phases: If ``True``, then Clifford operators whose
+        assignments of phases to the generators of the Pauli group differ
+        will be treated as distinct. Otherwise, the yielded elements will
+        be drawn from the group
+        :math:`\hat{\mathcal{C}}_n = \mathrm{Aut}(\hat{\mathcal{P}}_n / \{ i^k I : k \in \mathbb{Z}_4 \})`,
+        such that the phases of the outputs are not considered.
+    """
     idx = 0
     for P in pauli_group(nq):
         if P.wt() > 0:

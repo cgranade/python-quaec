@@ -33,6 +33,8 @@ import pred
 from paulicollections import PauliList
 from unitary_reps import pauli_as_unitary
 
+from singletons import Unspecified
+
 ## ALL ##
 
 __all__ = [
@@ -241,6 +243,12 @@ class Pauli(object):
         return len(self.op)
            
     def as_unitary(self):
+        """
+        Returns a :class:`numpy.ndarray` containing a unitary matrix
+        representation of this Pauli operator.
+        
+        Raises a :obj:`RuntimeError` if NumPy cannot be imported.
+        """
         return pauli_as_unitary(self)
                 
     def wt(self):
@@ -262,6 +270,22 @@ class Pauli(object):
         return Pauli(self.op, 4-self.ph)
         
     def centralizer_gens(self, group_gens=None):
+        r"""
+        Returns the generators of the centralizer group :math:`\mathrm{C}(P)`,
+        where :math:`P` is the Pauli operator represented by this instance.
+        If ``group_gens`` is specified, :math:`\mathrm{C}(P)` is taken to be
+        a subgroup of the group :math:`G = \langle G_1, \dots, G_k\rangle`,
+        where :math:`G_i` is the :math:`i^{\text{th}}` element of
+        ``group_gens``.
+        
+        :param group_gens: Either ``None`` or a list of generators :math:`G_i`.
+            If not ``None``, the returned centralizer :math:`\mathrm{C}(P)` is
+            a subgroup of the group :math:`\langle G_i \rangle_{i=1}^k`.
+        :type group_gens: list of qecc.Pauli instances
+        :returns: A list of elements :math:`P_i` of the Pauli group such that
+            :math:`\mathrm{C}(P) = \langle P_i \rangle_{i=1}^{n}`, where
+            :math:`n` is the number of unique generators of the centralizer.
+        """
         if group_gens is None:
             Xs, Zs = elem_gens(len(self))
             group_gens = Xs + Zs
@@ -298,7 +322,7 @@ def ensure_pauli(P):
     """
     # TODO: provide a decorator that applies this function to another function's
     #       arguments.
-    return P if isinstance(P, Pauli) else Pauli(P)
+    return P if isinstance(P, Pauli) or P is Unspecified else Pauli(P)
         
 # Stolen from itertools cookbook.
 def powerset(iterable):
