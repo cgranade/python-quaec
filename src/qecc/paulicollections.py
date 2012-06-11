@@ -26,6 +26,9 @@
 
 from PauliClass import *
 from collections import Sequence
+from singletons import Unspecified
+
+import unitary_reps
 
 ## ALL ##
 
@@ -40,7 +43,8 @@ class PauliList(list):
     Subclass of :obj:`list` offering useful methods for lists of
     :class:`qecc.Pauli` instances.
     
-    :param paulis: Instances either of :obj:`str` or :class:`qecc.Pauli`.
+    :param paulis: Instances either of :obj:`str` or :class:`qecc.Pauli`, or
+        the special object :obj:`qecc.Unspecified`.
         Strings are passed to the constructor of :class:`qecc.Pauli` for
         convinenence.
     """
@@ -76,8 +80,17 @@ class PauliList(list):
         operators. See also :obj:`qecc.from_generators`.
         """
         return from_generators(self)
+    
+    def stabilizer_subspace(self):
+        return unitary_reps.mutual_eigenspace([P.as_unitary() for P in self if P is not Unspecified])
         
     def centralizer_gens(self, group_gens=None):
+        r"""
+        Returns the generators of the centralizer group
+        :math:`\mathrm{C}(P_1, \dots, P_k)`, where :math:`P_i` is the :math:`i^{\text{th}}`
+        element of this list. See :meth:`qecc.Pauli.centralizer_gens` for
+        more information.
+        """
         if group_gens is None:
             # NOTE: Assumes all Paulis contained by self have the same nq.
             Xs, Zs = elem_gens(len(self[0]))
