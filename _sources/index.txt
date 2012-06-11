@@ -20,6 +20,7 @@ Contents
    :maxdepth: 2
    
    groups
+   paulicollections
    bsf
    circuits
    predicates
