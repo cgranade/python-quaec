@@ -40,8 +40,8 @@ upon.
 >>> len(qecc.Pauli('XYZI'))
 4
 
-Iterating Over Subgroups
-~~~~~~~~~~~~~~~~~~~~~~~~
+Iterating Over Groups and Subgroups
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autofunction:: qecc.pauli_group
 
@@ -69,12 +69,34 @@ efficiently built using the predicates described in :doc:`predicates`.
 
 .. autofunction:: qecc.mutually_commuting_sets
 
+
+
 :class:`qecc.Clifford` - Class representing Clifford group elements
 -------------------------------------------------------------------
 
 .. autoclass:: qecc.Clifford
     :members:
     :undoc-members:
+    
+.. todo::
+    Document ``len``, ``&``, etc.
+
+Alternate Constructors
+~~~~~~~~~~~~~~~~~~~~~~
+
+In addition to specifying the outputs of a Clifford operator acting on the
+elementary generators of the Pauli group, one can also create a :class:`Clifford`
+instance by specifying the ouput of an operator on an arbitrary generating set.
+In particlar, the function :func:`qecc.generic_clifford` takes the inputs and outputs
+of a given Clifford operator in order to create a :class:`qecc.Clifford`
+instance.
+
+.. autofunction:: qecc.generic_clifford
+
+Iterators onto the Clifford Group
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autofunction:: qecc.clifford_group
 
 Common Clifford Gates
 ~~~~~~~~~~~~~~~~~~~~~
