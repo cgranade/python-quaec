@@ -77,7 +77,7 @@ attempts to install QuaEC into the system-wide packages directory.
 Once QuaEC has been installed, it is made available as the :mod:`qecc` package:
 
 >>> import qecc as q
->>> print q.Pauli('XYZ', ph=2)
+>>> print q.Pauli('XYZ', phase=2)
 i^2 XYZ
 
 Next Steps
