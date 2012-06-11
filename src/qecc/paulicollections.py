@@ -82,6 +82,34 @@ class PauliList(list):
         return from_generators(self)
     
     def stabilizer_subspace(self):
+        r"""
+        Returns a :class:`numpy.ndarray` of shape ``(n - k, 2 ** n)`` containing
+        an orthonormal basis for the mutual +1 eigenspace of each fully
+        specified Pauli in this list. Here, ``n`` is taken to be the number of
+        qubits and ``k`` is taken to be the number of independent Pauli
+        operators in this list.
+        
+        Raises a :obj:`RuntimeError` if NumPy cannot be imported.
+        
+        For example, to find the Bell basis vector :math:`\left\|\beta_{00}\right\rangle`
+        using the stabilizer formalism:
+        
+        >>> import qecc as q
+        >>> q.PauliList('XX', q.Unspecified, q.Unspecified, 'ZZ').stabilizer_subspace()
+        array([[ 0.70710678+0.j,  0.00000000+0.j,  0.00000000+0.j,  0.70710678+0.j]])
+        
+        Similarly, one can find the codewords of the phase-flip code :math:`S = \langle XXI, IXX \rangle`:
+        
+        >>> q.PauliList('XXI', 'IXX').stabilizer_subspace()
+        array([[ 0.50000000-0.j, -0.00000000-0.j, -0.00000000-0.j,  0.50000000-0.j,
+                -0.00000000-0.j,  0.50000000+0.j,  0.50000000-0.j, -0.00000000-0.j],
+               [ 0.02229922+0.j,  0.49950250+0.j,  0.49950250+0.j,  0.02229922+0.j,
+                 0.49950250+0.j,  0.02229922+0.j,  0.02229922+0.j,  0.49950250+0.j]])
+                 
+        Note that in this second case, some numerical errors have occured;
+        this method does not guarantee that the returned basis
+        vectors are exact.
+        """
         return unitary_reps.mutual_eigenspace([P.as_unitary() for P in self if P is not Unspecified])
         
     def centralizer_gens(self, group_gens=None):
