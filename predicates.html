@@ -58,7 +58,8 @@ predicate function; that is, a function which returns a <a class="reference exte
 <dt id="qecc.Predicate">
 <em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">Predicate</tt><big>(</big><em>fn</em><big>)</big><a class="headerlink" href="#qecc.Predicate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class representing a predicate function on one or more arguments.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Predicate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">qecc</span> <span class="kn">import</span> <span class="n">Predicate</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Predicate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -101,7 +102,8 @@ another predicate using a given function to combine the results.</p>
 <em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">SetMembershipPredicate</tt><big>(</big><em>S</em><big>)</big><a class="headerlink" href="#qecc.SetMembershipPredicate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given an iterable <tt class="docutils literal"><span class="pre">S</span></tt>, constructs a predicate that returns <tt class="xref docutils literal"><span class="pre">True</span></tt>
 if and only if its argument is in <tt class="docutils literal"><span class="pre">S</span></tt>.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">SetMembershipPredicate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">qecc</span> <span class="kn">import</span> <span class="n">SetMembershipPredicate</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">SetMembershipPredicate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">map</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="go">[False, True, True, True, True, False]</span>
 </pre></div>
@@ -140,7 +142,8 @@ a given list of generators.</p>
 <h3>Usage Examples<a class="headerlink" href="#usage-examples" title="Permalink to this headline">¶</a></h3>
 <p>Predicate functions can be used to quickly generate collections of
 <a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> operators having a given set of properties.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">filter</span><span class="p">(</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">qecc</span> <span class="kn">import</span> <span class="n">commutes_with</span><span class="p">,</span> <span class="n">in_group_generated_by</span><span class="p">,</span> <span class="n">pauli_group</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">filter</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">commutes_with</span><span class="p">(</span><span class="s">&#39;XX&#39;</span><span class="p">,</span> <span class="s">&#39;ZZ&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">in_group_generated_by</span><span class="p">(</span><span class="s">&#39;XX&#39;</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="n">pauli_group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="p">)</span>

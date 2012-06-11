@@ -43,6 +43,7 @@ Usage Examples
 Predicate functions can be used to quickly generate collections of
 :class:`qecc.Pauli` operators having a given set of properties.
 
+>>> from qecc import commutes_with, in_group_generated_by, pauli_group
 >>> print filter(
 ...     commutes_with('XX', 'ZZ') & ~in_group_generated_by('XX'),
 ...     pauli_group(2)

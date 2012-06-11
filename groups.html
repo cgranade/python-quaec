@@ -202,7 +202,8 @@ is is supported.</td>
 
 <p>The <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> class supports multiplication, tensor products and
 negation by the <tt class="docutils literal"><span class="pre">*</span></tt>, <tt class="docutils literal"><span class="pre">&amp;</span></tt> and <tt class="docutils literal"><span class="pre">-</span></tt> operators, respectively.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">=</span> <span class="n">qecc</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;X&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">=</span> <span class="n">qecc</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;X&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Q</span> <span class="o">=</span> <span class="n">qecc</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;Y&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">*</span> <span class="n">Q</span>
 <span class="go">i^1 Z</span>
@@ -286,7 +287,8 @@ and returns 1 if <img class="math" src="_images/math/7ed6c5d0c626e033b6044bee55d
 <tt class="descclassname">qecc.</tt><tt class="descname">elem_gens</tt><big>(</big><em>nq</em><big>)</big><a class="headerlink" href="#qecc.elem_gens" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces all weight-one <img class="math" src="_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/> and <img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> operators on <cite>nq</cite> qubits.
 For example,</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Xgens</span><span class="p">,</span> <span class="n">Zgens</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">elem_gens</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Xgens</span><span class="p">,</span> <span class="n">Zgens</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">elem_gens</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Xgens</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="go">i^0 IX</span>
 </pre></div>

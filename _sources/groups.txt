@@ -18,6 +18,7 @@ Pauli and Clifford Groups
 The :class:`qecc.Pauli` class supports multiplication, tensor products and
 negation by the ``*``, ``&`` and ``-`` operators, respectively.
 
+>>> import qecc
 >>> P = qecc.Pauli('X')
 >>> Q = qecc.Pauli('Y')
 >>> P * Q
