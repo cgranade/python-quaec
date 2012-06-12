@@ -506,7 +506,9 @@ def pad(setP, n_eb=0, lower_right=None):
 
     if n_eb == 0 and lower_right is None or len(lower_right)==0:
         return setP
-        
+    elif len(lower_right) != 0:
+        n_eb=len(lower_right[0])
+            
     setout=[]
     for pauli in setP:
         setout.append(Pauli(pauli.op+'I'*n_eb))
@@ -515,7 +517,8 @@ def pad(setP, n_eb=0, lower_right=None):
             setout.append(eye_p(n_P+n_eb))
     else:
         for opmo in lower_right:
-            setout.append(eye_p(n_P)&opmo)    
+            setout.append(eye_p(n_P)&opmo)
+    return setout    
 
 ## MAIN ##
 

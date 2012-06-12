@@ -567,7 +567,7 @@ def transcoding_cliffords(stab_in,xs_in,zs_in,stab_out,xs_out,zs_out):
         
     cliff_xouts_left=stab_left+xs_left
     cliff_zouts_left=[Unspecified]*len(stab_left)+zs_left
-
+    
     cliff_left=Clifford(cliff_xouts_left,cliff_zouts_left).constraint_completions().next()
     list_left=cliff_left.xout+cliff_left.zout
 
