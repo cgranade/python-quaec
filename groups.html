@@ -103,7 +103,7 @@ information.</p>
 <dl class="method">
 <dt id="qecc.Pauli.as_unitary">
 <tt class="descname">as_unitary</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_unitary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-de8c536)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> containing a unitary matrix
+<dd><p>Returns a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-d0f520a)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> containing a unitary matrix
 representation of this Pauli operator.</p>
 <p>Raises a <tt class="xref py py-obj docutils literal"><span class="pre">RuntimeError</span></tt> if NumPy cannot be imported.</p>
 </dd></dl>
@@ -378,6 +378,52 @@ elements of <tt class="docutils literal"><span class="pre">group_iter</span></tt
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="qecc.solve_commutation_constraints">
+<tt class="descclassname">qecc.</tt><tt class="descname">solve_commutation_constraints</tt><big>(</big><em>commutation_constraints=</em><span class="optional">[</span><span class="optional">]</span>, <em>anticommutation_constraints=</em><span class="optional">[</span><span class="optional">]</span>, <em>search_in_gens=None</em><big>)</big><a class="headerlink" href="#qecc.solve_commutation_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given commutation constraints on a Pauli operator, yields an iterator onto
+all solutions of those constraints.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>commutation_constraints</strong> &#8211; A list of operators <img class="math" src="_images/math/3a92cd6ddfb02cfc3b2fa189ae5a974d12ade315.png" alt="\{A_i\}"/> such
+that each solution <img class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> yielded by this function must satisfy
+<img class="math" src="_images/math/374487ce15fae5a91e0ea87ba8acbf4d1c446012.png" alt="[A_i, P] = 0"/> for all <img class="math" src="_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/>.</li>
+<li><strong>commutation_constraints</strong> &#8211; A list of operators <img class="math" src="_images/math/925d4262d3013a1ec64fc067348763f2e9abbadf.png" alt="\{B_i\}"/> such
+that each solution <img class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> yielded by this function must satisfy
+<img class="math" src="_images/math/ad117fbac85277c187d45387605a3720d526bc72.png" alt="\{B_i, P\} = 0"/> for all <img class="math" src="_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/>.</li>
+<li><strong>search_in_gens</strong> &#8211; A list of operators <img class="math" src="_images/math/18382342938f24780ede2ff88111782420382745.png" alt="\{N_i\}"/> that generate
+the group in which to search for solutions. If <tt class="xref docutils literal"><span class="pre">None</span></tt>, defaults to
+the elementary generators of the Pauli group on <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> qubits, where
+<img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is given by the length of the commutation and anticommutation
+constraints.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An iterator <tt class="docutils literal"><span class="pre">it</span></tt> such that <tt class="docutils literal"><span class="pre">list(it)</span></tt> contains all operators
+within the group <img class="math" src="_images/math/aee8d6da57808bba0dbcf95f2ff77fe49e1465c2.png" alt="G = \langle N_1, \dots, N_k \rangle\rangle"/>
+given by <tt class="docutils literal"><span class="pre">search_in_gens</span></tt>, consistent with the commutation and
+anticommutation constraints.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function is based on finding the generators of the centralizer groups 
+of each commutation constraint, and is thus faster than a predicate-based
+search over the entire group of interest. The resulting iterator can be
+used in conjunction with other filters, however.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">solve_commutation_constraints</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="s">&#39;XXI&#39;</span><span class="p">,</span> <span class="s">&#39;IZZ&#39;</span><span class="p">,</span> <span class="s">&#39;IYI&#39;</span><span class="p">),</span> <span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="s">&#39;YIY&#39;</span><span class="p">)))</span>
+<span class="go">[i^0 XII, i^0 IIZ, i^0 YYX, i^0 ZYY]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">ifilter</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">ifilter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">P</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">wt</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">solve_commutation_constraints</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="s">&#39;XXI&#39;</span><span class="p">,</span> <span class="s">&#39;IZZ&#39;</span><span class="p">,</span> <span class="s">&#39;IYI&#39;</span><span class="p">),</span> <span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="s">&#39;YIY&#39;</span><span class="p">))))</span>
+<span class="go">[i^0 XII, i^0 IIZ]</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </div>
 </div>
 <div class="section" id="qecc-clifford-class-representing-clifford-group-elements">
@@ -421,7 +467,7 @@ symplectic matrix.</p>
 <dl class="method">
 <dt id="qecc.Clifford.as_unitary">
 <tt class="descname">as_unitary</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Clifford.as_unitary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-de8c536)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> containing a unitary matrix
+<dd><p>Returns a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-d0f520a)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> containing a unitary matrix
 representation of this Clifford operator.</p>
 <p>Raises a <tt class="xref py py-class docutils literal"><span class="pre">RuntimeError</span></tt> if NumPy cannot be imported.</p>
 </dd></dl>
