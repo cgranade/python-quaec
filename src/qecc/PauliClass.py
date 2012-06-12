@@ -27,7 +27,7 @@
 from itertools import product, chain, permutations, combinations, ifilter, ifilterfalse, imap, starmap, izip
 from copy import copy
 import bsf
-from operator import mul
+from operator import mul, add
 import pred
 
 from paulicollections import PauliList
@@ -41,8 +41,7 @@ __all__ = [
     'Pauli',
     'ensure_pauli', 'com', 'pauli_group', 'from_generators',
     'is_in_normalizer', 'elem_gen', 'elem_gens', 'eye_p', 'ns_mod_s',
-    'pad', 'mutually_commuting_sets', 'custom_commuter',
-    'clifford_bottoms'
+    'pad', 'mutually_commuting_sets', 'custom_commuter'
     ]
         
 ## CONSTANTS ##
@@ -458,100 +457,66 @@ def custom_commuter(commuters, anticommuters, nq):
         ))
 
 
-def mutually_commuting_sets(n_gens, n_bits=None, group_iter=None, perms=True):
+def mutually_commuting_sets(n_gens, n_bits=None, group_gens=None, exclude=None):
     r"""
-    Given two natural numbers ``n_bits`` and ``n_gens``, will return an iterator
-    onto all tuples of ``n_gens`` non-trivial Paulis on ``n_bits`` qubits which
-    mutually commute.
     
-    Alternatively, if ``group_iter`` is specified, then elements are drawn from
-    that iterator instead.
-    
-    If ``perms`` is ``True``, then permutations are treated as distinct.
-    
-    :param int n_bits: Number of qubits on which each operator acts.
-    :param int n_gens: Number of generators in each list yielded.
-    :param iterable group_iter: Group from which elements are drawn; defaults
-        to the entire Pauli group.
-    :param bool perms: Controls whether all permutations of each mutually
-        commuting set are returned.
-    :returns: An iterator onto tuples of mutually commuting non-identity
-         elements of ``group_iter``.
     """
+
+    if n_gens == 0:
+        yield ()
+        return
     
-    if group_iter is None and n_bits is None:
-        raise ValueError('Either a group or a number of qubits must be specified.')
+    if exclude is None:
+        if n_bits is not None:
+            exclude = [eye_p(n_bits)]
+        else:
+            if group_gens is not None and len(group_gens) > 0:
+                exclude = [eye_p(len(group_gens[0]))]
+
+    assert len(exclude) > 0
+
+    if group_gens is None and n_bits is None:
+        raise ValueError('Either a generating set or a number of qubits must be specified.')
     
-    if group_iter is None:
-        group_iter = pauli_group(n_bits)
+    if group_gens is None:
+        group_gens = add(*elem_gens(n_bits))
+    
+    assert len(group_gens) > 0
+    
+    for P in ifilterfalse(lambda q: q.wt()==0 or q in from_generators(exclude),from_generators(group_gens)):
+        P = Pauli(P.op, phase=0)
+        if n_gens==1:
+            yield (P,)
+        else:
+            c_gens=P.centralizer_gens(group_gens)
+            for S in mutually_commuting_sets(n_gens-1,group_gens=c_gens, exclude=exclude+[P]):
+                yield (P,)+S
         
-    group_without_identity = ifilterfalse(lambda p: p==eye_p(n_bits), group_iter)
-    length_n_gens_subsets = (permutations if perms else combinations)(group_without_identity, n_gens)
     
-    for subset in length_n_gens_subsets:
-        if all(com(*pairs)==0 for pairs in combinations(subset,2)):
-            yield subset
     
-def pad(setP, setQ, lower_right=None):
+def pad(setP, n_eb=0, lower_right=None):
     r"""
-    Given two sets of generators setP and setQ, this function first confirms 
-    that they encode the same number of logical qubits :math:`k`, then adds
-    identity Paulis to the smaller generator, so that the two sets act on
-    the same number of qubits :math:`n`, and have the same number of elements.
     """
     
     # Ensure that we have lists, and make a copy.
-    setP, setQ = list(setP), list(setQ)
+    setP= list(setP)
     
     len_P=len(setP)
     n_P=len(setP[0])
-    len_Q=len(setQ)
-    n_Q=len(setQ[0])
-    
-    # Check that the numbers of logical qubits match.
-    if n_P - len_P != n_Q - len_Q:
-        raise ValueError('The two generating sets describe stabilizer codes with different numbers of logical qubits.')
-    if len_P==len_Q:
-        return setP, setQ
-    setA=[]
-    setB=[]
-    # First Step: lengthen elements of original short list.
-    if n_P<n_Q:
-        for p in range(len(setP)):
-            setA.append(Pauli(setP[p].op+'I'*(n_Q-n_P)))
-    elif n_Q<n_P:
-        for q in range(len(setQ)):
-            setB.append(Pauli(setQ[q].op+'I'*(n_P-n_Q)))
-    # Next, pad with appropriate operators:
-    if len_P<len_Q:
-        if lower_right==None:
-            setA.extend([eye_p(n_Q)]*(len_Q-len_P))
-        else:
-            setA.extend(map(lambda p: eye_p(n_P)&p,lower_right))
-    elif len_Q<len_P:
-        if lower_right==None:
-            setB.extend([eye_p(n_P)]*(len_P-len_Q))
-        else:
-            setB.extend(map(lambda p: eye_p(n_Q)&p,lower_right))
-    if len_P>len_Q:
-        setA=setP
-    elif len_Q>len_P:
-        setB=setQ         
-    return setA, setB
 
-def clifford_bottoms(c_top):
-    r"""
-    This function yields the next set of nq paulis that mutually 
-    commute, and anti-commute with selected elements from c_top. 
-    """
-    nq=len(c_top)
-    possible_zs=[]
-    for jj in range(nq):
-        applicable_centralizer_gens=PauliList(*(c_top[:jj]+c_top[jj+1:])).centralizer_gens()
-        possible_zs.append(filter(lambda a:com(a,c_top[jj])==1,from_generators(applicable_centralizer_gens)))
-    for possible_set in product(*possible_zs):
-        if all(imap(lambda twolist: pred.commutes_with(twolist[0])(twolist[1]),combinations(possible_set,2))):
-            yield possible_set
+    if n_eb == 0 and lower_right is None or len(lower_right)==0:
+        return setP
+        
+    setout=[]
+    for pauli in setP:
+        setout.append(Pauli(pauli.op+'I'*n_eb))
+    if lower_right is None:
+        for jj in n_eb:
+            setout.append(eye_p(n_P+n_eb))
+    else:
+        for opmo in lower_right:
+            setout.append(eye_p(n_P)&opmo)    
+
 ## MAIN ##
 
 if __name__ == "__main__":
