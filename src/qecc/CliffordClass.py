@@ -546,55 +546,46 @@ def generic_clifford(paulis_in, paulis_out):
 # For backwards compatibility, we define gen_cliff as an alias.
 gen_cliff = generic_clifford
 
-def transcoding_cliffords(paulis_in,paulis_out):
+def transcoding_cliffords(stab_in,xs_in,zs_in,stab_out,xs_out,zs_out):
     r"""
-    This function produces an iterator onto all Cliffords that take
-    the pauli set 'paulis_in' to the set 'paulis_out', looping over all
-    possible sets of constraints on the remaining degrees of freedom. 
+    
     """
-    nq_in=len(paulis_in[0])
-    nq_out=len(paulis_out[0])
-    gens_in=len(paulis_in)
-    gens_out=len(paulis_out)
-    #Set up temporary lists so that the larger Paulis are on the left.
-    if nq_in>=nq_out:
-        paulis_temp_left=paulis_in
-        paulis_temp_right=paulis_out
-        nq_tl=nq_in
-        nq_tr=nq_out
-        gens_tl=gens_in
-        gens_tr=gens_out
-    elif nq_in<nq_out:
-        paulis_temp_left=paulis_out
-        paulis_temp_right=paulis_in
-        nq_tl=nq_out
-        nq_tr=nq_in
-        gens_tl=gens_out
-        gens_tr=gens_in
-    #Construct left_to_2n, a list of Paulis that complete the input Cliffords on the left.
-    #First, get a mutually commuting set of nq_in generators, then round up using a
-    #single clifford_bottom.
-    if gens_tl < nq_tl:
-        left_to_n=list(next(mutually_commuting_sets(nq_tl-gens_tl,nq_tl,group_iter=ns_mod_s(*paulis_temp_left))))
-        left_to_2n=left_to_n+list(next(clifford_bottoms(paulis_temp_left+left_to_n)))
+    #Preliminaries:
+    nq_in=len(stab_in[0])
+    nq_out=len(stab_out[0])
+    nq_anc=abs(nq_in-nq_out)
+
+    #Decide left side:
+    if nq_in<nq_out:
+        stab_left=stab_out
+        xs_left=xs_out
+        zs_left=zs_out
+        stab_right=stab_in
+        xs_right=xs_in
+        zs_right=zs_in
     else:
-        left_to_2n=list(next(clifford_bottoms(paulis_temp_left)))
-    #The right side constraints are what we have to iterate over.
-    pads_mid_right=mutually_commuting_sets(gens_tl-gens_tr,nq_tl-nq_tr)
-    for pad_mr in pads_mid_right:
-        paulis_temp_left, paulis_temp_right = pad(paulis_temp_left,paulis_temp_right,lower_right=pad_mr)
-        if len(paulis_temp_right) < nq_tr:
-            for mcs in mutually_commuting_sets(nq_tr-len(paulis_temp_right),nq_tr,group_iter=ns_mod_s(*paulis_temp_right)):
-                paulis_n=paulis_temp_right+mcs
+        stab_right=stab_out
+        xs_right=xs_out
+        zs_right=zs_out
+        stab_left=stab_in
+        xs_left=xs_in
+        zs_left=zs_in
+        
+    cliff_xouts_left=stab_left+xs_left
+    cliff_zouts_left=[Unspecified]*len(stab_left)+zs_left
+    
+    cliff_left=Clifford(cliff_xouts_left,cliff_zouts_left).constraint_completions().next()
+    list_left=cliff_left.xout+cliff_left.zout
+
+    for mcset in mutually_commuting_sets(n_gens=len(stab_left)-len(stab_right),n_bits=nq_anc):
+        temp_xouts_right=pad(stab_right,lower_right=mcset)+map(lambda p: p&eye_p(nq_anc),xs_right)
+        temp_zouts_right=[Unspecified]*len(stab_left)+map(lambda p: p&eye_p(nq_anc),zs_right)
+    for completion in Clifford(temp_xouts_right,temp_zouts_right).constraint_completions():
+        if nq_in<nq_out:
+            yield gen_cliff(completion.xout+completion.zout,list_left)
         else:
-            paulis_n=paulis_temp_right
-        for bottom_half in clifford_bottoms(paulis_n):
-            paulis_2n_right=paulis_temp_right+list(bottom_half)
-            print list(chain(paulis_temp_left,left_to_2n)),paulis_2n_right
-            if nq_in>=nq_out:
-                yield gen_cliff(list(chain(paulis_temp_left,left_to_2n)),paulis_2n_right)
-            else:
-                yield gen_cliff(paulis_2n_right,list(chain(paulis_temp_left,left_to_2n)))
+            yield gen_cliff(list_left,completion.xout+completion.zout)
+
 
 def min_len_transcoding_clifford(paulis_in,paulis_out):
     circuit_iter=map(lambda p: p.as_bsm().circuit_decomposition(), transcoding_cliffords(paulis_in,paulis_out))
@@ -629,4 +620,4 @@ def clifford_group(nq, consider_phases=False):
                         yield Clifford(*P_bars)
                 else:
                     yield completion
-            
+
