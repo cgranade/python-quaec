@@ -410,6 +410,7 @@ def elem_gens(nq):
     Produces all weight-one :math:`X` and :math:`Z` operators on `nq` qubits.
     For example,
     
+    >>> import qecc as q
     >>> Xgens, Zgens = q.elem_gens(2)
     >>> print Xgens[1]
     i^0 IX

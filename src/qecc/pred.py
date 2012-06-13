@@ -45,6 +45,7 @@ class Predicate(object):
     """
     Class representing a predicate function on one or more arguments.
     
+    >>> from qecc import Predicate
     >>> p = Predicate(lambda x: x > 0)
     >>> p(1)
     True
@@ -151,6 +152,7 @@ class SetMembershipPredicate(Predicate):
     Given an iterable ``S``, constructs a predicate that returns ``True``
     if and only if its argument is in ``S``.
     
+    >>> from qecc import SetMembershipPredicate
     >>> p = SetMembershipPredicate(range(4))
     >>> map(p, range(-1, 5))
     [False, True, True, True, True, False]

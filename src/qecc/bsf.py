@@ -65,6 +65,8 @@ class BinarySymplecticVector(object):
     using two NumPy arrays. For example, the following two invocations are
     equivalent:
     
+    >>> import qecc
+    >>> import numpy as np
     >>> bsv = qecc.BinarySymplecticVector(np.array([1, 0, 0, 0, 0, 0]))
     >>> bsv = qecc.BinarySymplecticVector(np.array([1, 0, 0]), np.array([0, 0, 0]))
     
@@ -344,7 +346,7 @@ class BinarySymplecticMatrix(object):
         binary symplectic matrix. In order to preserve the original matrix,
         use the :meth:`copy` method:
         
-        >>> new_bsm = bsm.copy().left_H(idx)
+        >>> new_bsm = bsm.copy().left_H(idx) # doctest: +SKIP
         """
         u.array_swap(self.zr[j, :], self.xr[j, :])
         return self
@@ -372,7 +374,7 @@ class BinarySymplecticMatrix(object):
         to acting on a copy of the binary symplectic matrix. In order to
         preserve the original matrix, use the :meth:`copy` method:
         
-        >>> new_bsm = bsm.copy().left_SWAP(j, k)
+        >>> new_bsm = bsm.copy().left_SWAP(j, k) # doctest: +SKIP
         """
         u.array_swap(self.xr[j, :], self.xr[k, :])
         u.array_swap(self.zr[j, :], self.zr[k, :])
@@ -396,7 +398,7 @@ class BinarySymplecticMatrix(object):
         binary symplectic matrix. In order to preserve the original matrix, use
         the :meth:`copy` method:
         
-        >>> new_bsm = bsm.copy().left_CNOT(c, t)
+        >>> new_bsm = bsm.copy().left_CNOT(c, t) # doctest: +SKIP
         """
         if c == t:
             raise ValueError("Control and target qubits cannot be the same.")
@@ -427,7 +429,7 @@ class BinarySymplecticMatrix(object):
         acting on a copy of the binary symplectic matrix. In order to preserve
         the original matrix, use the :meth:`copy` method:
         
-        >>> new_bsm = bsm.copy().left_R_pi4(c, t)
+        >>> new_bsm = bsm.copy().left_R_pi4(c, t) # doctest: +SKIP
         """
         self.zr[i, :] += self.xr[i, :]
         self.zr[i, :] %= 2
@@ -451,7 +453,7 @@ class BinarySymplecticMatrix(object):
         symplectic matrix. In order to preserve the original matrix, use the
         :meth:`copy` method:
         
-        >>> new_bsm = bsm.copy().left_CZ(c, t)
+        >>> new_bsm = bsm.copy().left_CZ(c, t) # doctest: +SKIP
         """
         if c1 == c2:
             raise ValueError("Control qubits cannot be the same.")

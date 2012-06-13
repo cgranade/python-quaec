@@ -218,7 +218,13 @@ class Clifford(object):
         return rolling_pauli 
 
     def __eq__(self,other):
-        return (self.xout==other.xout)and(self.zout==other.zout)
+        if isinstance(other, Clifford):
+            return all(P == Q for P, Q in zip(self.xout + self.zout, other.xout + other.zout))
+        else:
+            return False
+            
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
     def __mul__(self,other):

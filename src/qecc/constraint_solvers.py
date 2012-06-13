@@ -43,7 +43,37 @@ def solve_commutation_constraints(
         anticommutation_constraints=[],
         search_in_gens=None
     ):
-    """
+    r"""
+    Given commutation constraints on a Pauli operator, yields an iterator onto
+    all solutions of those constraints.
+    
+    :param commutation_constraints: A list of operators :math:`\{A_i\}` such
+        that each solution :math:`P` yielded by this function must satisfy
+        :math:`[A_i, P] = 0` for all :math:`i`.
+    :param commutation_constraints: A list of operators :math:`\{B_i\}` such
+        that each solution :math:`P` yielded by this function must satisfy
+        :math:`\{B_i, P\} = 0` for all :math:`i`.
+    :param search_in_gens: A list of operators :math:`\{N_i\}` that generate
+        the group in which to search for solutions. If ``None``, defaults to
+        the elementary generators of the Pauli group on :math:`n` qubits, where
+        :math:`n` is given by the length of the commutation and anticommutation
+        constraints.
+    :returns: An iterator ``it`` such that ``list(it)`` contains all operators
+        within the group :math:`G = \langle N_1, \dots, N_k \rangle\rangle`
+        given by ``search_in_gens``, consistent with the commutation and
+        anticommutation constraints.
+        
+    This function is based on finding the generators of the centralizer groups 
+    of each commutation constraint, and is thus faster than a predicate-based
+    search over the entire group of interest. The resulting iterator can be
+    used in conjunction with other filters, however.
+    
+    >>> import qecc as q
+    >>> list(q.solve_commutation_constraints(q.PauliList('XXI', 'IZZ', 'IYI'), q.PauliList('YIY')))
+    [i^0 XII, i^0 IIZ, i^0 YYX, i^0 ZYY]
+    >>> from itertools import ifilter
+    >>> list(ifilter(lambda P: P.wt() <= 2, q.solve_commutation_constraints(q.PauliList('XXI', 'IZZ', 'IYI'), q.PauliList('YIY'))))
+    [i^0 XII, i^0 IIZ]
     """
     
     # Start by checking that the arguments make sense.

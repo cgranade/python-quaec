@@ -50,7 +50,7 @@ class PauliList(list):
     """
 
     def __init__(self, *paulis):
-        if len(paulis) == 1 and isinstance(paulis[0], Sequence):
+        if len(paulis) == 1 and isinstance(paulis[0], Sequence) and not isinstance(paulis[0], str):
             paulis = map(ensure_pauli, paulis[0])
         else:
             paulis = map(ensure_pauli, paulis)
@@ -91,7 +91,7 @@ class PauliList(list):
         
         Raises a :obj:`RuntimeError` if NumPy cannot be imported.
         
-        For example, to find the Bell basis vector :math:`\left\|\beta_{00}\right\rangle`
+        For example, to find the Bell basis vector :math:`\left|\beta_{00}\right\rangle`
         using the stabilizer formalism:
         
         >>> import qecc as q
