@@ -22,12 +22,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
+## IMPORTS ##
+
+from itertools import imap
+
 ## FUNCTIONS ##
 
 def array_swap(A, B):
     temp = A.copy()
     A[...] = B
     B[...] = temp
+    
+def inv_dict(d):
+    return dict(imap(reversed, d.iteritems()))
         
 ## TEST ##
 

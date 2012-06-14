@@ -25,6 +25,7 @@
 ## IMPORTS ##
 
 from abc import ABCMeta, abstractmethod, abstractproperty
+from copy import copy
 from operator import add
 from functools import partial
 
@@ -36,119 +37,155 @@ import utils as u
 ## ALL ##
 
 __all__ = [
-    'Location', 'GateLocation', 'CNOTLoc', 'HadaLoc', 'PhaseLoc', 'CHP',
-    'WaitLoc', 'PrepLoc', 'MeasLoc', 'Circuit'
+    'Location', 'Circuit'
 ]
 
 ## CLASSES ##
 
 class Location(object):
-    __metaclass__ = ABCMeta
-    
-    def __init__(self, *qubits):
-        self.qubits = qubits
-        if len(qubits) != self.n_acts_on:
-            raise ValueError(
-                "This location acts on {0} qubits, but {1} have been specified."
-                .format(self.n_acts_on, len(qubits)))
-        
-    def __mul__(self, other):
-        return Circuit(self, other)
-        
-    def __and__(self, other):
-        return Circuit(self, other.shift_by(1 + max(self.qubits)))
-        
-    def __repr__(self):
-        return "\t{0}\t{1}".format(self.name, " ".join(map(str, self.qubits)))
-        
-    def named_repr(self, qubit_names):
-        return "\t{0}\t{1}".format(self.name, " ".join(map(qubit_names.__getitem__, self.qubits)))
-        
-    def shift_by(self, nq):
-        self.qubits = map(partial(add, nq), self.qubits)
-        return self
-        
-    @abstractproperty
-    def n_acts_on(self): pass
-    @abstractproperty
-    def name(self): pass
-        
-class GateLocation(Location):
-    @abstractmethod
-    def as_clifford(self, nq):
-        pass
-        
-    def as_bsm(self, nq):
-        return self.as_clifford(nq).as_bsm()
-        
-class CNOTLoc(GateLocation):
-    def as_clifford(self, nq):
-        return cc.cnot(nq, *self.qubits)
-    
-    @property    
-    def n_acts_on(self): return 2
-    @property
-    def name(self): return 'CNOT'
-    
-class HadaLoc(GateLocation):        
-    def as_clifford(self, nq):
-        return cc.hadamard(nq, *self.qubits)
-        
-    @property
-    def n_acts_on(self): return 1
-    @property
-    def name(self): return 'H'
-    
-class PhaseLoc(GateLocation):        
-    def as_clifford(self, nq):
-        return cc.phase(nq, *self.qubits)
-        
-    @property
-    def n_acts_on(self): return 1
-    @property
-    def name(self): return 'P'
-    
-CHP = (CNOTLoc, HadaLoc, PhaseLoc)
-# Useful for the following idiom:
-# >>> C, H, P = circuit.CHP
-    
-class WaitLoc(GateLocation):     
-    def as_clifford(self, nq):
-        return cc.eye_c(nq)
-        
-    @property
-    def n_acts_on(self): return 1
-    @property
-    def name(self): return '1'
-    
-class PrepLoc(Location):
-    pass
-    
-class MeasLoc(Location):
-    pass
-    
-class Circuit(object):
-    def __init__(self, *elems):
-        self.circuit_elems = list(elems)
-        
-    def __len__(self):
-        return len(self.circuit_elems)
-        
-    def __and__(self, other):
-        pass
-        
-    def __mul__(self, other):
-        if isinstance(other, Location):
-            return Circuit(*(self.circuit_elems + [other]))
+
+    ## NOTE: This class is IMMUTABLE. ##
+
+    ## CLASS CONSTANTS ##
+    KIND_NAMES = [
+        'I', 'X', 'Y', 'Z', 'H', 'P', 'CNOT', 'CZ', 'SWAP'
+    ]
+
+    def __init__(self, kind, *qubits):
+        if isinstance(kind, int):
+            self._kind = kind
+        elif isinstance(kind, str):
+            self._kind = self.KIND_NAMES.index(kind)
         else:
-            return Circuit(*(self.circuit_elems + other.circuit_elems))
+            raise TypeError("Location kind must be an int or str.")
         
+        self._qubits = tuple(qubits)
+        
+    def __str__(self):
+        return "\t{}\t{}".format(self.kind, ' '.join(map(str, self.qubits)))
     def __repr__(self):
-        return "\n".join(map(repr, self.circuit_elems))
+        return "<{} Location on qubits {}>".format(self.kind, self.qubits)
+    def __hash__(self):
+        return hash((self._kind,) + self.qubits)
         
+    @property
+    def kind(self):   return self.KIND_NAMES[self._kind]        
+    @property
+    def qubits(self): return self._qubits
+    @property
+    def nq(self):     return 1 + max(self.qubits)
+
+def ensure_loc(loc):
+    if isinstance(loc, tuple):
+        loc = Location(*loc)
+    elif not isinstance(loc, Location):
+        raise TypeError('Locations must be specified either as Location instances or as tuples.')
+    return loc
+
+class Circuit(list):
+    def __init__(self, *locs):
+        # Circuit(('CNOT', 0, 2), ('H', 1)) works, but
+        # Circuit('CNOT', 0, 2) doesn't work.
+        list.__init__(self, map(ensure_loc, locs))
+            
+    def append(self, newval):
+        super(Circuit, self).append(ensure_loc(newval))
+    def insert(self, at, newval):
+        super(Circuit, self).insert(at, ensure_loc(newval))
+            
+    def __repr__(self):
+        return "Circuit({})".format(", ".join(map(repr, self)))
+    def __str__(self):
+        return "\n".join(map(str, self))
+        
+    def __getitem__(self, *args):
+        item = super(Circuit, self).__getitem__(*args)
+        if not isinstance(item, list):
+            return item
+        else:
+            return Circuit(*item)
+            
+    def __getslice__(self, *args):
+        return Circuit(*super(Circuit, self).__getslice__(*args))
+        
+    def __add__(self, other):
+        if not isinstance(other, Circuit):
+            other = Circuit(*other)
+        return Circuit(*super(Circuit, self).__add__(other))
+    def __iadd__(self, other):
+        if not isinstance(other, Circuit):
+            other = Circuit(*other)
+        return Circuit(*super(Circuit, self).__iadd__(other))
+                
     @property
     def nq(self):
-        return 1 + max(map(lambda elem: max(elem.qubits), reduce(add, self.circuit_elems)))
+        return max(loc.nq for loc in self)
+        
+    def cancel_selfinv_gates(self, start_at=0):
+        SELFINV_GATES = ['H', 'X', 'Y', 'Z']
+        
+        if start_at == len(self):
+            return self
+            
+        loc = self[start_at]
+        if len(loc.qubits) == 1 and loc.kind in SELFINV_GATES:
+            # TODO: add two-qubit gates.
+            q = loc.qubits[0]
+            
+            for idx_future in xrange(start_at + 1, len(self)):
+                if q in self[idx_future].qubits:
+                    # Check that the kind matches.
+                    if self[idx_future].kind == loc.kind:
+                        self.pop(idx_future)
+                        self.pop(start_at)
+                        return self.cancel_selfinv_gates(start_at=start_at)
+                    else:
+                        # Go on to the next gate, since there's another gate
+                        # between here.
+                        return self.cancel_selfinv_gates(start_at=start_at+1)
+        
+        return self.cancel_selfinv_gates(start_at=start_at+1)
+        
+    def replace_cz_by_cnot(self):
+        # FIXME: this is inefficient as hell right now.
+        try:
+            idx = (idx for idx in range(len(self)) if self[idx].kind == 'CZ').next()
+            q = self[idx].qubits
+            self[idx] = Location('CNOT', *q)
+            self.insert(idx + 1, ('H', q[1]))
+            self.insert(idx, ('H', q[1]))
+            return self.replace_cz_by_cnot()
+        except StopIteration:
+            return self
+        
+    def group_by_time(self, pad_with_waits=False):
+        nq = self.nq
+        
+        found = [False] * nq        
+        group_acc = Circuit()
+        
+        for loc in self:
+            if any(found[qubit] for qubit in loc.qubits):
+                if pad_with_waits:
+                    group_acc += [('I', qubit) for qubit in range(nq) if not found[qubit]]
+                yield group_acc
+                
+                found = [False] * nq
+                group_acc = Circuit()
+                
+            for qubit in loc.qubits:
+                found[qubit] = True
+                
+            group_acc.append(loc)
+            
+        
+        if pad_with_waits:
+            group_acc += [('I', qubit) for qubit in range(nq) if not found[qubit]]
+        yield group_acc
+        
+    @property
+    def n_timesteps(self):
+        return len(list(self.group_by_time()))
 
 ## EXAMPLE USAGE ##
 
