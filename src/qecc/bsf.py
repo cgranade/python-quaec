@@ -38,6 +38,8 @@ import utils as u
 import bsf_decomp
 reload(bsf_decomp)
 
+import circuit
+
 ## ALL ##
 
 __all__ = [
@@ -530,7 +532,7 @@ class BinarySymplecticMatrix(object):
         # The circuit decomposition algorithm is long enough that it was moved
         # into another module, bsf_decomp.
         left, right = bsf_decomp.circuit_decomposition_part1(self.copy())
-        return left, right
+        return circuit.Circuit(*(left + right))
         
         
 ## BSM FUNCTIONS ##

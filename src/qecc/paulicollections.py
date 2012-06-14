@@ -25,6 +25,7 @@
 ## IMPORTS ##
 
 from PauliClass import *
+#from PauliClass import ensure_pauli
 from collections import Sequence
 from singletons import Unspecified
 
