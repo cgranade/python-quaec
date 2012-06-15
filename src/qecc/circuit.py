@@ -24,10 +24,8 @@
 
 ## IMPORTS ##
 
-from abc import ABCMeta, abstractmethod, abstractproperty
 from copy import copy
 from operator import add
-from functools import partial
 
 import PauliClass as pc
 import CliffordClass as cc
@@ -37,7 +35,8 @@ import utils as u
 ## ALL ##
 
 __all__ = [
-    'Location', 'Circuit'
+    'Location', 'Circuit',
+    'ensure_loc'
 ]
 
 ## INTERNAL FUNCTIONS ##
@@ -69,6 +68,17 @@ class Location(object):
     KIND_NAMES = [
         'I', 'X', 'Y', 'Z', 'H', 'R_pi4', 'CNOT', 'CZ', 'SWAP'
     ]
+    
+    QCVIEWER_NAMES = {
+        'I': 'I',           # This one is implemented by a gate definition
+                            # included by Circuit.as_qcviewer().
+        'X': 'X', 'Y': 'Y', 'Z': 'Z',
+        'H': 'H',
+        'R_pi4': 'S', # Is this right?
+        'CNOT': 'tof',
+        'CZ': 'Z',
+        'SWAP': 'swap'
+    }
 
     def __init__(self, kind, *qubits):
         if isinstance(kind, int):
@@ -93,9 +103,8 @@ class Location(object):
         inclusion in a QCViewer file.
         """
         # FIXME: link to QCViewer in the docstring here.
-        # FIXME: map location kinds to QCViewer equivalents.
         return '\t{gatename}\t{gatespec}\n'.format(
-            gatename=self.kind,
+            gatename=self.QCVIEWER_NAMES[self.kind],
             gatespec=qubits_str(self.qubits, qubit_names),
             )
         
@@ -125,11 +134,6 @@ class Circuit(list):
         super(Circuit, self).append(ensure_loc(newval))
     def insert(self, at, newval):
         super(Circuit, self).insert(at, ensure_loc(newval))
-            
-    def __repr__(self):
-        return "Circuit({})".format(", ".join(map(repr, self)))
-    def __str__(self):
-        return "\n".join(map(str, self))
         
     def __getitem__(self, *args):
         item = super(Circuit, self).__getitem__(*args)
@@ -161,46 +165,69 @@ class Circuit(list):
         return len(list(self.group_by_time()))
 
     ## PRETTY PRINTING ##
+            
+    def __repr__(self):
+        return "Circuit({})".format(", ".join(map(repr, self)))
+    def __str__(self):
+        return "\n".join(map(str, self))
+        
+    def as_qasm(self):
+        """
+        Returns a representation of the circuit in an QASM-like format.
+        In this format, each location is represented by a single line where
+        the first field indicates the kind of location and the remaining fields
+        indicate the qubits upon which the location acts.
+        
+        >>> import qecc as q
+        >>> circ = q.Circuit(('CNOT', 0, 2), ('H', 2), ('SWAP', 1, 2), ('I', 0))
+        >>> print circ.as_qasm()
+                CNOT    0 2
+                H       2
+                SWAP    1 2
+                I       0
+        """
+        return str(self)
 
     def as_qcviewer(self, inputs=(0,), outputs=None, qubit_names=None):
         if outputs is None:
             outputs = (idx for idx in range(self.nq) if idx not in inputs)
             
-        acc = '.v ' + qubits_str(range(self.nq), qubit_names) + '\n'
-        acc += '.i ' + qubits_str(inputs, qubit_names) + '\n'
-        acc += '.o ' + qubits_str(outputs, qubit_names) + '\n'
+        header = '.v ' + qubits_str(range(self.nq), qubit_names) + '\n'
+        header += '.i ' + qubits_str(inputs, qubit_names) + '\n'
+        header += '.o ' + qubits_str(outputs, qubit_names) + '\n'
             
-        acc += 'BEGIN\n'
+        circ_text = 'BEGIN\n'
         for loc in self:
-            acc += loc.as_qcviewer(qubit_names)
-
-        acc += 'END\n'
-        return acc
+            circ_text += loc.as_qcviewer(qubit_names)
+        circ_text += 'END\n'
+        
+        return header + circ_text
 
     ## CIRCUIT SIMPLIFICATION METHODS ##
         
     def cancel_selfinv_gates(self, start_at=0):
-        SELFINV_GATES = ['H', 'X', 'Y', 'Z']
+        SELFINV_GATES = ['H', 'X', 'Y', 'Z', 'CNOT']
         
         if start_at == len(self):
             return self
             
         loc = self[start_at]
-        if len(loc.qubits) == 1 and loc.kind in SELFINV_GATES:
-            # TODO: add two-qubit gates.
-            q = loc.qubits[0]
-            
-            for idx_future in xrange(start_at + 1, len(self)):
-                if q in self[idx_future].qubits:
-                    # Check that the kind matches.
-                    if self[idx_future].kind == loc.kind:
-                        self.pop(idx_future)
-                        self.pop(start_at)
-                        return self.cancel_selfinv_gates(start_at=start_at)
-                    else:
-                        # Go on to the next gate, since there's another gate
-                        # between here.
-                        return self.cancel_selfinv_gates(start_at=start_at+1)
+        if loc.kind in SELFINV_GATES:
+            if len(loc.qubits) == 1:
+                # TODO: add two-qubit gates.
+                q = loc.qubits[0]
+                
+                for idx_future in xrange(start_at + 1, len(self)):
+                    if q in self[idx_future].qubits:
+                        # Check that the kind matches.
+                        if self[idx_future].kind == loc.kind:
+                            self.pop(idx_future)
+                            self.pop(start_at)
+                            return self.cancel_selfinv_gates(start_at=start_at)
+                        else:
+                            # Go on to the next gate, since there's another gate
+                            # between here.
+                            return self.cancel_selfinv_gates(start_at=start_at+1)
         
         return self.cancel_selfinv_gates(start_at=start_at+1)
         
@@ -241,13 +268,3 @@ class Circuit(list):
             group_acc += [('I', qubit) for qubit in range(nq) if not found[qubit]]
         yield group_acc
 
-## EXAMPLE USAGE ##
-
-if __name__ == "__main__":
-    pass
-
-    # C = Circuit([Prep('q1', 'X'), Prep('q2', 'X'), Prep('q3', 'Z')], [CNOT('q1', 1), Had('q3')], [CNOT('q1', 'q3'), Wait('q2')])
-    # C = C & Circuit([Had('a1')]) # <- Pads with an extra time slice comprised of the empty list.
-    # C = C & Circuit([Phase('a2')], [Wait('a3')])
-    
-    
