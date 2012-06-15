@@ -48,7 +48,7 @@ class Location(object):
 
     ## CLASS CONSTANTS ##
     KIND_NAMES = [
-        'I', 'X', 'Y', 'Z', 'H', 'P', 'CNOT', 'CZ', 'SWAP'
+        'I', 'X', 'Y', 'Z', 'H', 'R_pi4', 'CNOT', 'CZ', 'SWAP'
     ]
 
     def __init__(self, kind, *qubits):
