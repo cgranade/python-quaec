@@ -40,11 +40,30 @@ __all__ = [
     'Location', 'Circuit'
 ]
 
+## INTERNAL FUNCTIONS ##
+
+def qubits_str(qubits, qubit_names=None):
+    if qubit_names is None:
+        return ' '.join('q{}'.format(idx + 1) for idx in qubits)
+    else:
+        return ' '.join(qubit_names[idx] for idx in qubits)
+
 ## CLASSES ##
 
 class Location(object):
-
-    ## NOTE: This class is IMMUTABLE. ##
+    """
+    Represents a gate, wait, measurement or preparation location in a
+    circuit.
+    
+    Note that currently, only gate locations are implemented.
+    
+    :param kind: The kind of location to be created. Each kind is an
+        abbreviation drawn from ``Location.KIND_NAMES``, or is the index in
+        ``Location.KIND_NAMES`` corresponding to the desired location kind.
+    :type kind: int or str
+    :param qubits: Indicies of the qubits on which this location acts.
+    :type qubits: tuple of ints.
+    """
 
     ## CLASS CONSTANTS ##
     KIND_NAMES = [
@@ -67,6 +86,18 @@ class Location(object):
         return "<{} Location on qubits {}>".format(self.kind, self.qubits)
     def __hash__(self):
         return hash((self._kind,) + self.qubits)
+        
+    def as_qcviewer(self, qubit_names=None):
+        """
+        Returns a representation of this location in a format suitable for
+        inclusion in a QCViewer file.
+        """
+        # FIXME: link to QCViewer in the docstring here.
+        # FIXME: map location kinds to QCViewer equivalents.
+        return '\t{gatename}\t{gatespec}\n'.format(
+            gatename=self.kind,
+            gatespec=qubits_str(self.qubits, qubit_names),
+            )
         
     @property
     def kind(self):   return self.KIND_NAMES[self._kind]        
@@ -131,23 +162,17 @@ class Circuit(list):
 
     ## PRETTY PRINTING ##
 
-    def as_qcviewer(self, inputs=(0,), outputs=None):
-        def qubits_str(qubits):
-            return ' '.join('q{}'.format(idx + 1) for idx in qubits)
-
+    def as_qcviewer(self, inputs=(0,), outputs=None, qubit_names=None):
         if outputs is None:
             outputs = (idx for idx in range(self.nq) if idx not in inputs)
             
-        acc = '.v ' + qubits_str(range(self.nq)) + '\n'
-        acc += '.i ' + qubits_str(inputs) + '\n'
-        acc += '.o ' + qubits_str(outputs) + '\n'
+        acc = '.v ' + qubits_str(range(self.nq), qubit_names) + '\n'
+        acc += '.i ' + qubits_str(inputs, qubit_names) + '\n'
+        acc += '.o ' + qubits_str(outputs, qubit_names) + '\n'
             
         acc += 'BEGIN\n'
         for loc in self:
-            acc += '\t{gatename}\t{gatespec}\n'.format(
-                gatename=loc.kind,
-                gatespec=qubits_str(loc.qubits)
-            )
+            acc += loc.as_qcviewer(qubit_names)
 
         acc += 'END\n'
         return acc
