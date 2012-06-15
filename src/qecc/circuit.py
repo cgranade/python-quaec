@@ -87,6 +87,8 @@ class Circuit(list):
         # Circuit(('CNOT', 0, 2), ('H', 1)) works, but
         # Circuit('CNOT', 0, 2) doesn't work.
         list.__init__(self, map(ensure_loc, locs))
+
+    ## SEQUENCE PROTOCOL ##
             
     def append(self, newval):
         super(Circuit, self).append(ensure_loc(newval))
@@ -116,10 +118,41 @@ class Circuit(list):
         if not isinstance(other, Circuit):
             other = Circuit(*other)
         return Circuit(*super(Circuit, self).__iadd__(other))
+
+    ## PROPERTIES ##
                 
     @property
     def nq(self):
         return max(loc.nq for loc in self)
+        
+    @property
+    def n_timesteps(self):
+        return len(list(self.group_by_time()))
+
+    ## PRETTY PRINTING ##
+
+    def as_qcviewer(self, inputs=(0,), outputs=None):
+        def qubits_str(qubits):
+            return ' '.join('q{}'.format(idx + 1) for idx in qubits)
+
+        if outputs is None:
+            outputs = (idx for idx in range(self.nq) if idx not in inputs)
+            
+        acc = '.v ' + qubits_str(range(self.nq)) + '\n'
+        acc += '.i ' + qubits_str(inputs) + '\n'
+        acc += '.o ' + qubits_str(outputs) + '\n'
+            
+        acc += 'BEGIN\n'
+        for loc in self:
+            acc += '\t{gatename}\t{gatespec}\n'.format(
+                gatename=loc.kind,
+                gatespec=qubits_str(loc.qubits)
+            )
+
+        acc += 'END\n'
+        return acc
+
+    ## CIRCUIT SIMPLIFICATION METHODS ##
         
     def cancel_selfinv_gates(self, start_at=0):
         SELFINV_GATES = ['H', 'X', 'Y', 'Z']
@@ -182,10 +215,6 @@ class Circuit(list):
         if pad_with_waits:
             group_acc += [('I', qubit) for qubit in range(nq) if not found[qubit]]
         yield group_acc
-        
-    @property
-    def n_timesteps(self):
-        return len(list(self.group_by_time()))
 
 ## EXAMPLE USAGE ##
 

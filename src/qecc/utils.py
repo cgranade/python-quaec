@@ -25,6 +25,7 @@
 ## IMPORTS ##
 
 from itertools import imap
+from functools import wraps
 
 ## FUNCTIONS ##
 
@@ -35,6 +36,22 @@ def array_swap(A, B):
     
 def inv_dict(d):
     return dict(imap(reversed, d.iteritems()))
+
+## DECORATORS ##
+
+def memoize(func):
+    
+    @wraps(func)
+    def memoized_func(*args):
+        if args in memoized_func.__memoize_cache__:
+            return memoized_func.__memoize_cache__[args]
+        else:
+            retval = func(*args)
+            memoized_func.__memoize_cache__[args] = retval
+            return retval
+
+    memoized_func.__memoize_cache__ = dict()
+    return memoized_func
         
 ## TEST ##
 
