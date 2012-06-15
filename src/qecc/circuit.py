@@ -171,16 +171,16 @@ class Circuit(list):
     def __str__(self):
         return "\n".join(map(str, self))
         
-    def as_qasm(self):
+    def as_quasm(self):
         """
-        Returns a representation of the circuit in an QASM-like format.
+        Returns a representation of the circuit in an assmembler-like format.
         In this format, each location is represented by a single line where
         the first field indicates the kind of location and the remaining fields
         indicate the qubits upon which the location acts.
         
         >>> import qecc as q
         >>> circ = q.Circuit(('CNOT', 0, 2), ('H', 2), ('SWAP', 1, 2), ('I', 0))
-        >>> print circ.as_qasm()
+        >>> print circ.as_quasm()
                 CNOT    0 2
                 H       2
                 SWAP    1 2
