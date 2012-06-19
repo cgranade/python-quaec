@@ -104,6 +104,9 @@ class Location(object):
         else:
             raise TypeError("Location kind must be an int or str.")
         
+        if not all(isinstance(q, int) for q in qubits):
+            raise TypeError('Qubit indices must be integers.')
+        
         self._qubits = tuple(qubits)
         self._is_clifford = bool(self.kind in self.CLIFFORD_GATE_KINDS)
         
@@ -113,6 +116,19 @@ class Location(object):
         return "<{} Location on qubits {}>".format(self.kind, self.qubits)
     def __hash__(self):
         return hash((self._kind,) + self.qubits)
+        
+    ## IMPORT METHODS ##
+    
+    @staticmethod
+    def from_quasm(source):
+        """
+        Returns a :class:`qecc.Location` initialized from a QuASM-formatted line.
+        
+        :type str source: A line of QuASM code specifying a location.
+        :returns qecc.Location: The location represented by the given QuASM source.
+        """
+        parts = source.split()
+        return Location(parts[0], *map(int, parts[1:]))
         
     ## PROPERTIES ##
         
@@ -270,6 +286,19 @@ class Circuit(list):
         this circuit in parallel.
         """
         return len(list(self.group_by_time()))
+
+    ## IMPORT CLASS METHODS ##
+    
+    @staticmethod
+    def from_quasm(source):
+        if not isinstance(source, str):
+            # Assume source is a file-like, so that iter(source) returns lines
+            # in the file.
+            it = iter(source)
+        else:
+            it = iter(source.split('\n'))
+            
+        return Circuit(*map(Location.from_quasm, it))
 
     ## PRETTY PRINTING ##
             
