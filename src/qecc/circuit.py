@@ -25,7 +25,7 @@
 ## IMPORTS ##
 
 from copy import copy
-from operator import add
+from operator import add, mul
 
 import PauliClass as pc
 import CliffordClass as cc
@@ -65,9 +65,25 @@ class Location(object):
     """
 
     ## CLASS CONSTANTS ##
-    KIND_NAMES = [
+    CLIFFORD_GATE_KINDS = [
         'I', 'X', 'Y', 'Z', 'H', 'R_pi4', 'CNOT', 'CZ', 'SWAP'
     ]
+    
+    CLIFFORD_GATE_FUNCS = {
+        'I': lambda nq, idx: cc.eye_c(nq),
+        'X': lambda nq, idx: pc.elem_gen(nq, idx, 'X').as_clifford(),
+        'Y': lambda nq, idx: pc.elem_gen(nq, idx, 'Y').as_clifford(),
+        'Z': lambda nq, idx: pc.elem_gen(nq, idx, 'Z').as_clifford(),
+        'H': cc.hadamard,
+        'R_pi4': cc.phase,
+        'CNOT': cc.cnot,
+        'CZ': cc.cz,
+        'SWAP': cc.swap
+    }
+    
+    KIND_NAMES = sum([
+        CLIFFORD_GATE_KINDS
+    ], [])
     
     QCVIEWER_NAMES = {
         'I': 'I',           # This one is implemented by a gate definition
@@ -89,6 +105,7 @@ class Location(object):
             raise TypeError("Location kind must be an int or str.")
         
         self._qubits = tuple(qubits)
+        self._is_clifford = bool(self.kind in self.CLIFFORD_GATE_KINDS)
         
     def __str__(self):
         return "\t{}\t{}".format(self.kind, ' '.join(map(str, self.qubits)))
@@ -97,10 +114,84 @@ class Location(object):
     def __hash__(self):
         return hash((self._kind,) + self.qubits)
         
+    ## PROPERTIES ##
+        
+    @property
+    def kind(self):
+        """
+        Returns a string defining which kind of location this instance
+        represents. Guaranteed to be a string that is an element of
+        ``Location.KIND_NAMES``.
+        """
+        return self.KIND_NAMES[self._kind]        
+        
+    @property
+    def qubits(self):
+        """
+        Returns a tuple of ints describing which qubits this location acts upon.
+        """
+        return self._qubits
+        
+    @property
+    def nq(self):
+        """
+        Returns the number of qubits in the smallest circuit that can contain
+        this location without relabeling qubits. For a :class:`qecc.Location`
+        ``loc``, this property is defined as ``1 + max(loc.nq)``.
+        """
+        return 1 + max(self.qubits)
+        
+    @property
+    def is_clifford(self):
+        """
+        Returns ``True`` if and only if this location represents a gate drawn
+        from the Clifford group.
+        """
+        return self._is_clifford
+      
+    ## SIMULATION METHODS ##
+        
+    def as_clifford(self, nq=None):
+        """
+        If this location represents a Clifford gate, returns the action of that
+        gate. Otherwise, a :obj:`RuntimeError` is raised.
+        
+        :param int nq: Specifies how many qubits to represent this location as
+            acting upon. If not specified, defaults to the value of the ``nq``
+            property.
+        :rtype: qecc.Clifford
+        """
+        if not self.is_clifford:
+            raise RuntimeError("Location must be a Clifford gate.")
+        else:
+            if nq is None:
+                nq = self.nq
+            elif nq < self.nq:
+                raise ValueError('nq must be greater than or equal to the nq property.')
+                
+            return self.CLIFFORD_GATE_FUNCS[self.kind](nq, *self.qubits)
+            
+        
+    ## EXPORT METHODS ##
+        
     def as_qcviewer(self, qubit_names=None):
         """
         Returns a representation of this location in a format suitable for
-        inclusion in a QCViewer file.
+        inclusion in a QCViewer file. 
+            
+        :param qubit_names: If specified, the given aliases will be used for the
+            qubits involved in this location when exporting to QCViewer.
+            Defaults to "q1", "q2", etc.
+        :rtype: str
+        
+        Note that the identity (or "wait") location requires the following to be
+        added to QCViewer's ``gateLib``::
+        
+            NAME wait
+            DRAWNAME "1"
+            SYMBOL I
+            1 , 0
+            0 , 1
         """
         # FIXME: link to QCViewer in the docstring here.
         return '\t{gatename}\t{gatespec}\n'.format(
@@ -108,12 +199,7 @@ class Location(object):
             gatespec=qubits_str(self.qubits, qubit_names),
             )
         
-    @property
-    def kind(self):   return self.KIND_NAMES[self._kind]        
-    @property
-    def qubits(self): return self._qubits
-    @property
-    def nq(self):     return 1 + max(self.qubits)
+    
 
 def ensure_loc(loc):
     if isinstance(loc, tuple):
@@ -132,8 +218,13 @@ class Circuit(list):
             
     def append(self, newval):
         super(Circuit, self).append(ensure_loc(newval))
+        
+    append.__doc__ = list.append.__doc__
+        
     def insert(self, at, newval):
         super(Circuit, self).insert(at, ensure_loc(newval))
+        
+    insert.__doc__ = list.insert.__doc__
         
     def __getitem__(self, *args):
         item = super(Circuit, self).__getitem__(*args)
@@ -158,10 +249,26 @@ class Circuit(list):
                 
     @property
     def nq(self):
+        """
+        Returns the number of qubits on which this circuit acts.
+        """
         return max(loc.nq for loc in self)
         
     @property
-    def n_timesteps(self):
+    def size(self):
+        """
+        Returns the number of locations in this circuit. Note that this property
+        is synonymous with :obj:`len`, in that ``len(circ) == circ.size`` for
+        all :class:`qecc.Circuit` instances.
+        """
+        return len(self)
+        
+    @property
+    def depth(self):
+        """
+        Returns the minimum number of timesteps required to implement exactly
+        this circuit in parallel.
+        """
         return len(list(self.group_by_time()))
 
     ## PRETTY PRINTING ##
@@ -188,9 +295,20 @@ class Circuit(list):
         """
         return str(self)
 
-    def as_qcviewer(self, inputs=(0,), outputs=None, qubit_names=None):
-        if outputs is None:
-            outputs = (idx for idx in range(self.nq) if idx not in inputs)
+    def as_qcviewer(self, inputs=(0,), outputs=(0,), qubit_names=None):
+        """
+        Returns a string representing this circuit in the format recognized by
+        `QCViewer`_.
+        
+        :param tuple inputs: Specifies which qubits should be marked as inputs
+            in the exported QCViewer circuit.
+        :param tuple outputs: Specifies which qubits should be marked as outputs
+            in the exported QCViewer circuit.
+        :param qubit_names: Names to be used for each qubit when exporting to
+            QCViewer.
+        
+        .. _QCViewer: http://qcirc.iqc.uwaterloo.ca/index.php?n=Projects.QCViewer
+        """
             
         header = '.v ' + qubits_str(range(self.nq), qubit_names) + '\n'
         header += '.i ' + qubits_str(inputs, qubit_names) + '\n'
@@ -203,9 +321,35 @@ class Circuit(list):
         
         return header + circ_text
 
+    ## CIRCUIT SIMULATION METHODS ##
+    
+    def as_clifford(self):
+        """
+        If this circuit is composed entirely of Clifford operators, converts it
+        to a :class:`qecc.Clifford` instance representing the action of the
+        entire circuit. If the circuit is not entirely Clifford gates, this method
+        raises a :obj:`RuntimeError`.
+        """
+        if not all(loc.is_clifford for loc in self):
+            raise RuntimeError('All locations must be Clifford gates in order to represent a circuit as a Clifford operator.')
+            
+        nq = self.nq
+        return reduce(mul, (loc.as_clifford(nq) for loc in self), cc.eye_c(nq))
+        
+
     ## CIRCUIT SIMPLIFICATION METHODS ##
         
     def cancel_selfinv_gates(self, start_at=0):
+        """
+        Transforms the circuit, removing any self-inverse gates from the circuit
+        if possible. Note that not all self-inverse gates are currently
+        supported by this method.
+        
+        :param int start_at: Specifies which location to consider first. Any
+            locations before ``start_at`` are not considered for cancelation by
+            this method.
+        """
+        
         SELFINV_GATES = ['H', 'X', 'Y', 'Z', 'CNOT']
         
         if start_at == len(self):
@@ -232,6 +376,10 @@ class Circuit(list):
         return self.cancel_selfinv_gates(start_at=start_at+1)
         
     def replace_cz_by_cnot(self):
+        """
+        Changes all controlled-:math:`Z` gates in this circuit to
+        controlled-NOT gates, adding Hadamard locations as required.
+        """
         # FIXME: this is inefficient as hell right now.
         try:
             idx = (idx for idx in range(len(self)) if self[idx].kind == 'CZ').next()
@@ -244,6 +392,16 @@ class Circuit(list):
             return self
         
     def group_by_time(self, pad_with_waits=False):
+        """
+        Returns an iterator onto subcircuits of this circuit, each of depth 1.
+        
+        :param bool pad_with_waits: If ``True``, each subcircuit will have
+            wait locations added such that every qubit is acted upon in every
+            subcircuit.
+            
+        :yields: each depth-1 subcircuit, corresponding to time steps of the
+            circuit
+        """
         nq = self.nq
         
         found = [False] * nq        

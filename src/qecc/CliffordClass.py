@@ -104,7 +104,7 @@ class Clifford(object):
                     )
                 
         # Prevent fully unspecified operators.
-        if all(P is Unspecified for P in xbars + zbars):
+        if all([P is Unspecified for P in chain(xbars, zbars)]):
             raise ValueError("At least one output must be specified.")
             
         # Copy the lists to break dependencies with the call site.

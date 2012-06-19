@@ -35,6 +35,8 @@ from unitary_reps import pauli_as_unitary
 
 from singletons import Unspecified
 
+import  CliffordClass as cc
+
 ## ALL ##
 
 __all__ = [
@@ -250,6 +252,18 @@ class Pauli(object):
         Raises a :obj:`RuntimeError` if NumPy cannot be imported.
         """
         return pauli_as_unitary(self)
+              
+    def as_clifford(self):
+        """
+        Returns a :class:`qecc.Clifford` representing conjugation by this Pauli
+        operator.
+        """
+        Xs, Zs = elem_gens(len(self))
+        for P in chain(Xs, Zs):
+            if com(self, P) == 1:
+                P.mul_phase(2)
+                
+        return cc.Clifford(Xs, Zs)
                 
     def wt(self):
         """
