@@ -44,20 +44,30 @@
    <h1 id="index">Index</h1>
 
    <div class="genindex-jumpbox">
-   <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#W"><strong>W</strong></a> | <a href="#X"><strong>X</strong></a> | <a href="#Z"><strong>Z</strong></a> 
+   <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#Q"><strong>Q</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#W"><strong>W</strong></a> | <a href="#X"><strong>X</strong></a> | <a href="#Z"><strong>Z</strong></a> 
    </div>
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
     <dt><a href="bsf.html#qecc.all_pauli_bsvs">all_pauli_bsvs() (in module qecc)</a></dt>
+    <dt><a href="circuits.html#qecc.Circuit.append">append() (qecc.Circuit method)</a></dt>
     <dt><a href="bsf.html#qecc.array_to_pauli">array_to_pauli() (in module qecc)</a></dt>
     <dt><a href="groups.html#qecc.Clifford.as_bsm">as_bsm() (qecc.Clifford method)</a></dt>
     <dt><a href="groups.html#qecc.Pauli.as_bsv">as_bsv() (qecc.Pauli method)</a></dt>
+    <dt><a href="bsf.html#qecc.BinarySymplecticMatrix.as_clifford">as_clifford() (qecc.BinarySymplecticMatrix method)</a></dt>
+    <dd><dl>
+      <dt><a href="circuits.html#qecc.Location.as_clifford">(qecc.Location method)</a></dt>
+      <dt><a href="groups.html#qecc.Pauli.as_clifford">(qecc.Pauli method)</a></dt>
+  </dl></dd>
 </dl></td>
   <td style="width: 33%" valign="top"><dl>
-    <dt><a href="bsf.html#qecc.BinarySymplecticMatrix.as_clifford">as_clifford() (qecc.BinarySymplecticMatrix method)</a></dt>
     <dt><a href="groups.html#qecc.Pauli.as_gens">as_gens() (qecc.Pauli method)</a></dt>
     <dt><a href="bsf.html#qecc.BinarySymplecticVector.as_pauli">as_pauli() (qecc.BinarySymplecticVector method)</a></dt>
+    <dt><a href="circuits.html#qecc.Circuit.as_qcviewer">as_qcviewer() (qecc.Circuit method)</a></dt>
+    <dd><dl>
+      <dt><a href="circuits.html#qecc.Location.as_qcviewer">(qecc.Location method)</a></dt>
+  </dl></dd>
+    <dt><a href="circuits.html#qecc.Circuit.as_quasm">as_quasm() (qecc.Circuit method)</a></dt>
     <dt><a href="groups.html#qecc.Clifford.as_unitary">as_unitary() (qecc.Clifford method)</a></dt>
     <dd><dl>
       <dt><a href="groups.html#qecc.Pauli.as_unitary">(qecc.Pauli method)</a></dt>
@@ -80,19 +90,21 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+    <dt><a href="circuits.html#qecc.Circuit.cancel_selfinv_gates">cancel_selfinv_gates() (qecc.Circuit method)</a></dt>
     <dt><a href="groups.html#qecc.Pauli.centralizer_gens">centralizer_gens() (qecc.Pauli method)</a></dt>
     <dd><dl>
       <dt><a href="paulicollections.html#qecc.PauliList.centralizer_gens">(qecc.PauliList method)</a></dt>
   </dl></dd>
+    <dt><a href="circuits.html#qecc.Circuit">Circuit (class in qecc)</a></dt>
     <dt><a href="bsf.html#qecc.BinarySymplecticMatrix.circuit_decomposition">circuit_decomposition() (qecc.BinarySymplecticMatrix method)</a></dt>
     <dt><a href="groups.html#qecc.Clifford">Clifford (class in qecc)</a></dt>
     <dt><a href="groups.html#qecc.clifford_group">clifford_group() (in module qecc)</a></dt>
     <dt><a href="groups.html#qecc.cnot">cnot() (in module qecc)</a></dt>
     <dt><a href="groups.html#qecc.com">com() (in module qecc)</a></dt>
     <dt><a href="predicates.html#qecc.Predicate.combine">combine() (qecc.Predicate method)</a></dt>
-    <dt><a href="bsf.html#qecc.commute">commute() (in module qecc)</a></dt>
 </dl></td>
   <td style="width: 33%" valign="top"><dl>
+    <dt><a href="bsf.html#qecc.commute">commute() (in module qecc)</a></dt>
     <dt><a href="predicates.html#qecc.commutes_with">commutes_with() (in module qecc)</a></dt>
     <dt><a href="groups.html#qecc.Clifford.conjugate_pauli">conjugate_pauli() (qecc.Clifford method)</a></dt>
     <dt><a href="bsf.html#qecc.constrained_set">constrained_set() (in module qecc)</a></dt>
@@ -135,9 +147,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
     <dt><a href="paulicollections.html#qecc.PauliList.generated_group">generated_group() (qecc.PauliList method)</a></dt>
+    <dt><a href="groups.html#qecc.generic_clifford">generic_clifford() (in module qecc)</a></dt>
 </dl></td>
   <td style="width: 33%" valign="top"><dl>
-    <dt><a href="groups.html#qecc.generic_clifford">generic_clifford() (in module qecc)</a></dt>
+    <dt><a href="circuits.html#qecc.Circuit.group_by_time">group_by_time() (qecc.Circuit method)</a></dt>
 </dl></td>
 </tr></table>
 
@@ -152,15 +165,24 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
     <dt><a href="predicates.html#qecc.in_group_generated_by">in_group_generated_by() (in module qecc)</a></dt>
+    <dt><a href="circuits.html#qecc.Circuit.insert">insert() (qecc.Circuit method)</a></dt>
     <dt><a href="bsf.html#qecc.BinarySymplecticMatrix.inv">inv() (qecc.BinarySymplecticMatrix method)</a></dt>
     <dt><a href="bsf.html#qecc.is_bsm_valid">is_bsm_valid() (in module qecc)</a></dt>
 </dl></td>
   <td style="width: 33%" valign="top"><dl>
+    <dt><a href="circuits.html#qecc.Location.is_clifford">is_clifford (qecc.Location attribute)</a></dt>
     <dt><a href="groups.html#qecc.is_in_normalizer">is_in_normalizer() (in module qecc)</a></dt>
     <dt><a href="bsf.html#qecc.BinarySymplecticMatrix.is_valid">is_valid() (qecc.BinarySymplecticMatrix method)</a></dt>
     <dd><dl>
       <dt><a href="groups.html#qecc.Clifford.is_valid">(qecc.Clifford method)</a></dt>
   </dl></dd>
+</dl></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+    <dt><a href="circuits.html#qecc.Location.kind">kind (qecc.Location attribute)</a></dt>
 </dl></td>
 </tr></table>
 
@@ -174,6 +196,7 @@
   <td style="width: 33%" valign="top"><dl>
     <dt><a href="bsf.html#qecc.BinarySymplecticMatrix.left_R_pi4">left_R_pi4() (qecc.BinarySymplecticMatrix method)</a></dt>
     <dt><a href="bsf.html#qecc.BinarySymplecticMatrix.left_SWAP">left_SWAP() (qecc.BinarySymplecticMatrix method)</a></dt>
+    <dt><a href="circuits.html#qecc.Location">Location (class in qecc)</a></dt>
 </dl></td>
 </tr></table>
 
@@ -190,7 +213,14 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+    <dt><a href="circuits.html#qecc.Circuit.n_timesteps">n_timesteps (qecc.Circuit attribute)</a></dt>
+</dl></td>
+  <td style="width: 33%" valign="top"><dl>
     <dt><a href="bsf.html#qecc.BinarySymplecticMatrix.nq">nq (qecc.BinarySymplecticMatrix attribute)</a></dt>
+    <dd><dl>
+      <dt><a href="circuits.html#qecc.Circuit.nq">(qecc.Circuit attribute)</a></dt>
+      <dt><a href="circuits.html#qecc.Location.nq">(qecc.Location attribute)</a></dt>
+  </dl></dd>
 </dl></td>
 </tr></table>
 
@@ -212,9 +242,17 @@
 </dl></td>
 </tr></table>
 
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+    <dt><a href="circuits.html#qecc.Location.qubits">qubits (qecc.Location attribute)</a></dt>
+</dl></td>
+</tr></table>
+
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+    <dt><a href="circuits.html#qecc.Circuit.replace_cz_by_cnot">replace_cz_by_cnot() (qecc.Circuit method)</a></dt>
     <dt><a href="bsf.html#qecc.BinarySymplecticMatrix.right_CNOT">right_CNOT() (qecc.BinarySymplecticMatrix method)</a></dt>
     <dt><a href="bsf.html#qecc.BinarySymplecticMatrix.right_CZ">right_CZ() (qecc.BinarySymplecticMatrix method)</a></dt>
     <dt><a href="bsf.html#qecc.BinarySymplecticMatrix.right_H">right_H() (qecc.BinarySymplecticMatrix method)</a></dt>

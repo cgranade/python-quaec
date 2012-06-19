@@ -87,6 +87,13 @@ information.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="qecc.Pauli.as_clifford">
+<tt class="descname">as_clifford</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_clifford" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> representing conjugation by this Pauli
+operator.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="qecc.Pauli.as_gens">
 <tt class="descname">as_gens</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_gens" title="Permalink to this definition">¶</a></dt>
 <dd><p>Expresses an input Pauli in terms of the elementary generators <img class="math" src="_images/math/964b9d696717d9b2f17a3d48cd69a5e9f56e8ea7.png" alt="X_j"/> and <img class="math" src="_images/math/365e85fa092babff714eb596ed90f58d1b9323c7.png" alt="Z_j"/>, stripping off phases.</p>
@@ -103,7 +110,7 @@ information.</p>
 <dl class="method">
 <dt id="qecc.Pauli.as_unitary">
 <tt class="descname">as_unitary</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_unitary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-d0f520a)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> containing a unitary matrix
+<dd><p>Returns a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-36681eb)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> containing a unitary matrix
 representation of this Pauli operator.</p>
 <p>Raises a <tt class="xref py py-obj docutils literal"><span class="pre">RuntimeError</span></tt> if NumPy cannot be imported.</p>
 </dd></dl>
@@ -459,7 +466,7 @@ symplectic matrix.</p>
 <dl class="method">
 <dt id="qecc.Clifford.as_unitary">
 <tt class="descname">as_unitary</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Clifford.as_unitary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-d0f520a)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> containing a unitary matrix
+<dd><p>Returns a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-36681eb)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> containing a unitary matrix
 representation of this Clifford operator.</p>
 <p>Raises a <tt class="xref py py-class docutils literal"><span class="pre">RuntimeError</span></tt> if NumPy cannot be imported.</p>
 </dd></dl>

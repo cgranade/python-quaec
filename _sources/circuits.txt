@@ -8,4 +8,32 @@
 Circuit Manipulation and Simulation
 ===================================
 
-This section has not yet been written.
+Quantum circuits are modeled in QuaEC by a sequence type, :class:`qecc.Circuit`,
+that stores zero or more circuit elements, known as `locations`. Each location
+has a `kind` that indicates if it is a gate, measurement or preparation
+location, as well as which gate, which measurement or which preparation is
+indicated.
+
+Creating a :class:`qecc.Location` instance consists of specifying the kind of
+location along with a sequence of indices indicating which qubits that location
+acts upon.
+
+>>> import qecc as q
+>>> loc = q.Location('CNOT', 0, 2)
+>>> loc.as_clifford()
+
+
+:class:`qecc.Location` - Class representing locations in a circuit
+------------------------------------------------------------------
+
+.. autoclass:: qecc.Location
+    :members:
+    :undoc-members:
+    
+    
+:class:`qecc.Circuit` - Class modeling arrangements of locations
+----------------------------------------------------------------
+
+.. autoclass:: qecc.Circuit
+    :members:
+    :undoc-members:

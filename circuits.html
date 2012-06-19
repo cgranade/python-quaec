@@ -50,7 +50,160 @@
             
   <div class="section" id="circuit-manipulation-and-simulation">
 <h1>Circuit Manipulation and Simulation<a class="headerlink" href="#circuit-manipulation-and-simulation" title="Permalink to this headline">¶</a></h1>
-<p>This section has not yet been written.</p>
+<p>Quantum circuits are modeled in QuaEC by a sequence type, <a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a>,
+that stores zero or more circuit elements, known as <cite>locations</cite>. Each location
+has a <cite>kind</cite> that indicates if it is a gate, measurement or preparation
+location, as well as which gate, which measurement or which preparation is
+indicated.</p>
+<p>Creating a <a class="reference internal" href="#qecc.Location" title="qecc.Location"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Location</span></tt></a> instance consists of specifying the kind of
+location along with a sequence of indices indicating which qubits that location
+acts upon.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loc</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="s">&#39;CNOT&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loc</span><span class="o">.</span><span class="n">as_clifford</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="qecc-location-class-representing-locations-in-a-circuit">
+<h2><a class="reference internal" href="#qecc.Location" title="qecc.Location"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Location</span></tt></a> - Class representing locations in a circuit<a class="headerlink" href="#qecc-location-class-representing-locations-in-a-circuit" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="qecc.Location">
+<em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">Location</tt><big>(</big><em>kind</em>, <em>*qubits</em><big>)</big><a class="headerlink" href="#qecc.Location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a gate, wait, measurement or preparation location in a
+circuit.</p>
+<p>Note that currently, only gate locations are implemented.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>kind</strong> (<em>int or str</em>) &#8211; The kind of location to be created. Each kind is an
+abbreviation drawn from <tt class="docutils literal"><span class="pre">Location.KIND_NAMES</span></tt>, or is the index in
+<tt class="docutils literal"><span class="pre">Location.KIND_NAMES</span></tt> corresponding to the desired location kind.</li>
+<li><strong>qubits</strong> (<em>tuple of ints.</em>) &#8211; Indicies of the qubits on which this location acts.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="qecc.Location.as_clifford">
+<tt class="descname">as_clifford</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Location.as_clifford" title="Permalink to this definition">¶</a></dt>
+<dd><p>If this location represents a Clifford gate, returns the action of that
+gate. Otherwise, a <tt class="xref py py-obj docutils literal"><span class="pre">RuntimeError</span></tt> is raised.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.Location.as_qcviewer">
+<tt class="descname">as_qcviewer</tt><big>(</big><em>qubit_names=None</em><big>)</big><a class="headerlink" href="#qecc.Location.as_qcviewer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a representation of this location in a format suitable for
+inclusion in a QCViewer file. Note that the identity (or &#8220;wait&#8221;)
+location requires the following to be added to QCViewer&#8217;s <tt class="docutils literal"><span class="pre">gateLib</span></tt>:</p>
+<div class="highlight-python"><pre>NAME wait
+DRAWNAME "1"
+SYMBOL I
+1 , 0
+0 , 1</pre>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.Location.is_clifford">
+<tt class="descname">is_clifford</tt><a class="headerlink" href="#qecc.Location.is_clifford" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <tt class="xref docutils literal"><span class="pre">True</span></tt> if and only if this location represents a gate drawn
+from the Clifford group.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.Location.kind">
+<tt class="descname">kind</tt><a class="headerlink" href="#qecc.Location.kind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string defining which kind of location this instance
+represents. Guaranteed to be a string that is an element of
+<tt class="docutils literal"><span class="pre">Location.KIND_NAMES</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.Location.nq">
+<tt class="descname">nq</tt><a class="headerlink" href="#qecc.Location.nq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of qubits in the smallest circuit that can contain
+this location without relabeling qubits. For a <a class="reference internal" href="#qecc.Location" title="qecc.Location"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Location</span></tt></a>
+<tt class="docutils literal"><span class="pre">loc</span></tt>, this property is defined as <tt class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">max(loc.nq)</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.Location.qubits">
+<tt class="descname">qubits</tt><a class="headerlink" href="#qecc.Location.qubits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a tuple of ints describing which qubits this location acts upon.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="qecc-circuit-class-modeling-arrangements-of-locations">
+<h2><a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a> - Class modeling arrangements of locations<a class="headerlink" href="#qecc-circuit-class-modeling-arrangements-of-locations" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="qecc.Circuit">
+<em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">Circuit</tt><big>(</big><em>*locs</em><big>)</big><a class="headerlink" href="#qecc.Circuit" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="qecc.Circuit.append">
+<tt class="descname">append</tt><big>(</big><em>newval</em><big>)</big><a class="headerlink" href="#qecc.Circuit.append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="qecc.Circuit.as_qcviewer">
+<tt class="descname">as_qcviewer</tt><big>(</big><em>inputs=(0</em>, <em>)</em>, <em>outputs=None</em>, <em>qubit_names=None</em><big>)</big><a class="headerlink" href="#qecc.Circuit.as_qcviewer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="qecc.Circuit.as_quasm">
+<tt class="descname">as_quasm</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Circuit.as_quasm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a representation of the circuit in an assmembler-like format.
+In this format, each location is represented by a single line where
+the first field indicates the kind of location and the remaining fields
+indicate the qubits upon which the location acts.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">circ</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Circuit</span><span class="p">((</span><span class="s">&#39;CNOT&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;H&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;SWAP&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;I&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span><span class="o">.</span><span class="n">as_quasm</span><span class="p">()</span>
+<span class="go">        CNOT    0 2</span>
+<span class="go">        H       2</span>
+<span class="go">        SWAP    1 2</span>
+<span class="go">        I       0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.Circuit.cancel_selfinv_gates">
+<tt class="descname">cancel_selfinv_gates</tt><big>(</big><em>start_at=0</em><big>)</big><a class="headerlink" href="#qecc.Circuit.cancel_selfinv_gates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="qecc.Circuit.group_by_time">
+<tt class="descname">group_by_time</tt><big>(</big><em>pad_with_waits=False</em><big>)</big><a class="headerlink" href="#qecc.Circuit.group_by_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="qecc.Circuit.insert">
+<tt class="descname">insert</tt><big>(</big><em>at</em>, <em>newval</em><big>)</big><a class="headerlink" href="#qecc.Circuit.insert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.Circuit.n_timesteps">
+<tt class="descname">n_timesteps</tt><a class="headerlink" href="#qecc.Circuit.n_timesteps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.Circuit.nq">
+<tt class="descname">nq</tt><a class="headerlink" href="#qecc.Circuit.nq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="qecc.Circuit.replace_cz_by_cnot">
+<tt class="descname">replace_cz_by_cnot</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Circuit.replace_cz_by_cnot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -59,6 +212,15 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Circuit Manipulation and Simulation</a><ul>
+<li><a class="reference internal" href="#qecc-location-class-representing-locations-in-a-circuit"><tt class="docutils literal"><span class="pre">qecc.Location</span></tt> - Class representing locations in a circuit</a></li>
+<li><a class="reference internal" href="#qecc-circuit-class-modeling-arrangements-of-locations"><tt class="docutils literal"><span class="pre">qecc.Circuit</span></tt> - Class modeling arrangements of locations</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="bsf.html"
                         title="previous chapter">Binary Symplectic Form</a></p>
@@ -73,7 +235,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -104,7 +266,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Chris Granade and Ben Criger. Licensed under the Creative Commons NonCommercial-ShareAlike 3.0 Unported License.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
     </div>
   </body>
 </html>
