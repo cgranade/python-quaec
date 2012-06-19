@@ -50,6 +50,8 @@
             
   <div class="section" id="circuit-manipulation-and-simulation">
 <h1>Circuit Manipulation and Simulation<a class="headerlink" href="#circuit-manipulation-and-simulation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>Quantum circuits are modeled in QuaEC by a sequence type, <a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a>,
 that stores zero or more circuit elements, known as <cite>locations</cite>. Each location
 has a <cite>kind</cite> that indicates if it is a gate, measurement or preparation
@@ -60,11 +62,130 @@ location along with a sequence of indices indicating which qubits that location
 acts upon.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">loc</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="s">&#39;CNOT&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">loc</span><span class="o">.</span><span class="n">as_clifford</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>The <a class="reference internal" href="#qecc.Location.as_clifford" title="qecc.Location.as_clifford"><tt class="xref py py-meth docutils literal"><span class="pre">qecc.Location.as_clifford()</span></tt></a> method allows converting gate locations
+back into a <a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> representation if applicable.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">loc</span><span class="o">.</span><span class="n">as_clifford</span><span class="p">()</span>
+<span class="go">XII |-&gt;  +XIX</span>
+<span class="go">IXI |-&gt;  +IXI</span>
+<span class="go">IIX |-&gt;  +IIX</span>
+<span class="go">ZII |-&gt;  +ZII</span>
+<span class="go">IZI |-&gt;  +IZI</span>
+<span class="go">IIZ |-&gt;  +ZIZ</span>
+</pre></div>
+</div>
+<p>When creating a <a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a>, you may specify each location either as
+an instance of <a class="reference internal" href="#qecc.Location" title="qecc.Location"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Location</span></tt></a> or as a tuple of arguments to <a class="reference internal" href="#qecc.Location" title="qecc.Location"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Location</span></tt></a>&#8216;s constructor.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">circ</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Circuit</span><span class="p">((</span><span class="s">&#39;CNOT&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;H&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;X&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Printing a circuit or location results in that instance being represented in
+the QuASM format, a plaintext representation of quantum circuits.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">loc</span>
+<span class="go">        CNOT    0 2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span>
+<span class="go">        CNOT    0 2</span>
+<span class="go">        H       1</span>
+<span class="go">        X       0</span>
+</pre></div>
+</div>
+<p>The number of qubits, depth and size of each location and circuit can be found
+by querying the appropriate properties of a <a class="reference internal" href="#qecc.Location" title="qecc.Location"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Location</span></tt></a> or <a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">loc</span><span class="o">.</span><span class="n">nq</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span><span class="o">.</span><span class="n">nq</span><span class="p">,</span> <span class="n">circ</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span> <span class="n">circ</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">circ</span><span class="p">)</span>
+<span class="go">3 2 3 3</span>
+</pre></div>
+</div>
+<p>Once constructed, a <a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a> can be transformed in several ways,
+including simplifications and representations in terms of depth-1 subcircuits.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">circ</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Circuit</span><span class="p">((</span><span class="s">&#39;CNOT&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;H&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;X&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;H&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span>
+<span class="go">        CNOT    0 2</span>
+<span class="go">        H       1</span>
+<span class="go">        X       0</span>
+<span class="go">        H       1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span><span class="o">.</span><span class="n">cancel_selfinv_gates</span><span class="p">()</span>
+<span class="go">        CNOT    0 2</span>
+<span class="go">        X       0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">circ</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Circuit</span><span class="p">((</span><span class="s">&#39;CZ&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;H&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;X&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span><span class="o">.</span><span class="n">replace_cz_by_cnot</span><span class="p">()</span>
+<span class="go">        H       2</span>
+<span class="go">        CNOT    0 2</span>
+<span class="go">        H       2</span>
+<span class="go">        H       1</span>
+<span class="go">        X       0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;</span><span class="se">\n\t</span><span class="s">--</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">circ</span><span class="o">.</span><span class="n">group_by_time</span><span class="p">()))</span>
+<span class="go">        H       2</span>
+<span class="go">        --</span>
+<span class="go">        CNOT    0 2</span>
+<span class="go">        --</span>
+<span class="go">        H       2</span>
+<span class="go">        H       1</span>
+<span class="go">        X       0</span>
+</pre></div>
+</div>
+<p>Note that, except for <a class="reference internal" href="#qecc.Circuit.group_by_time" title="qecc.Circuit.group_by_time"><tt class="xref py py-meth docutils literal"><span class="pre">qecc.Circuit.group_by_time()</span></tt></a>, each of these
+transformations mutates the circuit, so that the original circuit is lost.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span>
+<span class="go">        H       2</span>
+<span class="go">        CNOT    0 2</span>
+<span class="go">        H       2</span>
+<span class="go">        H       1</span>
+<span class="go">        X       0</span>
+</pre></div>
+</div>
+<p>If a circuit consists entirely of Clifford gate locations, then its entire
+action may be represented as a <a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">circ</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Circuit</span><span class="p">((</span><span class="s">&#39;CZ&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;H&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;X&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span><span class="o">.</span><span class="n">as_clifford</span><span class="p">()</span>
+<span class="go">XII |-&gt;  +XIZ</span>
+<span class="go">IXI |-&gt;  +IZI</span>
+<span class="go">IIX |-&gt;  +ZIX</span>
+<span class="go">ZII |-&gt;  +ZII</span>
+<span class="go">IZI |-&gt;  +IXI</span>
+<span class="go">IIZ |-&gt;  +IIZ</span>
+</pre></div>
+</div>
+<p>Finally, circuits can be exported to <a class="reference external" href="http://qcirc.iqc.uwaterloo.ca/index.php?n=Projects.QCViewer">QCViewer</a> files (<tt class="docutils literal"><span class="pre">*.qcv</span></tt>) for easy
+integration with QCViewer&#8217;s functionality.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span><span class="o">.</span><span class="n">as_qcviewer</span><span class="p">()</span>
+<span class="go">.v q1 q2 q3</span>
+<span class="go">.i q1</span>
+<span class="go">.o q2 q3</span>
+<span class="go">BEGIN</span>
+<span class="go">        H       q3</span>
+<span class="go">        tof     q1 q3</span>
+<span class="go">        H       q3</span>
+<span class="go">        H       q2</span>
+<span class="go">        X       q1</span>
+<span class="go">END</span>
+</pre></div>
+</div>
+<p>Note that, by default, qubits in the QCViewer export are named &#8220;q1&#8221;, &#8220;q2&#8221; and so
+on. This may be overriden by passing a sequence of strings as the
+<tt class="docutils literal"><span class="pre">qubit_names</span></tt> argument. Which qubits get assigned to the <tt class="docutils literal"><span class="pre">.i</span></tt> and <tt class="docutils literal"><span class="pre">.o</span></tt>
+headers in the QCViewer file are controlled by the <tt class="docutils literal"><span class="pre">inputs</span></tt> and <tt class="docutils literal"><span class="pre">outputs</span></tt>
+arguments, respectively.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span><span class="o">.</span><span class="n">as_qcviewer</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="n">outputs</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="n">qubit_names</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;in1&quot;</span><span class="p">,</span> <span class="s">&quot;anc1&quot;</span><span class="p">,</span> <span class="s">&quot;anc2&quot;</span><span class="p">])</span>
+<span class="go">.v in1 anc1 anc2</span>
+<span class="go">.i in1</span>
+<span class="go">.o in1</span>
+<span class="go">BEGIN</span>
+<span class="go">        H       anc2</span>
+<span class="go">        tof     in1 anc2</span>
+<span class="go">        H       anc2</span>
+<span class="go">        H       anc1</span>
+<span class="go">        X       in1</span>
+<span class="go">END</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="class-reference">
+<h2>Class Reference<a class="headerlink" href="#class-reference" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="qecc-location-class-representing-locations-in-a-circuit">
-<h2><a class="reference internal" href="#qecc.Location" title="qecc.Location"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Location</span></tt></a> - Class representing locations in a circuit<a class="headerlink" href="#qecc-location-class-representing-locations-in-a-circuit" title="Permalink to this headline">¶</a></h2>
+<h3><a class="reference internal" href="#qecc.Location" title="qecc.Location"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Location</span></tt></a> - Class representing locations in a circuit<a class="headerlink" href="#qecc-location-class-representing-locations-in-a-circuit" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="qecc.Location">
 <em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">Location</tt><big>(</big><em>kind</em>, <em>*qubits</em><big>)</big><a class="headerlink" href="#qecc.Location" title="Permalink to this definition">¶</a></dt>
@@ -87,17 +208,42 @@ abbreviation drawn from <tt class="docutils literal"><span class="pre">Location.
 </table>
 <dl class="method">
 <dt id="qecc.Location.as_clifford">
-<tt class="descname">as_clifford</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Location.as_clifford" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">as_clifford</tt><big>(</big><em>nq=None</em><big>)</big><a class="headerlink" href="#qecc.Location.as_clifford" title="Permalink to this definition">¶</a></dt>
 <dd><p>If this location represents a Clifford gate, returns the action of that
 gate. Otherwise, a <tt class="xref py py-obj docutils literal"><span class="pre">RuntimeError</span></tt> is raised.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nq</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Specifies how many qubits to represent this location as
+acting upon. If not specified, defaults to the value of the <tt class="docutils literal"><span class="pre">nq</span></tt>
+property.</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">qecc.Clifford</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="qecc.Location.as_qcviewer">
 <tt class="descname">as_qcviewer</tt><big>(</big><em>qubit_names=None</em><big>)</big><a class="headerlink" href="#qecc.Location.as_qcviewer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a representation of this location in a format suitable for
-inclusion in a QCViewer file. Note that the identity (or &#8220;wait&#8221;)
-location requires the following to be added to QCViewer&#8217;s <tt class="docutils literal"><span class="pre">gateLib</span></tt>:</p>
+inclusion in a QCViewer file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qubit_names</strong> &#8211; If specified, the given aliases will be used for the
+qubits involved in this location when exporting to QCViewer.
+Defaults to &#8220;q1&#8221;, &#8220;q2&#8221;, etc.</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+<p>Note that the identity (or &#8220;wait&#8221;) location requires the following to be
+added to QCViewer&#8217;s <tt class="docutils literal"><span class="pre">gateLib</span></tt>:</p>
 <div class="highlight-python"><pre>NAME wait
 DRAWNAME "1"
 SYMBOL I
@@ -139,19 +285,47 @@ this location without relabeling qubits. For a <a class="reference internal" hre
 
 </div>
 <div class="section" id="qecc-circuit-class-modeling-arrangements-of-locations">
-<h2><a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a> - Class modeling arrangements of locations<a class="headerlink" href="#qecc-circuit-class-modeling-arrangements-of-locations" title="Permalink to this headline">¶</a></h2>
+<h3><a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a> - Class modeling arrangements of locations<a class="headerlink" href="#qecc-circuit-class-modeling-arrangements-of-locations" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="qecc.Circuit">
 <em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">Circuit</tt><big>(</big><em>*locs</em><big>)</big><a class="headerlink" href="#qecc.Circuit" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="qecc.Circuit.append">
 <tt class="descname">append</tt><big>(</big><em>newval</em><big>)</big><a class="headerlink" href="#qecc.Circuit.append" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>L.append(object) &#8211; append object to end</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.Circuit.as_clifford">
+<tt class="descname">as_clifford</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Circuit.as_clifford" title="Permalink to this definition">¶</a></dt>
+<dd><p>If this circuit is composed entirely of Clifford operators, converts it
+to a <a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> instance representing the action of the
+entire circuit. If the circuit is not entirely Clifford gates, this method
+raises a <tt class="xref py py-obj docutils literal"><span class="pre">RuntimeError</span></tt>.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="qecc.Circuit.as_qcviewer">
-<tt class="descname">as_qcviewer</tt><big>(</big><em>inputs=(0</em>, <em>)</em>, <em>outputs=None</em>, <em>qubit_names=None</em><big>)</big><a class="headerlink" href="#qecc.Circuit.as_qcviewer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">as_qcviewer</tt><big>(</big><em>inputs=(0</em>, <em>)</em>, <em>outputs=(0</em>, <em>)</em>, <em>qubit_names=None</em><big>)</big><a class="headerlink" href="#qecc.Circuit.as_qcviewer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string representing this circuit in the format recognized by
+<a class="reference external" href="http://qcirc.iqc.uwaterloo.ca/index.php?n=Projects.QCViewer">QCViewer</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>inputs</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Specifies which qubits should be marked as inputs
+in the exported QCViewer circuit.</li>
+<li><strong>outputs</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Specifies which qubits should be marked as outputs
+in the exported QCViewer circuit.</li>
+<li><strong>qubit_names</strong> &#8211; Names to be used for each qubit when exporting to
+QCViewer.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="qecc.Circuit.as_quasm">
@@ -174,35 +348,77 @@ indicate the qubits upon which the location acts.</p>
 <dl class="method">
 <dt id="qecc.Circuit.cancel_selfinv_gates">
 <tt class="descname">cancel_selfinv_gates</tt><big>(</big><em>start_at=0</em><big>)</big><a class="headerlink" href="#qecc.Circuit.cancel_selfinv_gates" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Transforms the circuit, removing any self-inverse gates from the circuit
+if possible. Note that not all self-inverse gates are currently
+supported by this method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>start_at</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Specifies which location to consider first. Any
+locations before <tt class="docutils literal"><span class="pre">start_at</span></tt> are not considered for cancelation by
+this method.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.Circuit.depth">
+<tt class="descname">depth</tt><a class="headerlink" href="#qecc.Circuit.depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the minimum number of timesteps required to implement exactly
+this circuit in parallel.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="qecc.Circuit.group_by_time">
 <tt class="descname">group_by_time</tt><big>(</big><em>pad_with_waits=False</em><big>)</big><a class="headerlink" href="#qecc.Circuit.group_by_time" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns an iterator onto subcircuits of this circuit, each of depth 1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pad_with_waits</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <tt class="xref docutils literal"><span class="pre">True</span></tt>, each subcircuit will have
+wait locations added such that every qubit is acted upon in every
+subcircuit.</td>
+</tr>
+<tr class="field"><th class="field-name">Yields :</th><td class="field-body">each depth-1 subcircuit, corresponding to time steps of the
+circuit</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="qecc.Circuit.insert">
 <tt class="descname">insert</tt><big>(</big><em>at</em>, <em>newval</em><big>)</big><a class="headerlink" href="#qecc.Circuit.insert" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="qecc.Circuit.n_timesteps">
-<tt class="descname">n_timesteps</tt><a class="headerlink" href="#qecc.Circuit.n_timesteps" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>L.insert(index, object) &#8211; insert object before index</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="qecc.Circuit.nq">
 <tt class="descname">nq</tt><a class="headerlink" href="#qecc.Circuit.nq" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the number of qubits on which this circuit acts.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="qecc.Circuit.replace_cz_by_cnot">
 <tt class="descname">replace_cz_by_cnot</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Circuit.replace_cz_by_cnot" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Changes all controlled-<img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> gates in this circuit to
+controlled-NOT gates, adding Hadamard locations as required.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.Circuit.size">
+<tt class="descname">size</tt><a class="headerlink" href="#qecc.Circuit.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of locations in this circuit. Note that this property
+is synonymous with <a class="reference external" href="http://docs.python.org/library/functions.html#len" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">len</span></tt></a>, in that <tt class="docutils literal"><span class="pre">len(circ)</span> <span class="pre">==</span> <span class="pre">circ.size</span></tt> for
+all <a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a> instances.</p>
+</dd></dl>
 
 </dd></dl>
 
+</div>
 </div>
 </div>
 
@@ -215,8 +431,12 @@ indicate the qubits upon which the location acts.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Circuit Manipulation and Simulation</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#class-reference">Class Reference</a><ul>
 <li><a class="reference internal" href="#qecc-location-class-representing-locations-in-a-circuit"><tt class="docutils literal"><span class="pre">qecc.Location</span></tt> - Class representing locations in a circuit</a></li>
 <li><a class="reference internal" href="#qecc-circuit-class-modeling-arrangements-of-locations"><tt class="docutils literal"><span class="pre">qecc.Circuit</span></tt> - Class modeling arrangements of locations</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
