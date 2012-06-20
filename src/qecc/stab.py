@@ -73,7 +73,7 @@ class StabilizerCode(object):
         raise NotImplementedError("Not yet implemented.")
         
     def encoding_cliffords(self):
-        C = c.Clifford(self.group_generators + self.logical_xs, ([Unspecified] * self.n_constraints) + self.logical_zs)
+        C = c.Clifford(self.logical_xs + self.group_generators, self.logical_zs + ([Unspecified] * self.n_constraints))
         return C.constraint_completions()
         
     @staticmethod
@@ -84,7 +84,7 @@ class StabilizerCode(object):
                 'XXIIXXI',
                 'XIXIXIX',
                 'ZZZZIII',
-                'ZZIIZZI'
+                'ZZIIZZI',
                 'ZIZIZIZ'                
             ],
             ['XXXXXXX'], ['ZZZZZZZ']
