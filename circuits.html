@@ -252,6 +252,21 @@ SYMBOL I
 </div>
 </dd></dl>
 
+<dl class="staticmethod">
+<dt id="qecc.Location.from_quasm">
+<em class="property">static </em><tt class="descname">from_quasm</tt><big>(</big><em>source</em><big>)</big><a class="headerlink" href="#qecc.Location.from_quasm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <a class="reference internal" href="#qecc.Location" title="qecc.Location"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Location</span></tt></a> initialized from a QuASM-formatted line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name" colspan="2">Returns qecc.Location:</th></tr>
+<tr class="field"><td>&nbsp;</td><td class="field-body">The location represented by the given QuASM source.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="qecc.Location.is_clifford">
 <tt class="descname">is_clifford</tt><a class="headerlink" href="#qecc.Location.is_clifford" title="Permalink to this definition">¶</a></dt>
@@ -369,6 +384,11 @@ this method.</td>
 <dd><p>Returns the minimum number of timesteps required to implement exactly
 this circuit in parallel.</p>
 </dd></dl>
+
+<dl class="staticmethod">
+<dt id="qecc.Circuit.from_quasm">
+<em class="property">static </em><tt class="descname">from_quasm</tt><big>(</big><em>source</em><big>)</big><a class="headerlink" href="#qecc.Circuit.from_quasm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="qecc.Circuit.group_by_time">

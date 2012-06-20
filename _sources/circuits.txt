@@ -154,7 +154,6 @@ Class Reference
     :members:
     :undoc-members:
     
-    
 :class:`qecc.Circuit` - Class modeling arrangements of locations
 ----------------------------------------------------------------
 
