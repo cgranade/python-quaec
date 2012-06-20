@@ -33,8 +33,9 @@ import exceptions as _xpts
 import pred as _p
 import circuit as _circ
 import constraint_solvers as _cs
+import stab as _stab
 
-__modules = [_pc, _pc, _cc, _bsf, _xpts, _p, _circ, _cs]
+__modules = [_pc, _pc, _cc, _bsf, _xpts, _p, _circ, _cs, _stab]
 # Note that we exclude _sing here to prevent changing the id of each singleton.
 
 # Note that the utils module is not exposed, as we wish for that module to
@@ -57,6 +58,7 @@ from exceptions import *
 from pred import *
 from circuit import *
 from constraint_solvers import *
+from stab import *
 
 __all__ = reduce(lambda a, b: a+b, map(lambda mod: mod.__all__, __modules))
 

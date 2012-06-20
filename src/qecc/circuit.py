@@ -90,7 +90,7 @@ class Location(object):
                             # included by Circuit.as_qcviewer().
         'X': 'X', 'Y': 'Y', 'Z': 'Z',
         'H': 'H',
-        'R_pi4': 'S', # Is this right?
+        'R_pi4': 'P',
         'CNOT': 'tof',
         'CZ': 'Z',
         'SWAP': 'swap'
