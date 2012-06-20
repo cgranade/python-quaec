@@ -138,6 +138,19 @@ class Pauli(object):
         """
         return "i^{k} {op}".format(k=self.ph, op=self.op)
 
+    def __str__(self):
+        SPARSE_THRESH = 0.3
+        
+        if self.wt / len(self) > SPARSE_THRESH:
+            return repr(self)
+        else:
+            return self.str_sparse()
+            
+    def str_sparse(self):
+        return " ".join(
+            "{}[{}]".format(P, idx) for idx, P in enumerate(self.op) if P != "I"
+        )
+
     def __neg__(self):
         """
         Negates (multiplying by :math:`-1`) a Pauli.
@@ -265,6 +278,7 @@ class Pauli(object):
                 
         return cc.Clifford(Xs, Zs)
                 
+    @property
     def wt(self):
         """
         Measures the weight of a given Pauli.
@@ -502,7 +516,7 @@ def mutually_commuting_sets(n_elems, n_bits=None, group_gens=None, exclude=None)
     
     assert len(group_gens) > 0
     
-    for P in ifilterfalse(lambda q: q.wt()==0 or q in from_generators(exclude),from_generators(group_gens)):
+    for P in ifilterfalse(lambda q: q.wt==0 or q in from_generators(exclude),from_generators(group_gens)):
         P = Pauli(P.op, phase=0)
         if n_elems==1:
             yield (P,)

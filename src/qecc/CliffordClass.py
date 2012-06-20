@@ -607,7 +607,7 @@ def clifford_group(nq, consider_phases=False):
     """
     idx = 0
     for P in pauli_group(nq):
-        if P.wt() > 0:
+        if P.wt > 0:
             C = Clifford([P] + [Unspecified]*(nq -1), [Unspecified]*nq)
             for completion in C.constraint_completions():
                 if consider_phases:

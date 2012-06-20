@@ -72,7 +72,7 @@ def solve_commutation_constraints(
     >>> list(q.solve_commutation_constraints(q.PauliList('XXI', 'IZZ', 'IYI'), q.PauliList('YIY')))
     [i^0 XII, i^0 IIZ, i^0 YYX, i^0 ZYY]
     >>> from itertools import ifilter
-    >>> list(ifilter(lambda P: P.wt() <= 2, q.solve_commutation_constraints(q.PauliList('XXI', 'IZZ', 'IYI'), q.PauliList('YIY'))))
+    >>> list(ifilter(lambda P: P.wt <= 2, q.solve_commutation_constraints(q.PauliList('XXI', 'IZZ', 'IYI'), q.PauliList('YIY'))))
     [i^0 XII, i^0 IIZ]
     """
     
