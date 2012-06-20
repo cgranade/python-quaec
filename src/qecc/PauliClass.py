@@ -139,17 +139,21 @@ class Pauli(object):
         return "i^{k} {op}".format(k=self.ph, op=self.op)
 
     def __str__(self):
+        SPARSE_NQ     = 5
         SPARSE_THRESH = 0.3
         
-        if self.wt / len(self) > SPARSE_THRESH:
+        if len(self) <= SPARSE_NQ or self.wt / len(self) > SPARSE_THRESH:
             return repr(self)
         else:
             return self.str_sparse()
             
-    def str_sparse(self):
-        return " ".join(
+    def __getitem__(self, idxs):
+        return Pauli(self.op[idxs], phase=self.ph)
+            
+    def str_sparse(self, incl_ph=True):
+        return ("i^{} ".format(self.ph) if incl_ph else "") + (" ".join(
             "{}[{}]".format(P, idx) for idx, P in enumerate(self.op) if P != "I"
-        )
+        ) if self.wt > 0 else "I")
 
     def __neg__(self):
         """

@@ -47,6 +47,8 @@ from bsf import *
 from numpy import hstack, newaxis
 from exceptions import *
 
+from paulicollections import PauliList
+
 from constraint_solvers import solve_commutation_constraints
 from unitary_reps import clifford_as_unitary
 
@@ -69,6 +71,8 @@ __all__ = [
 
 VALID_OPS = ['I', 'X', 'Y', 'Z']
 VALID_PHS = range(4)
+KINDS = ['X', 'Z']
+PHASES = [" +", "+i", " -", "-i"]
 
 ## CLASSES ##
 
@@ -91,25 +95,22 @@ class Clifford(object):
         # Require that all specified operators be Paulis.
         # Moreover, we should warn the caller if the output phase is not either
         # 0 or 2, since such operators are not automorphisms of the Pauli group.
-        for output_xz in chain(xbars, zbars):
-            if output_xz is not Unspecified:
-                if not isinstance(output_xz,Pauli):
-                    raise TypeError("Output operators must be Paulis.")
-                if output_xz.ph not in [0, 2]:
-                    warnings.warn(
-                        'The output phase of a Clifford operator has been specified as {}, such that the operator is not a valid automorphism.\n'.format(
-                            output_xz.ph
-                        ) +
-                        'To avoid this warning, please choose all output phases to be from the set {0, 2}.'
-                    )
+        self.xout = PauliList(*xbars)
+        self.zout = PauliList(*zbars)
+        
+        for output_xz in chain(self.xout, self.zout):
+            if output_xz is not Unspecified and output_xz.ph not in [0, 2]:
+                warnings.warn(
+                    'The output phase of a Clifford operator has been specified as {}, such that the operator is not a valid automorphism.\n'.format(
+                        output_xz.ph
+                    ) +
+                    'To avoid this warning, please choose all output phases to be from the set {0, 2}.'
+                )
                 
         # Prevent fully unspecified operators.
         if all([P is Unspecified for P in chain(xbars, zbars)]):
             raise ValueError("At least one output must be specified.")
-            
-        # Copy the lists to break dependencies with the call site.
-        self.xout=copy(xbars)
-        self.zout=copy(zbars)
+        
 
     def __len__(self):
         """
@@ -131,15 +132,26 @@ class Clifford(object):
         Returns a string representing a Clifford in Pauli notation (yielding a
         list of input Paulis, and a list of output Paulis.)
         """
+        SPARSE_NQ = 3
+        if len(self) > SPARSE_NQ:
+            print len(self), SPARSE_NQ
+            return self.str_sparse()
+        
         left_side_x,left_side_z=elem_gens(len(self))
         right_side=self.xout+self.zout
         return '\n'.join(
                 '{gen.op} |-> {outsign}{out}'.format(
                     gen=gen,
                     out=out.op if out is not Unspecified else "Unspecified",
-                    outsign=[" +", "+i", " -", "-i"][out.ph] if out is not Unspecified else ""
+                    outsign=PHASES[out.ph] if out is not Unspecified else ""
                     )
                 for gen, out in zip(left_side_x + left_side_z, self.xout + self.zout)
+            )
+            
+    def str_sparse(self):
+        out = zip(KINDS, map(enumerate, [self.xout, self.zout]))
+        return "\n".join(
+            ["{}[{}] |-> {}{}".format(kind, idx, PHASES[P.ph], P.str_sparse(incl_ph=False)) for kind, Ps in out for idx, P in Ps]
             )
 
     def is_valid(self, quiet=True):
@@ -203,7 +215,7 @@ class Clifford(object):
                 # Nope. Wasn't iterable. Raise an error.
                 raise TypeError("Cliffords conjugate Paulis.")
         #Initialize the output Pauli to the identity:
-        rolling_pauli=Pauli('I'*len(pauli))        
+        rolling_pauli=Pauli('I'*len(pauli), phase=pauli.ph)
         for idx,op in enumerate(pauli.op):
             #For every X/Z the input Pauli contains, multiply by the
             # corresponding output Pauli from self. 
