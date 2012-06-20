@@ -99,6 +99,21 @@ class StabilizerCode(object):
                 'XIXZZ',
                 'ZXIXZ'
             ],
+
             ['XXXXX'], ['ZZZZZ']
         )
-        
+    def bit_flip_code(x_dist):
+        nq=2*x_dist+1
+        return StabilizerCode(
+            ['I'*j+'ZZ'+'I'*(nq-j-2) for j in range(nq)],
+
+            ['X'*nq], ['Z'*nq]
+        )
+    def phase_flip_code(z_dist):
+        nq=2*z_dist+1
+        return StabilizerCode(
+            ['I'*j+'XX'+'I'*(nq-j-2) for j in range(nq)],
+            ['X'*nq], ['Z'*nq]
+        )
+    def reed_muller_code(r,t):
+        raise NotImplementedError("Coming Soon: Reed-Muller Codes")
