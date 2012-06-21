@@ -150,9 +150,13 @@ class Clifford(object):
             
     def str_sparse(self):
         out = zip(KINDS, map(enumerate, [self.xout, self.zout]))
+        nq = len(self)
         return "\n".join(
-            ["{}[{}] |-> {}{}".format(kind, idx, PHASES[P.ph], P.str_sparse(incl_ph=False)) for kind, Ps in out for idx, P in Ps]
-            )
+            [
+                "{}[{}] |-> {}{}".format(kind, idx, PHASES[P.ph], P.str_sparse(incl_ph=False))
+                for kind, Ps in out for idx, P in Ps
+                if elem_gen(nq, idx, kind) != P
+            ])
 
     def is_valid(self, quiet=True):
         """

@@ -26,7 +26,7 @@ print "\n\n"
 print "Syndrome propagation:"
 print "========================================================================"
 
-faults = [q.elem_gen(7, idx, P) for idx in range(7) for P in ['X', 'Z']]
+faults = [q.elem_gen(7, idx, P) for idx in range(7) for P in ['X', 'Y', 'Z']]
 synd_meas = [q.elem_gen(7, idx, kind) for idx, kind in zip(range(1,7), 'XXXZZZ')]
 
 print "Using syndrome measurement operators:"
