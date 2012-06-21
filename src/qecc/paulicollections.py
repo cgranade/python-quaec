@@ -24,8 +24,7 @@
 
 ## IMPORTS ##
 
-from PauliClass import *
-#from PauliClass import ensure_pauli
+import PauliClass as pc
 from collections import Sequence
 from singletons import Unspecified
 
@@ -52,9 +51,9 @@ class PauliList(list):
 
     def __init__(self, *paulis):
         if len(paulis) == 1 and isinstance(paulis[0], Sequence) and not isinstance(paulis[0], str):
-            paulis = map(ensure_pauli, paulis[0])
+            paulis = map(pc.ensure_pauli, paulis[0])
         else:
-            paulis = map(ensure_pauli, paulis)
+            paulis = map(pc.ensure_pauli, paulis)
             
         # FIXME: figure out why super(list, self).__init__ doesn't work.
         list.__init__(self, paulis)
@@ -74,6 +73,24 @@ class PauliList(list):
         
     def __add__(self, other):
         return PauliList(*(super(PauliList, self).__add__(other)))
+        
+    ## OPERATORS ACTING ON PAULI LISTS ##
+    
+    def __and__(self, other):
+        if not isinstance(other, pc.Pauli):
+            return NotImplemented
+            
+        else:
+            return PauliList(*[P & other for P in self])
+    
+    def __rand__(self, other):
+        if not isinstance(other, pc.Pauli):
+            return NotImplemented
+        
+        else:
+            return PauliList(*[other & P for P in self])
+    
+    ## OTHER METHODS ##
         
     def generated_group(self):
         """
@@ -122,7 +139,7 @@ class PauliList(list):
         """
         if group_gens is None:
             # NOTE: Assumes all Paulis contained by self have the same nq.
-            Xs, Zs = elem_gens(len(self[0]))
+            Xs, Zs = pc.elem_gens(len(self[0]))
             group_gens = Xs + Zs
             
         if len(self) == 0:

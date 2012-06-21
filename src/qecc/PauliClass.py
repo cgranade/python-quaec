@@ -174,7 +174,13 @@ class Pauli(object):
         return Pauli(self.op + other.op, self.ph + other.ph)
 
     def __and__(self,other):
+        if not isinstance(other, Pauli):
+            return NotImplemented
         return self.tens(other)
+        
+    def set_phase(self, ph=0):
+        self.ph = ph
+        return self
         
     def mul_phase(self, ph):
         r"""

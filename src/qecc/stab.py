@@ -53,6 +53,17 @@ class StabilizerCode(object):
         self.logical_xs = pc.PauliList(*logical_xs)
         self.logical_zs = pc.PauliList(*logical_zs)
         
+    def __repr__(self):
+        return "<[[{n}, {k}, d]] StabilizerCode at {id:0x}>".format(
+            n=self.nq, k=self.nq_logical,
+            id=id(self)
+        )
+    
+    def __str__(self):
+        return "S = <{group_generators}>\nXbars = {0.logical_xs}\nZbars = {0.logical_zs}".format(
+            self,
+            group_generators=", ".join(map(str, self.group_generators)))
+        
     @property
     def nq(self):
         """
@@ -65,7 +76,7 @@ class StabilizerCode(object):
         return len(self.group_generators)
         
     @property
-    def n_logical(self):
+    def nq_logical(self):
         return self.nq - self.n_constraints
         
     @property
@@ -76,62 +87,77 @@ class StabilizerCode(object):
         C = c.Clifford(self.logical_xs + self.group_generators, self.logical_zs + ([Unspecified] * self.n_constraints))
         return C.constraint_completions()
 
+    def block_logical_pauli(self, P):
+        r"""
+        Given a Pauli operator :math:`P` acting on :math:`k`, finds a Pauli
+        operator :math:`\overline{P}` on :math:`nk` qubits that corresponds
+        to the logical operator acting across :math:`k` blocks of this code.
+        
+        Note that this method is only supported for single logical qubit codes.
+        """
+        
+        if self.nq_logical > 1:
+            raise NotImplementedError("Mapping of logical Pauli operators is currently only supported for single-qubit codes.")
+        
+        # TODO: test that phases are handled correctly.
+        
+        # FIXME: cache this dictionary.
+        replace_dict = {
+            'I': p.eye_p(self.nq),
+            'X': self.logical_xs[0],
+            'Y': (self.logical_xs[0] * self.logical_zs[0]).mul_phase(1),
+            'Z': self.logical_zs[0]
+        }
+        
+        # FIXME: using eye_p(0) is a hack.
+        return reduce(op.and_, 
+                (replace_dict[sq_op] for sq_op in P.op),
+                p.eye_p(0))
+
     def concatenate(self,other):
         """
         Returns the stabilizer for a concatenated code, given the 
         stabilizers for two codes. At this point, it only works for two
         k=1 codes.
         """
-        nq_self=self.nq
-        nq_other=other.nq
-        nq_new=nq_self*nq_other
-        stab_new=StabilizerCode([],[],[])
-        for k in range(nq_other):
-            for low_level_gen in self.group_generators:
-                stab_new.group_generators.append(p.Pauli('I'*k*nq_self+low_level_gen.op+'I'*(nq_new-nq_self*(k+1))))
-        for phys_gen in other.group_generators:
-            log_gen_op=''
-            log_gen_ph=0
-            for letter in phys_gen.op:
-                if letter == 'X':
-                    log_gen_op+=self.logical_xs[0].op
-                elif letter == 'Z':
-                    log_gen_op+=self.logical_zs[0].op
-                elif letter == 'Y':
-                    log_gen_op+=(self.logical_xs[0]*self.logical_zs[0]).op
-                    log_gen_ph+=1
-                elif letter == 'I':
-                    log_gen_op+='I'*nq_self
-            stab_new.group_generators.append(p.Pauli(log_gen_op,log_gen_ph))
-        for phys_log in other.logical_xs:
-            log_log_op=''
-            log_log_ph=0
-            for letter in phys_log.op:
-                if letter == 'X':
-                    log_log_op+=self.logical_xs[0].op
-                elif letter == 'Z':
-                    log_log_op+=self.logical_zs[0].op
-                elif letter == 'Y':
-                    log_log_op+=(self.logical_xs[0]*self.logical_zs[0]).op
-                    log_log_ph+=1
-                elif letter == 'I':
-                    log_log_op+='I'*nq_self
-            stab_new.logical_xs.append(p.Pauli(log_log_op,log_log_ph))
-        for phys_log in other.logical_zs:
-            log_log_op=''
-            log_log_ph=0
-            for letter in phys_log.op:
-                if letter == 'X':
-                    log_log_op+=self.logical_xs[0].op
-                elif letter == 'Z':
-                    log_log_op+=self.logical_zs[0].op
-                elif letter == 'Y':
-                    log_log_op+=(self.logical_xs[0]*self.logical_zs[0]).op
-                    log_log_ph+=1
-                elif letter == 'I':
-                    log_log_op+='I'*nq_self
-            stab_new.logical_zs.append(p.Pauli(log_log_op,log_log_ph))
-        return stab_new
+        
+        if self.nq_logical > 1 or other.nq_logical > 1:
+            raise NotImplementedError("Concatenation is currently only supported for single-qubit codes.")
+        
+        nq_self = self.nq
+        nq_other = other.nq
+        nq_new = nq_self * nq_other
+        
+        # To obtain the new generators, we must apply the stabilizer generators
+        # to each block of the inner code (self), as well as the stabilizer
+        # generators of the outer code (other), using the inner logical Paulis
+        # for the outer stabilizer generators.
+        
+        # Making the stabilizer generators from the inner (L0) code is straight-
+        # forward: we repeat the code other.nq times, once on each block of the
+        # outer code. We use that PauliList supports tensor products.
+        new_generators = sum(
+            (
+                p.eye_p(nq_self * k) & self.group_generators & p.eye_p(nq_self * (nq_other - k - 1))
+                for k in range(nq_other)
+            ),
+            pc.PauliList())
+                
+        # Each of the stabilizer generators due to the outer (L1) code can be
+        # found by computing the block-logical operator across multiple L0
+        # blocks, as implemented by StabilizerCode.block_logical_pauli.
+        new_generators += map(self.block_logical_pauli, other.group_generators)
+            
+        # In the same way, the logical operators are also found by mapping L1
+        # operators onto L0 qubits.
+        
+        # This completes the definition of the concatenated code, and so we are
+        # done.
+        
+        return StabilizerCode(new_generators,
+            logical_xs=map(self.block_logical_pauli, other.logical_xs),
+            logical_zs=map(self.block_logical_pauli, other.logical_zs)
+        )
 
     @staticmethod
     def bit_flip_code(x_dist):
@@ -178,6 +204,10 @@ class StabilizerCode(object):
     @staticmethod
     def shor_code():
         return StabilizerCode.bit_flip_code(1).concatenate(StabilizerCode.phase_flip_code(1))        
+
+    @staticmethod
+    def css_code(C1, C2):
+        raise NotImplementedError("Not yet implemented.")
 
     @staticmethod
     def reed_muller_code(r,t):
