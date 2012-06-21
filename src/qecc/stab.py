@@ -103,7 +103,7 @@ class StabilizerCode(object):
                 yield normalizer_element
         
     def encoding_cliffords(self):
-        C = c.Clifford(self.logical_xs + self.group_generators, self.logical_zs + ([Unspecified] * self.n_constraints))
+        C = c.Clifford(self.logical_xs + ([Unspecified] * self.n_constraints), self.logical_zs + self.group_generators)
         return C.constraint_completions()
 
     def block_logical_pauli(self, P):
@@ -191,6 +191,7 @@ class StabilizerCode(object):
     @staticmethod
     def bit_flip_code(x_dist):
         return StabilizerCode.flip_code(x_dist, stab_kind='Z')
+
     @staticmethod
     def phase_flip_code(z_dist):
         return StabilizerCode.flip_code(z_dist, stab_kind='X')
@@ -232,6 +233,7 @@ class StabilizerCode(object):
     @staticmethod
     def reed_muller_code(r,t):
         raise NotImplementedError("Coming Soon: Reed-Muller Codes")
+
     @staticmethod
     def reed_solomon_code(r,t):
         raise NotImplementedError("Coming Soon: Reed-Solomon Codes")
