@@ -54,8 +54,9 @@ class StabilizerCode(object):
         self.logical_zs = pc.PauliList(*logical_zs)
         
     def __repr__(self):
-        return "<[[{n}, {k}, d]] StabilizerCode at {id:0x}>".format(
+        return "<[[{n}, {k}, {d}]] StabilizerCode at {id:0x}>".format(
             n=self.nq, k=self.nq_logical,
+            d=self.distance if self.nq < 6 else "?",
             id=id(self)
         )
     
@@ -81,7 +82,25 @@ class StabilizerCode(object):
         
     @property
     def distance(self):
-        raise NotImplementedError("Not yet implemented.")
+        """
+        Warning: this property is currently very slow to compute.
+        """
+        return min(P.wt for P in self.normalizer_group(mod_s=True))
+ 
+    def stabilizer_group(self, coset_rep=None):
+        return self.group_generators.generated_group(coset_rep=coset_rep)
+        
+    def logical_pauli_group(self, incl_identity=True):
+        return p.from_generators(self.logical_xs + self.logical_zs, incl_identity=incl_identity)
+        
+    def normalizer_group(self, mod_s=False):
+        r"""
+        Returns all elements of the normalizer of the stabilizer group. If
+        ``mod_s`` is ``True``, returns the set :math:`N(S)\\S`.
+        """
+        for Pbar in self.logical_pauli_group(incl_identity=not mod_s):
+            for normalizer_element in self.stabilizer_group(coset_rep=Pbar):
+                yield normalizer_element
         
     def encoding_cliffords(self):
         C = c.Clifford(self.logical_xs + self.group_generators, self.logical_zs + ([Unspecified] * self.n_constraints))
@@ -159,21 +178,22 @@ class StabilizerCode(object):
             logical_zs=map(self.block_logical_pauli, other.logical_zs)
         )
 
+    ## COMMON CODES ##
+
+    @staticmethod
+    def flip_code(dist, stab_kind='Z'):
+        nq=2*dist+1
+        return StabilizerCode(
+            ['I'*j + (stab_kind * 2) + 'I'*(nq-j-2) for j in range(nq-1)],
+            ['X'*nq], ['Z'*nq]
+        )
+
     @staticmethod
     def bit_flip_code(x_dist):
-        nq=2*x_dist+1
-        return StabilizerCode(
-            ['I'*j+'ZZ'+'I'*(nq-j-2) for j in range(nq-1)],
-            ['X'*nq], ['Z'*nq]
-
-        )
+        return StabilizerCode.flip_code(x_dist, stab_kind='Z')
     @staticmethod
     def phase_flip_code(z_dist):
-        nq=2*z_dist+1
-        return StabilizerCode(
-            ['I'*j+'XX'+'I'*(nq-j-2) for j in range(nq-1)],
-            ['X'*nq], ['Z'*nq]
-        )
+        return StabilizerCode.flip_code(z_dist, stab_kind='X')
 
     @staticmethod
     def perfect_5q_code():
