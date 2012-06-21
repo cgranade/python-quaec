@@ -44,6 +44,7 @@ from copy import copy, deepcopy
 from itertools import product, chain, combinations
 from PauliClass import *
 from bsf import *
+import stab # Not import * so as to avoid cyclic dependencies.
 from numpy import hstack, newaxis
 from exceptions import *
 
@@ -293,9 +294,17 @@ class Clifford(object):
         return Clifford(exones+extwos,zedones+zedtwos)
 
     def __call__(self, other):
-        if not isinstance(other, Pauli):
+        if isinstance(other, Pauli):
+            return self.conjugate_pauli(other)
+        if isinstance(other, PauliList):
+            return PauliList(*map(self, other))
+        elif isinstance(other, stab.StabilizerCode):
+            return stab.StabilizerCode(
+                self(other.group_generators),
+                self(other.logical_xs),
+                self(other.logical_zs))
+        else:
             return NotImplemented
-        return self.conjugate_pauli(other)
         
     def constraint_completions(self):
         """
