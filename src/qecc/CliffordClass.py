@@ -192,6 +192,10 @@ class Clifford(object):
                     return False
                     
         return True
+        
+    def inv(self):
+        print "Phase information will be lost, aBSM notation will fix this."
+        return self.as_bsm().inv().as_clifford
 
     def conjugate_pauli(self,pauli):
         r"""
