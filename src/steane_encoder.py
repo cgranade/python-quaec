@@ -1,6 +1,7 @@
 import qecc as q
 import operator as op
-from itertools import starmap
+from itertools import starmap, product
+from collections import defaultdict
 
 stab_code = q.StabilizerCode.steane_code()
 enc = stab_code.encoding_cliffords().next()
@@ -27,21 +28,47 @@ print "Syndrome propagation:"
 print "========================================================================"
 
 faults = [q.elem_gen(7, idx, P) for idx in range(7) for P in ['X', 'Y', 'Z']]
-synd_meas = [q.elem_gen(7, idx, kind) for idx, kind in zip(range(1,7), 'XXXZZZ')]
+synd_meas = [q.elem_gen(7, idx, kind) for idx, kind in zip(range(1,7), 'ZZZZZZ')]
+
+stab = q.StabilizerCode.unencoded_state(nq_logical=1, nq_ancilla=6)
+
+print "Initial stabilizer code:"
+print stab
+
+print "Encoding:"
+print enc(stab)
+
 
 print "Using syndrome measurement operators:"
 for idx, meas in enumerate(synd_meas):
     print '\t{}\t{}'.format(idx, meas.str_sparse(incl_ph=False))
 print ''
     
-for fault in faults:
-    eff = enc * fault.as_clifford() * dec
-    print "Fault {} yields syndrome [{}].".format(
-        fault.str_sparse(incl_ph=False),
-        ", ".join(str(eff.conjugate_pauli(meas).ph / 2) for meas in synd_meas)
-        )
-    print ''
-    print "Effective single-qubit Clifford:"
-    print q.Clifford([eff.xout[0][0]], [eff.zout[0][0]])
-    print '--------'
+recovery = defaultdict(lambda: q.I.as_clifford())
     
+for fault in faults:
+    eff = dec * fault.as_clifford() * enc
+    syndrome = tuple([eff.conjugate_pauli(meas).ph / 2 for meas in synd_meas])
+    error = q.Clifford([eff.xout[0][0]], [eff.zout[0][0]])
+    if syndrome not in recovery:
+        recovery[syndrome] = error
+    else:
+        if recovery[syndrome] != error:
+            raise RuntimeError("Collision.")
+
+def error_to_pauli(error):
+    if error == q.I.as_clifford():
+        return "I"
+    if error == q.X.as_clifford():
+        return "X"
+    if error == q.Y.as_clifford():
+        return "Y"
+    if error == q.Z.as_clifford():
+        return "Z"
+
+print "Recovery operators for all weight-1 errors:"
+
+print "\n".join(
+    "{syndrome}:\t{error}".format(syndrome=syndrome, error=error_to_pauli(recovery[syndrome]))
+    for syndrome in product(range(2), repeat=6)
+)

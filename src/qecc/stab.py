@@ -70,7 +70,7 @@ class StabilizerCode(object):
         """
         TODO
         """
-        return len(iter(gen for gen in self.group_generators if gen is not Unspecified).next())
+        return len(iter(gen for gen in self.group_generators + self.logical_xs + self.logical_zs if gen is not Unspecified).next())
         
     @property
     def n_constraints(self):
@@ -103,7 +103,9 @@ class StabilizerCode(object):
                 yield normalizer_element
         
     def encoding_cliffords(self):
-        C = c.Clifford(self.logical_xs + self.group_generators, self.logical_zs + ([Unspecified] * self.n_constraints))
+        C = c.Clifford(
+            self.logical_xs + ([Unspecified] * self.n_constraints),
+            self.logical_zs + self.group_generators)
         return C.constraint_completions()
 
     def block_logical_pauli(self, P):
@@ -178,7 +180,37 @@ class StabilizerCode(object):
             logical_zs=map(self.block_logical_pauli, other.logical_zs)
         )
 
+    def __and__(self, other):
+    
+        if not isinstance(other, StabilizerCode):
+            return NotImplemented
+        
+        return StabilizerCode(
+            (self.group_generators & p.eye_p(other.nq)) +
+            (p.eye_p(self.nq) & other.group_generators),
+            
+            (self.logical_xs & p.eye_p(other.nq)) +
+            (p.eye_p(self.nq) & other.logical_xs),
+            
+            (self.logical_zs & p.eye_p(other.nq)) +
+            (p.eye_p(self.nq) & other.logical_zs),
+        )
+
     ## COMMON CODES ##
+
+    @staticmethod
+    def ancilla_register(nq=1):
+        return StabilizerCode(
+            p.elem_gens(nq)[1],
+            [], []
+        )
+
+    @staticmethod
+    def unencoded_state(nq_logical=1, nq_ancilla=0):    
+        return (
+            StabilizerCode([], *p.elem_gens(nq_logical)) &
+            StabilizerCode.ancilla_register(nq_ancilla)
+        )
 
     @staticmethod
     def flip_code(dist, stab_kind='Z'):
