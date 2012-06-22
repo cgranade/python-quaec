@@ -44,6 +44,7 @@ from copy import copy, deepcopy
 from itertools import product, chain, combinations
 from PauliClass import *
 from bsf import *
+import stab # Not import * so as to avoid cyclic dependencies.
 from numpy import hstack, newaxis
 from exceptions import *
 
@@ -194,12 +195,13 @@ class Clifford(object):
         return True
         
     def inv(self):
-        print "Phase information will be lost, aBSM notation will fix this."
-        return self.as_bsm().inv().as_clifford
+        #print "Phase information will be lost, aBSM notation will fix this."
+        if any([P.ph != 0 for P in self.xout + self.zout]):
+            warnings.warn("This inverse method uses BSM, and hence discards phase information.")
+        return self.as_bsm().inv().as_clifford()
 
     def conjugate_pauli(self,pauli):
         r"""
-
         Given an instance of :class:`qecc.Pauli` representing the
         operator :math:`P`, calculates the mapping 
         :math:`CPC^{\dagger}`, where :math:`C` is the operator represented by
@@ -239,7 +241,7 @@ class Clifford(object):
 
     def __eq__(self,other):
         if isinstance(other, Clifford):
-            return all(P == Q for P, Q in zip(self.xout + self.zout, other.xout + other.zout))
+            return all([P == Q for P, Q in zip(self.xout + self.zout, other.xout + other.zout)])
         else:
             return False
             
@@ -293,9 +295,17 @@ class Clifford(object):
         return Clifford(exones+extwos,zedones+zedtwos)
 
     def __call__(self, other):
-        if not isinstance(other, Pauli):
+        if isinstance(other, Pauli):
+            return self.conjugate_pauli(other)
+        if isinstance(other, PauliList):
+            return PauliList(*map(self, other))
+        elif isinstance(other, stab.StabilizerCode):
+            return stab.StabilizerCode(
+                self(other.group_generators),
+                self(other.logical_xs),
+                self(other.logical_zs))
+        else:
             return NotImplemented
-        return self.conjugate_pauli(other)
         
     def constraint_completions(self):
         """

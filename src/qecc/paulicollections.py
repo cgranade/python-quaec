@@ -74,6 +74,9 @@ class PauliList(list):
     def __add__(self, other):
         return PauliList(*(super(PauliList, self).__add__(other)))
         
+    def __str__(self):
+        return "PauliList({})".format(", ".join(map(repr, self)))
+        
     ## OPERATORS ACTING ON PAULI LISTS ##
     
     def __and__(self, other):

@@ -50,6 +50,7 @@ __all__ = [
 ## CONSTANTS ##
 
 VALID_OPS = ['I', 'X', 'Y', 'Z']
+__all__ += VALID_OPS
 VALID_PHS = range(4)
 
 MULT_TABLE = {
@@ -351,6 +352,13 @@ class Pauli(object):
                 #       be excluded.
                 return PauliList(*group_gens[1:])
 
+## MORE CONSTANTS ##
+
+I = Pauli('I')
+X = Pauli('X')
+Y = Pauli('Y')
+Z = Pauli('Z')
+
 ## FUNCTIONS ##
        
 def ensure_pauli(P):
@@ -466,7 +474,7 @@ def elem_gens(nq):
     :returns: a tuple of two lists, containing :math:`X` and :math:`Z`
         generators, respectively.
     """
-    return tuple([elem_gen(nq,idx,P) for idx in range(nq)] for P in ['X','Z'])
+    return tuple(PauliList(*[elem_gen(nq,idx,P) for idx in range(nq)]) for P in ['X','Z'])
 
 def eye_p(nq):
     """
