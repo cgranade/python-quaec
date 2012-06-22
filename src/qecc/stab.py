@@ -48,10 +48,14 @@ class StabilizerCode(object):
     TODO
     """
     
+    ## CONSTRUCTOR ##
+    
     def __init__(self, group_generators, logical_xs, logical_zs):
         self.group_generators = pc.PauliList(*group_generators)
         self.logical_xs = pc.PauliList(*logical_xs)
         self.logical_zs = pc.PauliList(*logical_zs)
+        
+    ## PRETTY PRINTING ##
         
     def __repr__(self):
         return "<[[{n}, {k}, {d}]] StabilizerCode at {id:0x}>".format(
@@ -64,33 +68,69 @@ class StabilizerCode(object):
         return "S = <{group_generators}>\nXbars = {0.logical_xs}\nZbars = {0.logical_zs}".format(
             self,
             group_generators=", ".join(map(str, self.group_generators)))
+       
+    ## READ-ONLY PROPERTIES ##
         
     @property
     def nq(self):
         """
-        TODO
+        The number of physical qubits into which this code encodes data.
         """
         return len(iter(gen for gen in self.group_generators + self.logical_xs + self.logical_zs if gen is not Unspecified).next())
         
     @property
     def n_constraints(self):
+        """
+        The number of stabilizer constraints on valid codewords.
+        """
         return len(self.group_generators)
         
     @property
     def nq_logical(self):
+        """
+        The number of logical qubits admitted by this code.
+        """
         return self.nq - self.n_constraints
         
     @property
     def distance(self):
-        """
+        r"""
+        The distance of this code, defined by :math:`\min\text{wt} \{
+        P | P \in \text{N}(S) \\ S \}`, where :math:`S` is the stabilizer group
+        for this code.
+        
         Warning: this property is currently very slow to compute.
         """
         return min(P.wt for P in self.normalizer_group(mod_s=True))
  
+    ## GROUP ENUMERATION METHODS ##
+ 
     def stabilizer_group(self, coset_rep=None):
+        r"""
+        Iterator onto all elements of the stabilizer group :math:`S` describing
+        this code, or onto a coset :math:`PS` of the stabilizer group.
+        
+        :param qecc.Pauli coset_rep: A Pauli operator :math:`P`, so that the
+            iterated coset is :math:`PS`. If not specified, defaults to the
+            identity.
+        :yields: All elements of the coset :math:`PS` of the stabilizer
+            group :math:`S`.
+        """
         return self.group_generators.generated_group(coset_rep=coset_rep)
         
     def logical_pauli_group(self, incl_identity=True):
+        r"""
+        Iterator onto the group :math:`\text{N}(S) / S`, where :math:`S` is
+        the stabilizer group describing this code. Each member of the group
+        is specified by a coset representative drawn from the respective
+        elements of :math:`\text{N}(S) / S`. These representatives are
+        chosen to be the logical :math:`X` and :math:`Z` operators specified
+        as properties of this instance.
+        
+        :param bool incl_identity: If ``False``, the identity coset :math:`S`
+            is excluded from this iterator.
+        :yields: A representative for each element of :math:`\text{N}(S) / S`.
+        """
         return p.from_generators(self.logical_xs + self.logical_zs, incl_identity=incl_identity)
         
     def normalizer_group(self, mod_s=False):
@@ -102,11 +142,18 @@ class StabilizerCode(object):
             for normalizer_element in self.stabilizer_group(coset_rep=Pbar):
                 yield normalizer_element
         
+    ## EN/DE/TRANSCODING METHODS ##
+        
     def encoding_cliffords(self):
         C = c.Clifford(
             self.logical_xs + ([Unspecified] * self.n_constraints),
             self.logical_zs + self.group_generators)
         return C.constraint_completions()
+        
+    def star_decoder(self, for_enc=None):
+        raise NotImplementedError("Not yet implemented.")
+
+    ## BLOCK CODE METHODS ##
 
     def block_logical_pauli(self, P):
         r"""
@@ -134,7 +181,27 @@ class StabilizerCode(object):
         return reduce(op.and_, 
                 (replace_dict[sq_op] for sq_op in P.op),
                 p.eye_p(0))
-
+    
+    ## OPERATORS ##
+    
+    def __and__(self, other):
+    
+        if not isinstance(other, StabilizerCode):
+            return NotImplemented
+        
+        return StabilizerCode(
+            (self.group_generators & p.eye_p(other.nq)) +
+            (p.eye_p(self.nq) & other.group_generators),
+            
+            (self.logical_xs & p.eye_p(other.nq)) +
+            (p.eye_p(self.nq) & other.logical_xs),
+            
+            (self.logical_zs & p.eye_p(other.nq)) +
+            (p.eye_p(self.nq) & other.logical_zs),
+        )
+        
+    ## CONCATENATION ##
+        
     def concatenate(self,other):
         """
         Returns the stabilizer for a concatenated code, given the 
@@ -178,22 +245,6 @@ class StabilizerCode(object):
         return StabilizerCode(new_generators,
             logical_xs=map(self.block_logical_pauli, other.logical_xs),
             logical_zs=map(self.block_logical_pauli, other.logical_zs)
-        )
-
-    def __and__(self, other):
-    
-        if not isinstance(other, StabilizerCode):
-            return NotImplemented
-        
-        return StabilizerCode(
-            (self.group_generators & p.eye_p(other.nq)) +
-            (p.eye_p(self.nq) & other.group_generators),
-            
-            (self.logical_xs & p.eye_p(other.nq)) +
-            (p.eye_p(self.nq) & other.logical_xs),
-            
-            (self.logical_zs & p.eye_p(other.nq)) +
-            (p.eye_p(self.nq) & other.logical_zs),
         )
 
     ## COMMON CODES ##
@@ -267,3 +318,5 @@ class StabilizerCode(object):
     @staticmethod
     def reed_solomon_code(r,t):
         raise NotImplementedError("Coming Soon: Reed-Solomon Codes")
+        
+
