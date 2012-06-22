@@ -195,12 +195,13 @@ class Clifford(object):
         return True
         
     def inv(self):
-        print "Phase information will be lost, aBSM notation will fix this."
-        return self.as_bsm().inv().as_clifford
+        #print "Phase information will be lost, aBSM notation will fix this."
+        if any([P.ph != 0 for P in self.xout + self.zout]):
+            warnings.warn("This inverse method uses BSM, and hence discards phase information.")
+        return self.as_bsm().inv().as_clifford()
 
     def conjugate_pauli(self,pauli):
         r"""
-
         Given an instance of :class:`qecc.Pauli` representing the
         operator :math:`P`, calculates the mapping 
         :math:`CPC^{\dagger}`, where :math:`C` is the operator represented by
