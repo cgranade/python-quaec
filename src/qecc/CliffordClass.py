@@ -135,7 +135,6 @@ class Clifford(object):
         """
         SPARSE_NQ = 3
         if len(self) > SPARSE_NQ:
-            print len(self), SPARSE_NQ
             return self.str_sparse()
         
         left_side_x,left_side_z=elem_gens(len(self))

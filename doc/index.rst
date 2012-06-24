@@ -22,6 +22,7 @@ Contents
    groups
    paulicollections
    bsf
+   stab
    circuits
    predicates
    utils
