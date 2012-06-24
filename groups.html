@@ -70,112 +70,6 @@
 </tbody>
 </table>
 <dl class="method">
-<dt id="qecc.Pauli.as_bsv">
-<tt class="descname">as_bsv</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_bsv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts the given Pauli to a binary symplectic vector, discarding phase
-information.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">A binary symplectic vector representing this Pauli operator.</td>
-</tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">BinarySymplecticVector</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.Pauli.as_clifford">
-<tt class="descname">as_clifford</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_clifford" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> representing conjugation by this Pauli
-operator.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.Pauli.as_gens">
-<tt class="descname">as_gens</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_gens" title="Permalink to this definition">¶</a></dt>
-<dd><p>Expresses an input Pauli in terms of the elementary generators <img class="math" src="_images/math/964b9d696717d9b2f17a3d48cd69a5e9f56e8ea7.png" alt="X_j"/> and <img class="math" src="_images/math/365e85fa092babff714eb596ed90f58d1b9323c7.png" alt="Z_j"/>, stripping off phases.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">list of <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> instances.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.Pauli.as_unitary">
-<tt class="descname">as_unitary</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_unitary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-36681eb)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> containing a unitary matrix
-representation of this Pauli operator.</p>
-<p>Raises a <tt class="xref py py-obj docutils literal"><span class="pre">RuntimeError</span></tt> if NumPy cannot be imported.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.Pauli.centralizer_gens">
-<tt class="descname">centralizer_gens</tt><big>(</big><em>group_gens=None</em><big>)</big><a class="headerlink" href="#qecc.Pauli.centralizer_gens" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the generators of the centralizer group <img class="math" src="_images/math/258100fc9201c2fb854c0b6c3fd4994b92350d2c.png" alt="\mathrm{C}(P)"/>,
-where <img class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> is the Pauli operator represented by this instance.
-If <tt class="docutils literal"><span class="pre">group_gens</span></tt> is specified, <img class="math" src="_images/math/258100fc9201c2fb854c0b6c3fd4994b92350d2c.png" alt="\mathrm{C}(P)"/> is taken to be
-a subgroup of the group <img class="math" src="_images/math/362f442ca43f4ead5fa7dc7ec25e86289032d651.png" alt="G = \langle G_1, \dots, G_k\rangle"/>,
-where <img class="math" src="_images/math/1bd9a54ae5cfd7c94283454c6e8a05f9d77bbf9a.png" alt="G_i"/> is the <img class="math" src="_images/math/6934c6c653b822d4b861f82307a28c4b4bb1df3d.png" alt="i^{\text{th}}"/> element of
-<tt class="docutils literal"><span class="pre">group_gens</span></tt>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_gens</strong> (<em>list of qecc.Pauli instances</em>) &#8211; Either <tt class="xref docutils literal"><span class="pre">None</span></tt> or a list of generators <img class="math" src="_images/math/1bd9a54ae5cfd7c94283454c6e8a05f9d77bbf9a.png" alt="G_i"/>.
-If not <tt class="xref docutils literal"><span class="pre">None</span></tt>, the returned centralizer <img class="math" src="_images/math/258100fc9201c2fb854c0b6c3fd4994b92350d2c.png" alt="\mathrm{C}(P)"/> is
-a subgroup of the group <img class="math" src="_images/math/2e41a1ecdd222c1580b874adc7c3cfb11972def0.png" alt="\langle G_i \rangle_{i=1}^k"/>.</td>
-</tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">A list of elements <img class="math" src="_images/math/e86919caff4a26af2c8867c56bcd9134bfd241ac.png" alt="P_i"/> of the Pauli group such that
-<img class="math" src="_images/math/a3c274be10fef66aaefea2e52eab3e44b5860c41.png" alt="\mathrm{C}(P) = \langle P_i \rangle_{i=1}^{n}"/>, where
-<img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is the number of unique generators of the centralizer.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.Pauli.ct">
-<tt class="descname">ct</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.ct" title="Permalink to this definition">¶</a></dt>
-<dd><p>The conjugate transpose of this Pauli operator.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">an instance of the <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> class.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.Pauli.mul_phase">
-<tt class="descname">mul_phase</tt><big>(</big><em>ph</em><big>)</big><a class="headerlink" href="#qecc.Pauli.mul_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Increments the phase of this Pauli by <img class="math" src="_images/math/5e6a66bcd18aa82fb009a562fa40790727a37ba8.png" alt="i^{\mathrm{ph}}"/>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ph</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Amount the phase is to be incremented by.</td>
-</tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">This instance.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.Pauli.set_phase">
-<tt class="descname">set_phase</tt><big>(</big><em>ph=0</em><big>)</big><a class="headerlink" href="#qecc.Pauli.set_phase" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="qecc.Pauli.str_sparse">
 <tt class="descname">str_sparse</tt><big>(</big><em>incl_ph=True</em><big>)</big><a class="headerlink" href="#qecc.Pauli.str_sparse" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -198,6 +92,73 @@ is the Pauli operator represented by this instance.</td>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="qecc.Pauli.set_phase">
+<tt class="descname">set_phase</tt><big>(</big><em>ph=0</em><big>)</big><a class="headerlink" href="#qecc.Pauli.set_phase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="qecc.Pauli.mul_phase">
+<tt class="descname">mul_phase</tt><big>(</big><em>ph</em><big>)</big><a class="headerlink" href="#qecc.Pauli.mul_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increments the phase of this Pauli by <img class="math" src="_images/math/5e6a66bcd18aa82fb009a562fa40790727a37ba8.png" alt="i^{\mathrm{ph}}"/>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ph</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Amount the phase is to be incremented by.</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">This instance.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.Pauli.as_gens">
+<tt class="descname">as_gens</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_gens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expresses an input Pauli in terms of the elementary generators <img class="math" src="_images/math/964b9d696717d9b2f17a3d48cd69a5e9f56e8ea7.png" alt="X_j"/> and <img class="math" src="_images/math/365e85fa092babff714eb596ed90f58d1b9323c7.png" alt="Z_j"/>, stripping off phases.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">list of <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> instances.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.Pauli.as_bsv">
+<tt class="descname">as_bsv</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_bsv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the given Pauli to a binary symplectic vector, discarding phase
+information.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">A binary symplectic vector representing this Pauli operator.</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">BinarySymplecticVector</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.Pauli.as_unitary">
+<tt class="descname">as_unitary</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_unitary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-36681eb)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> containing a unitary matrix
+representation of this Pauli operator.</p>
+<p>Raises a <tt class="xref py py-obj docutils literal"><span class="pre">RuntimeError</span></tt> if NumPy cannot be imported.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.Pauli.as_clifford">
+<tt class="descname">as_clifford</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_clifford" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> representing conjugation by this Pauli
+operator.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="qecc.Pauli.wt">
 <tt class="descname">wt</tt><a class="headerlink" href="#qecc.Pauli.wt" title="Permalink to this definition">¶</a></dt>
@@ -210,6 +171,45 @@ is the Pauli operator represented by this instance.</td>
 </tr>
 <tr class="field"><th class="field-name">Returns:</th><td class="field-body">The number of qubits on which the represented Pauli operator
 is is supported.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.Pauli.ct">
+<tt class="descname">ct</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.ct" title="Permalink to this definition">¶</a></dt>
+<dd><p>The conjugate transpose of this Pauli operator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">an instance of the <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> class.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.Pauli.centralizer_gens">
+<tt class="descname">centralizer_gens</tt><big>(</big><em>group_gens=None</em><big>)</big><a class="headerlink" href="#qecc.Pauli.centralizer_gens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the generators of the centralizer group <img class="math" src="_images/math/258100fc9201c2fb854c0b6c3fd4994b92350d2c.png" alt="\mathrm{C}(P)"/>,
+where <img class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> is the Pauli operator represented by this instance.
+If <tt class="docutils literal"><span class="pre">group_gens</span></tt> is specified, <img class="math" src="_images/math/258100fc9201c2fb854c0b6c3fd4994b92350d2c.png" alt="\mathrm{C}(P)"/> is taken to be
+a subgroup of the group <img class="math" src="_images/math/362f442ca43f4ead5fa7dc7ec25e86289032d651.png" alt="G = \langle G_1, \dots, G_k\rangle"/>,
+where <img class="math" src="_images/math/1bd9a54ae5cfd7c94283454c6e8a05f9d77bbf9a.png" alt="G_i"/> is the <img class="math" src="_images/math/6934c6c653b822d4b861f82307a28c4b4bb1df3d.png" alt="i^{\text{th}}"/> element of
+<tt class="docutils literal"><span class="pre">group_gens</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_gens</strong> (<em>list of qecc.Pauli instances</em>) &#8211; Either <tt class="xref docutils literal"><span class="pre">None</span></tt> or a list of generators <img class="math" src="_images/math/1bd9a54ae5cfd7c94283454c6e8a05f9d77bbf9a.png" alt="G_i"/>.
+If not <tt class="xref docutils literal"><span class="pre">None</span></tt>, the returned centralizer <img class="math" src="_images/math/258100fc9201c2fb854c0b6c3fd4994b92350d2c.png" alt="\mathrm{C}(P)"/> is
+a subgroup of the group <img class="math" src="_images/math/2e41a1ecdd222c1580b874adc7c3cfb11972def0.png" alt="\langle G_i \rangle_{i=1}^k"/>.</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">A list of elements <img class="math" src="_images/math/e86919caff4a26af2c8867c56bcd9134bfd241ac.png" alt="P_i"/> of the Pauli group such that
+<img class="math" src="_images/math/a3c274be10fef66aaefea2e52eab3e44b5860c41.png" alt="\mathrm{C}(P) = \langle P_i \rangle_{i=1}^{n}"/>, where
+<img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is the number of unique generators of the centralizer.</td>
 </tr>
 </tbody>
 </table>
@@ -461,27 +461,34 @@ either 0 or 2. A warning will result if this condition is not met.</li>
 </tbody>
 </table>
 <dl class="method">
-<dt id="qecc.Clifford.as_bsm">
-<tt class="descname">as_bsm</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Clifford.as_bsm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a representation of the Clifford operator as a binary
-symplectic matrix.</p>
+<dt id="qecc.Clifford.str_sparse">
+<tt class="descname">str_sparse</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Clifford.str_sparse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="qecc.Clifford.is_valid">
+<tt class="descname">is_valid</tt><big>(</big><em>quiet=True</em><big>)</big><a class="headerlink" href="#qecc.Clifford.is_valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <tt class="xref docutils literal"><span class="pre">True</span></tt> if this instance represents a valid automorphism. In
+particular, this method returns <tt class="xref docutils literal"><span class="pre">True</span></tt> if all output phase assignments
+are either 0 or 2, and if all of the commutation relations on its
+outputs are obeyed. Unspecified outputs are ignored.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="bsf.html#qecc.BinarySymplecticMatrix" title="qecc.BinarySymplecticMatrix"><tt class="xref py py-class docutils literal"><span class="pre">qecc.BinarySymplecticMatrix</span></tt></a></td>
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>quiet</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If set to <tt class="xref docutils literal"><span class="pre">True</span></tt>, this method will not print out
+any information, but will return <tt class="xref docutils literal"><span class="pre">True</span></tt> or <tt class="xref docutils literal"><span class="pre">False</span></tt> as described
+above. Otherwise, if the operator is not a valid Clifford operator,
+diagnostic information will be printed.</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="qecc.Clifford.as_unitary">
-<tt class="descname">as_unitary</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Clifford.as_unitary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-36681eb)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> containing a unitary matrix
-representation of this Clifford operator.</p>
-<p>Raises a <tt class="xref py py-class docutils literal"><span class="pre">RuntimeError</span></tt> if NumPy cannot be imported.</p>
-</dd></dl>
+<dt id="qecc.Clifford.inv">
+<tt class="descname">inv</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Clifford.inv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="qecc.Clifford.conjugate_pauli">
@@ -537,34 +544,27 @@ raise an <tt class="xref py py-class docutils literal"><span class="pre">qecc.In
 </dd></dl>
 
 <dl class="method">
-<dt id="qecc.Clifford.inv">
-<tt class="descname">inv</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Clifford.inv" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="qecc.Clifford.is_valid">
-<tt class="descname">is_valid</tt><big>(</big><em>quiet=True</em><big>)</big><a class="headerlink" href="#qecc.Clifford.is_valid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns <tt class="xref docutils literal"><span class="pre">True</span></tt> if this instance represents a valid automorphism. In
-particular, this method returns <tt class="xref docutils literal"><span class="pre">True</span></tt> if all output phase assignments
-are either 0 or 2, and if all of the commutation relations on its
-outputs are obeyed. Unspecified outputs are ignored.</p>
+<dt id="qecc.Clifford.as_bsm">
+<tt class="descname">as_bsm</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Clifford.as_bsm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a representation of the Clifford operator as a binary
+symplectic matrix.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>quiet</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If set to <tt class="xref docutils literal"><span class="pre">True</span></tt>, this method will not print out
-any information, but will return <tt class="xref docutils literal"><span class="pre">True</span></tt> or <tt class="xref docutils literal"><span class="pre">False</span></tt> as described
-above. Otherwise, if the operator is not a valid Clifford operator,
-diagnostic information will be printed.</td>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="bsf.html#qecc.BinarySymplecticMatrix" title="qecc.BinarySymplecticMatrix"><tt class="xref py py-class docutils literal"><span class="pre">qecc.BinarySymplecticMatrix</span></tt></a></td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="qecc.Clifford.str_sparse">
-<tt class="descname">str_sparse</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Clifford.str_sparse" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="qecc.Clifford.as_unitary">
+<tt class="descname">as_unitary</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Clifford.as_unitary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-36681eb)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> containing a unitary matrix
+representation of this Clifford operator.</p>
+<p>Raises a <tt class="xref py py-class docutils literal"><span class="pre">RuntimeError</span></tt> if NumPy cannot be imported.</p>
+</dd></dl>
 
 </dd></dl>
 

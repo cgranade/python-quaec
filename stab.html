@@ -1,0 +1,502 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stabilizer Codes &mdash; QuaEC v0.1alpha1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1alpha1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="QuaEC v0.1alpha1 documentation" href="index.html" />
+    <link rel="next" title="Circuit Manipulation and Simulation" href="circuits.html" />
+    <link rel="prev" title="Binary Symplectic Form" href="bsf.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="circuits.html" title="Circuit Manipulation and Simulation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="bsf.html" title="Binary Symplectic Form"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">QuaEC v0.1alpha1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="stabilizer-codes">
+<h1>Stabilizer Codes<a class="headerlink" href="#stabilizer-codes" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>QuaEC includes a class, <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a>, that represents
+error-correcting codes specified using the stabilizer formalism. To construct
+a stabilizer code in QuaEC, the generators of a stabilizer group must be
+specified along with a particular assignment of logical operators acting on
+states encoded in the stabilizer code.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stab</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">StabilizerCode</span><span class="p">([</span><span class="s">&#39;ZZI&#39;</span><span class="p">,</span> <span class="s">&#39;IZZ&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;XXX&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;ZZZ&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">stab</span>
+<span class="go">S = &lt;i^0 ZZI, i^0 IZZ&gt;</span>
+<span class="go">Xbars = PauliList(i^0 XXX)</span>
+<span class="go">Zbars = PauliList(i^0 ZZZ)</span>
+</pre></div>
+</div>
+<p>For convienence, several static methods are provided to create instances for
+well-known stabilizer codes.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">stab</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">perfect_5q_code</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">stab</span>
+<span class="go">S = &lt;i^0 XZZXI, i^0 IXZZX, i^0 XIXZZ, i^0 ZXIXZ&gt;</span>
+<span class="go">Xbars = PauliList(i^0 XXXXX)</span>
+<span class="go">Zbars = PauliList(i^0 ZZZZZ)</span>
+</pre></div>
+</div>
+<p>Once constructed, an instance of <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a> exposes properties
+that describe the number of physical and logical qubits, as well as the distance
+of the code. (Please note that calculating the distance can be extremely slow
+for large codes.)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">stab</span><span class="o">.</span><span class="n">nq</span><span class="p">,</span> <span class="n">stab</span><span class="o">.</span><span class="n">nq_logical</span><span class="p">,</span> <span class="n">stab</span><span class="o">.</span><span class="n">distance</span><span class="p">)</span>
+<span class="go">(5, 1, 3)</span>
+</pre></div>
+</div>
+<p>Encoders and decoders for stabilizer codes can be found in a straightforward
+manner using <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">enc</span> <span class="o">=</span> <span class="n">stab</span><span class="o">.</span><span class="n">encoding_cliffords</span><span class="p">()</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">enc</span>
+<span class="go">X[0] |-&gt;  +X[0] X[1] X[2] X[3] X[4]</span>
+<span class="go">X[1] |-&gt;  +X[0] X[2] X[3] X[4]</span>
+<span class="go">X[2] |-&gt;  +X[1] X[2]</span>
+<span class="go">X[3] |-&gt;  +Y[0] X[1] X[3] Y[4]</span>
+<span class="go">X[4] |-&gt;  +X[0] X[1] Y[3] Y[4]</span>
+<span class="go">Z[0] |-&gt;  +Z[0] Z[1] Z[2] Z[3] Z[4]</span>
+<span class="go">Z[1] |-&gt;  +X[0] Z[1] Z[2] X[3]</span>
+<span class="go">Z[2] |-&gt;  +X[1] Z[2] Z[3] X[4]</span>
+<span class="go">Z[3] |-&gt;  +X[0] X[2] Z[3] Z[4]</span>
+<span class="go">Z[4] |-&gt;  +Z[0] X[1] X[3] Z[4]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">enc</span><span class="o">.</span><span class="n">inv</span><span class="p">()</span>
+<span class="go">X[0] |-&gt;  +X[0] Z[3] X[4]</span>
+<span class="go">X[1] |-&gt;  +X[0] X[1]</span>
+<span class="go">X[2] |-&gt;  +X[0] X[1] X[2]</span>
+<span class="go">X[3] |-&gt;  +X[0] X[2] X[3] Z[4]</span>
+<span class="go">X[4] |-&gt;  +X[0] Y[3] Y[4]</span>
+<span class="go">Z[0] |-&gt;  +Z[0] Y[1] Y[3] Z[4]</span>
+<span class="go">Z[1] |-&gt;  +Z[0] Y[2] Z[3] Y[4]</span>
+<span class="go">Z[2] |-&gt;  +Z[0] Z[1] Z[2] X[3]</span>
+<span class="go">Z[3] |-&gt;  +Z[0] Y[1] Z[3] Y[4]</span>
+<span class="go">Z[4] |-&gt;  +Z[0] Z[1] X[2] Z[3] Z[4]</span>
+</pre></div>
+</div>
+<p>Stabilizer codes may be combined by the tensor product (reprsented in QuaEC by
+<tt class="docutils literal"><span class="pre">&amp;</span></tt>), or by concatenation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">stab</span> <span class="o">&amp;</span> <span class="n">stab</span>
+<span class="go">S = &lt;i^0 X[0] Z[1] Z[2] X[3], i^0 X[1] Z[2] Z[3] X[4], i^0 X[0] X[2] Z[3] Z[4], i^0 Z[0] X[1] X[3] Z[4], i^0 X[5] Z[6] Z[7] X[8], i^0 X[6] Z[7] Z[8] X[9], i^0 X[5] X[7] Z[8] Z[9], i^0 Z[5] X[6] X[8] Z[9]&gt;</span>
+<span class="go">Xbars = PauliList(i^0 XXXXXIIIII, i^0 IIIIIXXXXX)</span>
+<span class="go">Zbars = PauliList(i^0 ZZZZZIIIII, i^0 IIIIIZZZZZ)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">q</span><span class="o">.</span><span class="n">StabilizerCode</span><span class="o">.</span><span class="n">bit_flip_code</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">StabilizerCode</span><span class="o">.</span><span class="n">phase_flip_code</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="go">S = &lt;i^0 Z[0] Z[1], i^0 Z[1] Z[2], i^0 Z[3] Z[4], i^0 Z[4] Z[5], i^0 Z[6] Z[7], i^0 Z[7] Z[8], i^0 X[0] X[1] X[2] X[3] X[4] X[5], i^0 X[3] X[4] X[5] X[6] X[7] X[8]&gt;</span>
+<span class="go">Xbars = PauliList(i^0 XXXXXXXXX)</span>
+<span class="go">Zbars = PauliList(i^0 ZZZZZZZZZ)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="class-reference">
+<h2>Class Reference<a class="headerlink" href="#class-reference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qecc-stabilizercode">
+<h3><a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a><a class="headerlink" href="#qecc-stabilizercode" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="qecc.StabilizerCode">
+<em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">StabilizerCode</tt><big>(</big><em>group_generators</em>, <em>logical_xs</em>, <em>logical_zs</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class representing a stabilizer code specified by the generators of its
+stabilizer group and by representatives for the logical operators acting
+on the code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>group_generators</strong> &#8211; Generators <img class="math" src="_images/math/9f09d622cd7ebd49e20b2e20717869bf2ee2aa5a.png" alt="N_i"/> such that the stabilizer
+group <img class="math" src="_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a0a.png" alt="S"/> of the represented code is given by
+<img class="math" src="_images/math/75c707313b184dc3424180e4764eb57702c7b3d4.png" alt="S = \left\langle N_i \right\rangle"/>.</li>
+<li><strong>logical_xs</strong> &#8211; Representatives for the logical <img class="math" src="_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/> operators
+acting on encoded states.</li>
+<li><strong>logical_zs</strong> &#8211; Representatives for the logical <img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> operators
+acting on encoded states.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="qecc.StabilizerCode.nq">
+<tt class="descname">nq</tt><a class="headerlink" href="#qecc.StabilizerCode.nq" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of physical qubits into which this code encodes data.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.StabilizerCode.n_constraints">
+<tt class="descname">n_constraints</tt><a class="headerlink" href="#qecc.StabilizerCode.n_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of stabilizer constraints on valid codewords.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.StabilizerCode.nq_logical">
+<tt class="descname">nq_logical</tt><a class="headerlink" href="#qecc.StabilizerCode.nq_logical" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of logical qubits admitted by this code.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.StabilizerCode.distance">
+<tt class="descname">distance</tt><a class="headerlink" href="#qecc.StabilizerCode.distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>The distance of this code, defined by <img class="math" src="_images/math/533ab002f6997faaabc9a30c17a5035ecb821cbd.png" alt="\min\text{wt} \{
+P | P \in \text{N}(S) \backslash S \}"/>, where <img class="math" src="_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a0a.png" alt="S"/> is the stabilizer group
+for this code.</p>
+<p>Warning: this property is currently very slow to compute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.StabilizerCode.stabilizer_group">
+<tt class="descname">stabilizer_group</tt><big>(</big><em>coset_rep=None</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.stabilizer_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterator onto all elements of the stabilizer group <img class="math" src="_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a0a.png" alt="S"/> describing
+this code, or onto a coset <img class="math" src="_images/math/805452ee372321839953fbd750cd9b23b973a3df.png" alt="PS"/> of the stabilizer group.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coset_rep</strong> (<a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><em>qecc.Pauli</em></a>) &#8211; A Pauli operator <img class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/>, so that the
+iterated coset is <img class="math" src="_images/math/805452ee372321839953fbd750cd9b23b973a3df.png" alt="PS"/>. If not specified, defaults to the
+identity.</td>
+</tr>
+<tr class="field"><th class="field-name">Yields :</th><td class="field-body">All elements of the coset <img class="math" src="_images/math/805452ee372321839953fbd750cd9b23b973a3df.png" alt="PS"/> of the stabilizer
+group <img class="math" src="_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a0a.png" alt="S"/>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.StabilizerCode.logical_pauli_group">
+<tt class="descname">logical_pauli_group</tt><big>(</big><em>incl_identity=True</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.logical_pauli_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterator onto the group <img class="math" src="_images/math/fd02de7f085e6a2b71233a3361573ef765a8ddcc.png" alt="\text{N}(S) / S"/>, where <img class="math" src="_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a0a.png" alt="S"/> is
+the stabilizer group describing this code. Each member of the group
+is specified by a coset representative drawn from the respective
+elements of <img class="math" src="_images/math/fd02de7f085e6a2b71233a3361573ef765a8ddcc.png" alt="\text{N}(S) / S"/>. These representatives are
+chosen to be the logical <img class="math" src="_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/> and <img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> operators specified
+as properties of this instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>incl_identity</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <tt class="xref docutils literal"><span class="pre">False</span></tt>, the identity coset <img class="math" src="_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a0a.png" alt="S"/>
+is excluded from this iterator.</td>
+</tr>
+<tr class="field"><th class="field-name">Yields :</th><td class="field-body">A representative for each element of <img class="math" src="_images/math/fd02de7f085e6a2b71233a3361573ef765a8ddcc.png" alt="\text{N}(S) / S"/>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.StabilizerCode.normalizer_group">
+<tt class="descname">normalizer_group</tt><big>(</big><em>mod_s=False</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.normalizer_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all elements of the normalizer of the stabilizer group. If
+<tt class="docutils literal"><span class="pre">mod_s</span></tt> is <tt class="xref docutils literal"><span class="pre">True</span></tt>, returns the set <img class="math" src="_images/math/bacdea9a63882f949bdc797cca1260ddcbc4d97c.png" alt="N(S)\backslash S"/>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.StabilizerCode.encoding_cliffords">
+<tt class="descname">encoding_cliffords</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.encoding_cliffords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterator onto all Clifford operators that encode into this
+stabilizer code, starting from an input register such that the state to
+be encoded is a state of the first <img class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> qubits, and such that the
+rest of the qubits in the input register are initialized to
+<img class="math" src="_images/math/c2fb842874f704afd57bf6a07e03ace7e4f87562.png" alt="\left|0\right\rangle"/>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Yields :</th><td class="field-body">instances <tt class="docutils literal"><span class="pre">C</span></tt> of <a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> such that
+<tt class="docutils literal"><span class="pre">C(q.StabilizerCode.unencoded_state(k,</span> <span class="pre">n</span> <span class="pre">-</span> <span class="pre">k))</span></tt> equals this code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.StabilizerCode.star_decoder">
+<tt class="descname">star_decoder</tt><big>(</big><em>for_enc=None</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.star_decoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not yet implemented.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.StabilizerCode.block_logical_pauli">
+<tt class="descname">block_logical_pauli</tt><big>(</big><em>P</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.block_logical_pauli" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a Pauli operator <img class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> acting on <img class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/>, finds a Pauli
+operator <img class="math" src="_images/math/91640f7a4eecd5a74c8a865c03846d837a6491d0.png" alt="\overline{P}"/> on <img class="math" src="_images/math/352c8227b306ecb073ce0371932c5b7fe3241232.png" alt="nk"/> qubits that corresponds
+to the logical operator acting across <img class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> blocks of this code.</p>
+<p>Note that this method is only supported for single logical qubit codes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.StabilizerCode.concatenate">
+<tt class="descname">concatenate</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.concatenate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the stabilizer for a concatenated code, given the 
+stabilizers for two codes. At this point, it only works for two
+<img class="math" src="_images/math/5ed8470bc717a49aafe4556c7e2c2e11ddc7b687.png" alt="k=1"/> codes.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qecc.StabilizerCode.ancilla_register">
+<em class="property">static </em><tt class="descname">ancilla_register</tt><big>(</big><em>nq=1</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.ancilla_register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a> representing an
+ancilla register of <tt class="docutils literal"><span class="pre">nq</span></tt> qubits, initialized in the state
+<img class="math" src="_images/math/77b73034e650c5ba36a7279cc1c780785200fa1c.png" alt="\left|0\right\rangle^{\otimes \text{nq}}"/>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">qecc.StabilizerCode</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qecc.StabilizerCode.unencoded_state">
+<em class="property">static </em><tt class="descname">unencoded_state</tt><big>(</big><em>nq_logical=1</em>, <em>nq_ancilla=0</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.unencoded_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a> representing an
+unencoded register of <tt class="docutils literal"><span class="pre">nq_logical</span></tt> qubits tensored with an ancilla
+register of <tt class="docutils literal"><span class="pre">nq_ancilla</span></tt> qubits.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nq_logical</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of qubits to</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">qecc.StabilizerCode</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qecc.StabilizerCode.flip_code">
+<em class="property">static </em><tt class="descname">flip_code</tt><big>(</big><em>n_correctable</em>, <em>stab_kind=i^0 Z</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.flip_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a> representing a
+code that protects against weight-<tt class="docutils literal"><span class="pre">n_correctable</span></tt> flip errors of a
+single kind.</p>
+<p>This method generalizes the bit-flip and phase-flip codes, corresponding
+to <tt class="docutils literal"><span class="pre">stab_kind=qecc.Z</span></tt> and <tt class="docutils literal"><span class="pre">stab_kind=qecc.X</span></tt>, respectively.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n_correctable</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Maximum weight of the errors that can be
+corrected by this code.</li>
+<li><strong>stab_kind</strong> (<a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><em>qecc.Pauli</em></a>) &#8211; Single-qubit Pauli operator specifying
+which kind of operators to use for the new stabilizer code.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">qecc.StabilizerCode</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qecc.StabilizerCode.bit_flip_code">
+<em class="property">static </em><tt class="descname">bit_flip_code</tt><big>(</big><em>n_correctable</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.bit_flip_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a> representing a
+code that protects against weight-<tt class="docutils literal"><span class="pre">n_correctable</span></tt> bit-flip errors.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n_correctable</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Maximum weight of the bit-flip errors that can
+be corrected by this code.</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">qecc.StabilizerCode</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qecc.StabilizerCode.phase_flip_code">
+<em class="property">static </em><tt class="descname">phase_flip_code</tt><big>(</big><em>n_correctable</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.phase_flip_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a> representing a
+code that protects against weight-<tt class="docutils literal"><span class="pre">n_correctable</span></tt> phase-flip errors.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n_correctable</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Maximum weight of the phase-flip errors that
+can be corrected by this code.</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">qecc.StabilizerCode</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qecc.StabilizerCode.perfect_5q_code">
+<em class="property">static </em><tt class="descname">perfect_5q_code</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.perfect_5q_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a> representing the
+5-qubit perfect code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">qecc.StabilizerCode</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qecc.StabilizerCode.steane_code">
+<em class="property">static </em><tt class="descname">steane_code</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.steane_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a> representing the
+7-qubit Steane code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">qecc.StabilizerCode</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qecc.StabilizerCode.shor_code">
+<em class="property">static </em><tt class="descname">shor_code</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.shor_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a> representing the
+9-qubit Shor code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">qecc.StabilizerCode</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qecc.StabilizerCode.css_code">
+<em class="property">static </em><tt class="descname">css_code</tt><big>(</big><em>C1</em>, <em>C2</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.css_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not yet implemented.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qecc.StabilizerCode.reed_muller_code">
+<em class="property">static </em><tt class="descname">reed_muller_code</tt><big>(</big><em>r</em>, <em>t</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.reed_muller_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not yet implemented.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qecc.StabilizerCode.reed_solomon_code">
+<em class="property">static </em><tt class="descname">reed_solomon_code</tt><big>(</big><em>r</em>, <em>t</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.reed_solomon_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not yet implemented.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Stabilizer Codes</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#class-reference">Class Reference</a><ul>
+<li><a class="reference internal" href="#qecc-stabilizercode"><tt class="docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="bsf.html"
+                        title="previous chapter">Binary Symplectic Form</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="circuits.html"
+                        title="next chapter">Circuit Manipulation and Simulation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/stab.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="circuits.html" title="Circuit Manipulation and Simulation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="bsf.html" title="Binary Symplectic Form"
+             >previous</a> |</li>
+        <li><a href="index.html">QuaEC v0.1alpha1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Chris Granade and Ben Criger. Licensed under the Creative Commons NonCommercial-ShareAlike 3.0 Unported License.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>

@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="QuaEC v0.1alpha1 documentation" href="index.html" />
-    <link rel="next" title="Circuit Manipulation and Simulation" href="circuits.html" />
+    <link rel="next" title="Stabilizer Codes" href="stab.html" />
     <link rel="prev" title="Collections of Pauli Operators" href="paulicollections.html" /> 
   </head>
   <body>
@@ -34,7 +34,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="circuits.html" title="Circuit Manipulation and Simulation"
+          <a href="stab.html" title="Stabilizer Codes"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="paulicollections.html" title="Collections of Pauli Operators"
@@ -53,7 +53,7 @@
 <p>The <tt class="xref py py-mod docutils literal"><span class="pre">qecc</span></tt> package provides support for vectors and matrices in binary
 symplectic form, including support for algorithms acting on these
 representations. Note that all classes and functions documented here depend on
-the <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/index.html#numpy" title="(in NumPy v1.7.dev-d0f520a)"><tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt></a> package.</p>
+the <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/index.html#numpy" title="(in NumPy v1.7.dev-36681eb)"><tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt></a> package.</p>
 <div class="section" id="qecc-binarysymplecticvector-binary-symplectic-representation-of-pauli-group-elements">
 <h2><a class="reference internal" href="#qecc.BinarySymplecticVector" title="qecc.BinarySymplecticVector"><tt class="xref py py-class docutils literal"><span class="pre">qecc.BinarySymplecticVector</span></tt></a> - Binary symplectic representation of Pauli group elements<a class="headerlink" href="#qecc-binarysymplecticvector-binary-symplectic-representation-of-pauli-group-elements" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -75,6 +75,42 @@ equivalent:</p>
 <p>The <a class="reference external" href="http://docs.python.org/library/functions.html#len" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">len</span></tt></a> of a <tt class="xref py py-class docutils literal"><span class="pre">BinarySymplecticVector</span></tt> is defined as the number
 of qubits upon which the represented Pauli operator acts, and is thus half
 of the length of a single array containing the same data.</p>
+<dl class="attribute">
+<dt id="qecc.BinarySymplecticVector.x">
+<tt class="descname">x</tt><a class="headerlink" href="#qecc.BinarySymplecticVector.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Array containing the <img class="math" src="_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/> part of the binary symplectic vector.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-36681eb)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>, shape <tt class="docutils literal"><span class="pre">(2</span> <span class="pre">*</span> <span class="pre">nq,</span> <span class="pre">)</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.BinarySymplecticVector.z">
+<tt class="descname">z</tt><a class="headerlink" href="#qecc.BinarySymplecticVector.z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Array containing the <img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> part of the binary symplectic vector.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-36681eb)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>, shape <tt class="docutils literal"><span class="pre">(nq,</span> <span class="pre">)</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.BinarySymplecticVector.copy">
+<tt class="descname">copy</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticVector.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of the binary symplectic vector such that mutations of
+the copy do not affect this instance. For more details, see the
+<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.copy.html#numpy.ndarray.copy" title="(in NumPy v1.7.dev-36681eb)"><tt class="xref py py-meth docutils literal"><span class="pre">numpy.ndarray.copy()</span></tt></a> method.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="qecc.BinarySymplecticVector.as_pauli">
 <tt class="descname">as_pauli</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticVector.as_pauli" title="Permalink to this definition">¶</a></dt>
@@ -90,42 +126,6 @@ by the binary symplectic representation of the Pauli group, and so
 <dd><p>Returns the binary symplectic inner product <img class="math" src="_images/math/5f46340f18c53c6a37c5df9a8aa8bf68ebc81ba5.png" alt="u \odot v"/> of this
 vector with another vector. Letting <img class="math" src="_images/math/4a66e037f05cb089859124c2b156047e65c6589f.png" alt="u = (a | b)"/> and
 <img class="math" src="_images/math/545492508597d07a021dda4325069a3e17468b82.png" alt="v = (c | d)"/>, <img class="math" src="_images/math/24efab3eb42fdaddd38965b7d6809c7c95e6b8de.png" alt="u\odot v = a \cdot c + b \cdot d"/>.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.BinarySymplecticVector.copy">
-<tt class="descname">copy</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticVector.copy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a copy of the binary symplectic vector such that mutations of
-the copy do not affect this instance. For more details, see the
-<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.copy.html#numpy.ndarray.copy" title="(in NumPy v1.7.dev-d0f520a)"><tt class="xref py py-meth docutils literal"><span class="pre">numpy.ndarray.copy()</span></tt></a> method.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="qecc.BinarySymplecticVector.x">
-<tt class="descname">x</tt><a class="headerlink" href="#qecc.BinarySymplecticVector.x" title="Permalink to this definition">¶</a></dt>
-<dd><p>Array containing the <img class="math" src="_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/> part of the binary symplectic vector.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-d0f520a)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>, shape <tt class="docutils literal"><span class="pre">(2</span> <span class="pre">*</span> <span class="pre">nq,</span> <span class="pre">)</span></tt>.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="qecc.BinarySymplecticVector.z">
-<tt class="descname">z</tt><a class="headerlink" href="#qecc.BinarySymplecticVector.z" title="Permalink to this definition">¶</a></dt>
-<dd><p>Array containing the <img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> part of the binary symplectic vector.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-d0f520a)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>, shape <tt class="docutils literal"><span class="pre">(nq,</span> <span class="pre">)</span></tt>.</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 </dd></dl>
@@ -153,7 +153,7 @@ satisfied.</p>
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>pauli_array_input</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a> of <a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> instances.) &#8211; Constraint operators <img class="math" src="_images/math/e86919caff4a26af2c8867c56bcd9134bfd241ac.png" alt="P_i"/>.</li>
-<li><strong>logical_array_input</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-d0f520a)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> of <cite>dtype=int</cite> and shape
+<li><strong>logical_array_input</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7.dev-36681eb)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> of <cite>dtype=int</cite> and shape
 <tt class="docutils literal"><span class="pre">(len(pauli_array_input),</span> <span class="pre">)</span></tt>.) &#8211; Constraint values <img class="math" src="_images/math/94d9565abaadf04609a2e9941aa2d20b0a299b8a.png" alt="b_i"/>.</li>
 </ul>
 </td>
@@ -182,37 +182,159 @@ satisfied.</p>
 <dl class="class">
 <dt id="qecc.BinarySymplecticMatrix">
 <em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">BinarySymplecticMatrix</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="qecc.BinarySymplecticMatrix.as_clifford">
-<tt class="descname">as_clifford</tt><big>(</big><em>check_validity=True</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.as_clifford" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts this binary symplectic matrix into a Clifford representation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>check_validity</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <tt class="xref docutils literal"><span class="pre">True</span></tt>, then the matrix is first
-checked to ensure that it is a valid Clifford.</td>
-</tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a></td>
-</tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">The same gate as this binary symplectic matrix, represented
-as an instance of <a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a>.</td>
-</tr>
-</tbody>
-</table>
+<dd><dl class="attribute">
+<dt id="qecc.BinarySymplecticMatrix.nq">
+<tt class="descname">nq</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.nq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of qubits that the binary symplectic matrix acts
+upon.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.BinarySymplecticMatrix.xc">
+<tt class="descname">xc</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.xc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.BinarySymplecticMatrix.zc">
+<tt class="descname">zc</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.zc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.BinarySymplecticMatrix.xr">
+<tt class="descname">xr</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.xr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.BinarySymplecticMatrix.zr">
+<tt class="descname">zr</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.zr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.BinarySymplecticMatrix.xx">
+<tt class="descname">xx</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.xx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.BinarySymplecticMatrix.xz">
+<tt class="descname">xz</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.xz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.BinarySymplecticMatrix.zx">
+<tt class="descname">zx</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.zx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.BinarySymplecticMatrix.zz">
+<tt class="descname">zz</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.zz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="qecc.BinarySymplecticMatrix.left_H">
+<tt class="descname">left_H</tt><big>(</big><em>j</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies on the left by a Hadamard gate on the <img class="math" src="_images/math/ec8eb9058cb3a532b3b4a1f33e169e8421c22a3d.png" alt="j^{\text{th}}"/>
+qubit. This method acts in-place, as opposed to acting on a copy of the
+binary symplectic matrix. In order to preserve the original matrix,
+use the <tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">new_bsm</span> <span class="o">=</span> <span class="n">bsm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">left_H</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> 
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
-<dt id="qecc.BinarySymplecticMatrix.circuit_decomposition">
-<tt class="descname">circuit_decomposition</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.circuit_decomposition" title="Permalink to this definition">¶</a></dt>
-<dd><p>Decomposes the binary symplectic matrix</p>
+<dt id="qecc.BinarySymplecticMatrix.right_H">
+<tt class="descname">right_H</tt><big>(</big><em>j</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies on the right by a Hadamard gate on the <img class="math" src="_images/math/ec8eb9058cb3a532b3b4a1f33e169e8421c22a3d.png" alt="j^{\text{th}}"/>
+qubit. See <tt class="xref py py-meth docutils literal"><span class="pre">left_H()</span></tt> for more details.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="qecc.BinarySymplecticMatrix.copy">
-<tt class="descname">copy</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.copy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a copy of this binary symplectic matrix, pointing to a distinct
-location in memory.</p>
+<dt id="qecc.BinarySymplecticMatrix.right_H_all">
+<tt class="descname">right_H_all</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_H_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies on the right by a Hadamard gate on each
+qubit. See <tt class="xref py py-meth docutils literal"><span class="pre">left_H()</span></tt> for more details.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.BinarySymplecticMatrix.left_SWAP">
+<tt class="descname">left_SWAP</tt><big>(</big><em>j</em>, <em>k</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_SWAP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies on the left by a SWAP gate between the <img class="math" src="_images/math/ec8eb9058cb3a532b3b4a1f33e169e8421c22a3d.png" alt="j^{\text{th}}"/>
+and <img class="math" src="_images/math/3cb9fb3b35f43cc27e4e63da0093b956154335a2.png" alt="k^{\text{th}}"/> qubits. This method acts in-place, as opposed
+to acting on a copy of the binary symplectic matrix. In order to
+preserve the original matrix, use the <tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">new_bsm</span> <span class="o">=</span> <span class="n">bsm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">left_SWAP</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> 
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.BinarySymplecticMatrix.right_SWAP">
+<tt class="descname">right_SWAP</tt><big>(</big><em>j</em>, <em>k</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_SWAP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies on the right by a SWAP gate between the <img class="math" src="_images/math/ec8eb9058cb3a532b3b4a1f33e169e8421c22a3d.png" alt="j^{\text{th}}"/>
+and <img class="math" src="_images/math/3cb9fb3b35f43cc27e4e63da0093b956154335a2.png" alt="k^{\text{th}}"/> qubits. See <tt class="xref py py-meth docutils literal"><span class="pre">left_SWAP()</span></tt> for more
+details.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.BinarySymplecticMatrix.left_CNOT">
+<tt class="descname">left_CNOT</tt><big>(</big><em>c</em>, <em>t</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_CNOT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies on the left by a CNOT gate controlled by the
+<img class="math" src="_images/math/10d1973af16031f61997ed715a1fe902c596928e.png" alt="c^{\text{th}}"/> qubit and targeting the <img class="math" src="_images/math/3cb9fb3b35f43cc27e4e63da0093b956154335a2.png" alt="k^{\text{th}}"/>
+qubit. This method acts in-place, as opposed to acting on a copy of the
+binary symplectic matrix. In order to preserve the original matrix, use
+the <tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">new_bsm</span> <span class="o">=</span> <span class="n">bsm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">left_CNOT</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> 
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.BinarySymplecticMatrix.right_CNOT">
+<tt class="descname">right_CNOT</tt><big>(</big><em>c</em>, <em>t</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_CNOT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies on the right by a CNOT gate controlled by the
+<img class="math" src="_images/math/10d1973af16031f61997ed715a1fe902c596928e.png" alt="c^{\text{th}}"/> qubit and targeting the <img class="math" src="_images/math/3cb9fb3b35f43cc27e4e63da0093b956154335a2.png" alt="k^{\text{th}}"/>
+qubit. For more details, see <tt class="xref py py-meth docutils literal"><span class="pre">left_CNOT()</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.BinarySymplecticMatrix.left_R_pi4">
+<tt class="descname">left_R_pi4</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_R_pi4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies on the left by an <img class="math" src="_images/math/c8fdf81e128346db84c9ace86aeea617e3a0c027.png" alt="R_{\pi/4}"/> gate acting on the
+<img class="math" src="_images/math/6934c6c653b822d4b861f82307a28c4b4bb1df3d.png" alt="i^{\text{th}}"/> qubit. This method acts in-place, as opposed to
+acting on a copy of the binary symplectic matrix. In order to preserve
+the original matrix, use the <tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">new_bsm</span> <span class="o">=</span> <span class="n">bsm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">left_R_pi4</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> 
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.BinarySymplecticMatrix.right_R_pi4">
+<tt class="descname">right_R_pi4</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_R_pi4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies on the right by an <img class="math" src="_images/math/c8fdf81e128346db84c9ace86aeea617e3a0c027.png" alt="R_{\pi/4}"/> gate acting on the
+<img class="math" src="_images/math/6934c6c653b822d4b861f82307a28c4b4bb1df3d.png" alt="i^{\text{th}}"/> qubit. For more details, see
+<tt class="xref py py-meth docutils literal"><span class="pre">left_R_pi4()</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.BinarySymplecticMatrix.left_CZ">
+<tt class="descname">left_CZ</tt><big>(</big><em>c1</em>, <em>c2</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_CZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies on the left by an controlled-<img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> gate acting between
+the <img class="math" src="_images/math/2ad28d21c7db1ab290101c05d6a073458afbc7fb.png" alt="c_1^{\text{th}}"/> and <img class="math" src="_images/math/f7499b2d397f7e8f4a9869b7df8294d3e7ad00ce.png" alt="c_2^{\text{th}}"/> qubits. This
+method acts in-place, as opposed to acting on a copy of the binary
+symplectic matrix. In order to preserve the original matrix, use the
+<tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">new_bsm</span> <span class="o">=</span> <span class="n">bsm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">left_CZ</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> 
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.BinarySymplecticMatrix.right_CZ">
+<tt class="descname">right_CZ</tt><big>(</big><em>c1</em>, <em>c2</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_CZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies on the right by an controlled-<img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> gate acting between
+the <img class="math" src="_images/math/2ad28d21c7db1ab290101c05d6a073458afbc7fb.png" alt="c_1^{\text{th}}"/> and <img class="math" src="_images/math/f7499b2d397f7e8f4a9869b7df8294d3e7ad00ce.png" alt="c_2^{\text{th}}"/> qubits. For more
+details, see <tt class="xref py py-meth docutils literal"><span class="pre">left_CZ()</span></tt>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -239,164 +361,42 @@ a valid Clifford group element.</td>
 </dd></dl>
 
 <dl class="method">
+<dt id="qecc.BinarySymplecticMatrix.as_clifford">
+<tt class="descname">as_clifford</tt><big>(</big><em>check_validity=True</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.as_clifford" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts this binary symplectic matrix into a Clifford representation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>check_validity</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <tt class="xref docutils literal"><span class="pre">True</span></tt>, then the matrix is first
+checked to ensure that it is a valid Clifford.</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a></td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">The same gate as this binary symplectic matrix, represented
+as an instance of <a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="qecc.BinarySymplecticMatrix.is_valid">
 <tt class="descname">is_valid</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.is_valid" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="qecc.BinarySymplecticMatrix.left_CNOT">
-<tt class="descname">left_CNOT</tt><big>(</big><em>c</em>, <em>t</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_CNOT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the left by a CNOT gate controlled by the
-<img class="math" src="_images/math/10d1973af16031f61997ed715a1fe902c596928e.png" alt="c^{\text{th}}"/> qubit and targeting the <img class="math" src="_images/math/3cb9fb3b35f43cc27e4e63da0093b956154335a2.png" alt="k^{\text{th}}"/>
-qubit. This method acts in-place, as opposed to acting on a copy of the
-binary symplectic matrix. In order to preserve the original matrix, use
-the <tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">new_bsm</span> <span class="o">=</span> <span class="n">bsm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">left_CNOT</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> 
-</pre></div>
-</div>
+<dt id="qecc.BinarySymplecticMatrix.copy">
+<tt class="descname">copy</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of this binary symplectic matrix, pointing to a distinct
+location in memory.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="qecc.BinarySymplecticMatrix.left_CZ">
-<tt class="descname">left_CZ</tt><big>(</big><em>c1</em>, <em>c2</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_CZ" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the left by an controlled-<img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> gate acting between
-the <img class="math" src="_images/math/2ad28d21c7db1ab290101c05d6a073458afbc7fb.png" alt="c_1^{\text{th}}"/> and <img class="math" src="_images/math/f7499b2d397f7e8f4a9869b7df8294d3e7ad00ce.png" alt="c_2^{\text{th}}"/> qubits. This
-method acts in-place, as opposed to acting on a copy of the binary
-symplectic matrix. In order to preserve the original matrix, use the
-<tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">new_bsm</span> <span class="o">=</span> <span class="n">bsm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">left_CZ</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> 
-</pre></div>
-</div>
+<dt id="qecc.BinarySymplecticMatrix.circuit_decomposition">
+<tt class="descname">circuit_decomposition</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.circuit_decomposition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decomposes the binary symplectic matrix</p>
 </dd></dl>
-
-<dl class="method">
-<dt id="qecc.BinarySymplecticMatrix.left_H">
-<tt class="descname">left_H</tt><big>(</big><em>j</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_H" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the left by a Hadamard gate on the <img class="math" src="_images/math/ec8eb9058cb3a532b3b4a1f33e169e8421c22a3d.png" alt="j^{\text{th}}"/>
-qubit. This method acts in-place, as opposed to acting on a copy of the
-binary symplectic matrix. In order to preserve the original matrix,
-use the <tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">new_bsm</span> <span class="o">=</span> <span class="n">bsm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">left_H</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> 
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.BinarySymplecticMatrix.left_R_pi4">
-<tt class="descname">left_R_pi4</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_R_pi4" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the left by an <img class="math" src="_images/math/c8fdf81e128346db84c9ace86aeea617e3a0c027.png" alt="R_{\pi/4}"/> gate acting on the
-<img class="math" src="_images/math/6934c6c653b822d4b861f82307a28c4b4bb1df3d.png" alt="i^{\text{th}}"/> qubit. This method acts in-place, as opposed to
-acting on a copy of the binary symplectic matrix. In order to preserve
-the original matrix, use the <tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">new_bsm</span> <span class="o">=</span> <span class="n">bsm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">left_R_pi4</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> 
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.BinarySymplecticMatrix.left_SWAP">
-<tt class="descname">left_SWAP</tt><big>(</big><em>j</em>, <em>k</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_SWAP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the left by a SWAP gate between the <img class="math" src="_images/math/ec8eb9058cb3a532b3b4a1f33e169e8421c22a3d.png" alt="j^{\text{th}}"/>
-and <img class="math" src="_images/math/3cb9fb3b35f43cc27e4e63da0093b956154335a2.png" alt="k^{\text{th}}"/> qubits. This method acts in-place, as opposed
-to acting on a copy of the binary symplectic matrix. In order to
-preserve the original matrix, use the <tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">new_bsm</span> <span class="o">=</span> <span class="n">bsm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">left_SWAP</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> 
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="qecc.BinarySymplecticMatrix.nq">
-<tt class="descname">nq</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.nq" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of qubits that the binary symplectic matrix acts
-upon.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.BinarySymplecticMatrix.right_CNOT">
-<tt class="descname">right_CNOT</tt><big>(</big><em>c</em>, <em>t</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_CNOT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the right by a CNOT gate controlled by the
-<img class="math" src="_images/math/10d1973af16031f61997ed715a1fe902c596928e.png" alt="c^{\text{th}}"/> qubit and targeting the <img class="math" src="_images/math/3cb9fb3b35f43cc27e4e63da0093b956154335a2.png" alt="k^{\text{th}}"/>
-qubit. For more details, see <tt class="xref py py-meth docutils literal"><span class="pre">left_CNOT()</span></tt>.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.BinarySymplecticMatrix.right_CZ">
-<tt class="descname">right_CZ</tt><big>(</big><em>c1</em>, <em>c2</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_CZ" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the right by an controlled-<img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> gate acting between
-the <img class="math" src="_images/math/2ad28d21c7db1ab290101c05d6a073458afbc7fb.png" alt="c_1^{\text{th}}"/> and <img class="math" src="_images/math/f7499b2d397f7e8f4a9869b7df8294d3e7ad00ce.png" alt="c_2^{\text{th}}"/> qubits. For more
-details, see <tt class="xref py py-meth docutils literal"><span class="pre">left_CZ()</span></tt>.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.BinarySymplecticMatrix.right_H">
-<tt class="descname">right_H</tt><big>(</big><em>j</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_H" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the right by a Hadamard gate on the <img class="math" src="_images/math/ec8eb9058cb3a532b3b4a1f33e169e8421c22a3d.png" alt="j^{\text{th}}"/>
-qubit. See <tt class="xref py py-meth docutils literal"><span class="pre">left_H()</span></tt> for more details.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.BinarySymplecticMatrix.right_H_all">
-<tt class="descname">right_H_all</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_H_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the right by a Hadamard gate on each
-qubit. See <tt class="xref py py-meth docutils literal"><span class="pre">left_H()</span></tt> for more details.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.BinarySymplecticMatrix.right_R_pi4">
-<tt class="descname">right_R_pi4</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_R_pi4" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the right by an <img class="math" src="_images/math/c8fdf81e128346db84c9ace86aeea617e3a0c027.png" alt="R_{\pi/4}"/> gate acting on the
-<img class="math" src="_images/math/6934c6c653b822d4b861f82307a28c4b4bb1df3d.png" alt="i^{\text{th}}"/> qubit. For more details, see
-<tt class="xref py py-meth docutils literal"><span class="pre">left_R_pi4()</span></tt>.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="qecc.BinarySymplecticMatrix.right_SWAP">
-<tt class="descname">right_SWAP</tt><big>(</big><em>j</em>, <em>k</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_SWAP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the right by a SWAP gate between the <img class="math" src="_images/math/ec8eb9058cb3a532b3b4a1f33e169e8421c22a3d.png" alt="j^{\text{th}}"/>
-and <img class="math" src="_images/math/3cb9fb3b35f43cc27e4e63da0093b956154335a2.png" alt="k^{\text{th}}"/> qubits. See <tt class="xref py py-meth docutils literal"><span class="pre">left_SWAP()</span></tt> for more
-details.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="qecc.BinarySymplecticMatrix.xc">
-<tt class="descname">xc</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.xc" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="qecc.BinarySymplecticMatrix.xr">
-<tt class="descname">xr</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.xr" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="qecc.BinarySymplecticMatrix.xx">
-<tt class="descname">xx</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.xx" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="qecc.BinarySymplecticMatrix.xz">
-<tt class="descname">xz</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.xz" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="qecc.BinarySymplecticMatrix.zc">
-<tt class="descname">zc</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.zc" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="qecc.BinarySymplecticMatrix.zr">
-<tt class="descname">zr</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.zr" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="qecc.BinarySymplecticMatrix.zx">
-<tt class="descname">zx</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.zx" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="qecc.BinarySymplecticMatrix.zz">
-<tt class="descname">zz</tt><a class="headerlink" href="#qecc.BinarySymplecticMatrix.zz" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -454,8 +454,8 @@ zeros.</p>
   <p class="topless"><a href="paulicollections.html"
                         title="previous chapter">Collections of Pauli Operators</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="circuits.html"
-                        title="next chapter">Circuit Manipulation and Simulation</a></p>
+  <p class="topless"><a href="stab.html"
+                        title="next chapter">Stabilizer Codes</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/bsf.txt"
@@ -485,7 +485,7 @@ zeros.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="circuits.html" title="Circuit Manipulation and Simulation"
+          <a href="stab.html" title="Stabilizer Codes"
              >next</a> |</li>
         <li class="right" >
           <a href="paulicollections.html" title="Collections of Pauli Operators"
