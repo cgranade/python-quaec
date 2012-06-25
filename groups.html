@@ -460,6 +460,16 @@ either 0 or 2. A warning will result if this condition is not met.</li>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="qecc.Clifford.nq">
+<tt class="descname">nq</tt><a class="headerlink" href="#qecc.Clifford.nq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.Clifford.n_unspecified">
+<tt class="descname">n_unspecified</tt><a class="headerlink" href="#qecc.Clifford.n_unspecified" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="qecc.Clifford.str_sparse">
 <tt class="descname">str_sparse</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Clifford.str_sparse" title="Permalink to this definition">¶</a></dt>
@@ -488,7 +498,9 @@ diagnostic information will be printed.</td>
 <dl class="method">
 <dt id="qecc.Clifford.inv">
 <tt class="descname">inv</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Clifford.inv" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculates the inverse <img class="math" src="_images/math/1f9dde26fcc951cb30c787bb39043e4354b9b367.png" alt="C^{-1}"/> of this Clifford operator
+<img class="math" src="_images/math/c3355896da590fc491a10150a50416687626d7cc.png" alt="C"/>, such that <img class="math" src="_images/math/45c11c0ce28df38973b078ea3fb682ec7e6af25f.png" alt="C^{-1} \cdot C"/> is the identity.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="qecc.Clifford.conjugate_pauli">

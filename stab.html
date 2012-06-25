@@ -176,6 +176,14 @@ for this code.</p>
 <p>Warning: this property is currently very slow to compute.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="qecc.StabilizerCode.n_correctable">
+<tt class="descname">n_correctable</tt><a class="headerlink" href="#qecc.StabilizerCode.n_correctable" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of errors <img class="math" src="_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t"/> correctable by this code, defined by
+<img class="math" src="_images/math/725a9fcb8a133175f215e8c8ab887c3cc8fdaf8e.png" alt="\left\lfloor \frac{d - 1}{2} \right\rfloor"/>, where <img class="math" src="_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d"/> is
+the distance of the code, given by the <tt class="docutils literal"><span class="pre">distance</span></tt> property.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="qecc.StabilizerCode.stabilizer_group">
 <tt class="descname">stabilizer_group</tt><big>(</big><em>coset_rep=None</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.stabilizer_group" title="Permalink to this definition">¶</a></dt>
@@ -247,7 +255,22 @@ rest of the qubits in the input register are initialized to
 <dl class="method">
 <dt id="qecc.StabilizerCode.star_decoder">
 <tt class="descname">star_decoder</tt><big>(</big><em>for_enc=None</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.star_decoder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Not yet implemented.</p>
+<dd><p>Returns a tuple of a decoding Clifford and a <a class="reference internal" href="paulicollections.html#qecc.PauliList" title="qecc.PauliList"><tt class="xref py py-class docutils literal"><span class="pre">qecc.PauliList</span></tt></a>
+specifying the recovery operation to perform as a function of the result
+of a <img class="math" src="_images/math/8edfdad39af4fc825ca6266cab678ebd1f4da65b.png" alt="Z^{\otimes{n - k}}"/> measurement on the ancilla register.</p>
+<p>For syndromes corresponding to errors of weight greater than the distance,
+the relevant element of the recovery list will be set to
+<tt class="xref py py-obj docutils literal"><span class="pre">qecc.Unspecified</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>for_enc</strong> &#8211; If not <tt class="xref docutils literal"><span class="pre">None</span></tt>, specifies to use a given Clifford
+operator as the encoder, instead of the first element yielded by
+<tt class="xref py py-meth docutils literal"><span class="pre">encoding_cliffords()</span></tt>.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
