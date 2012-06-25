@@ -120,6 +120,10 @@ class Clifford(object):
         for P in self.xout + self.zout:
             if P is not Unspecified:
                 return len(P)
+                
+    @property
+    def nq(self):
+        return len(self)
 
     def __repr__(self):
         return "<Clifford operator on {nq} qubit{s} at 0x{id:x}>".format(
@@ -151,12 +155,13 @@ class Clifford(object):
     def str_sparse(self):
         out = zip(KINDS, map(enumerate, [self.xout, self.zout]))
         nq = len(self)
-        return "\n".join(
+        outstr = "\n".join(
             [
                 "{}[{}] |-> {}{}".format(kind, idx, PHASES[P.ph], P.str_sparse(incl_ph=False))
                 for kind, Ps in out for idx, P in Ps
                 if elem_gen(nq, idx, kind) != P
             ])
+        return outstr if len(outstr) > 0 else "eye_p({})".format(self.nq)
 
     def is_valid(self, quiet=True):
         """
@@ -194,10 +199,12 @@ class Clifford(object):
         return True
         
     def inv(self):
-        #print "Phase information will be lost, aBSM notation will fix this."
-        if any([P.ph != 0 for P in self.xout + self.zout]):
-            warnings.warn("This inverse method uses BSM, and hence discards phase information.")
-        return self.as_bsm().inv().as_clifford()
+        """
+        
+        """
+        almost_inv = self.as_bsm().inv().as_clifford()
+        return almost_inv * self * almost_inv
+        
 
     def conjugate_pauli(self,pauli):
         r"""

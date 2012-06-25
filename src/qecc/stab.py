@@ -212,8 +212,6 @@ class StabilizerCode(object):
         
         encoder = self.encoding_cliffords().next()
         decoder = encoder.inv()
-        if decoder * encoder != c.eye_c(self.nq):
-            warnings.warn("Decoder is not a true inverse of the encoder, but is off by a Pauli operator. This may cause the syndromes to be rearranged.")
         
         errors = pc.PauliList(p.eye_p(self.nq)) + pc.PauliList(p.paulis_by_weight(self.nq, self.n_correctable))
         
