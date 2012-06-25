@@ -352,6 +352,11 @@ class Pauli(object):
                 #     - The anticommuting generator (0) has no match, and must
                 #       be excluded.
                 return PauliList(*group_gens[1:])
+                
+    ## COMPARISON METHODS ##
+    
+    def hamming_dist(self, other):
+        return (self * other).wt
 
 ## MORE CONSTANTS ##
 

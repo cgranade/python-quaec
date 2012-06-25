@@ -92,6 +92,8 @@ class Clifford(object):
     :type zbars: list of :class:`qecc.Pauli` instances
     """
     
+    ## CONSTRUCTOR ##
+    
     def __init__(self, xbars, zbars):
         # Require that all specified operators be Paulis.
         # Moreover, we should warn the caller if the output phase is not either
@@ -112,6 +114,8 @@ class Clifford(object):
         if all([P is Unspecified for P in chain(xbars, zbars)]):
             raise ValueError("At least one output must be specified.")
         
+        
+    ## SEQUENCE PROTOCOL ##
 
     def __len__(self):
         """
@@ -120,10 +124,18 @@ class Clifford(object):
         for P in self.xout + self.zout:
             if P is not Unspecified:
                 return len(P)
+         
+    ## PROPERTIES ##
                 
     @property
     def nq(self):
         return len(self)
+        
+    @property
+    def n_unspecified(self):
+        return len([P for P in chain(self.xout, self.zout) if P is Unspecified])
+        
+    ## PRINTING ##
 
     def __repr__(self):
         return "<Clifford operator on {nq} qubit{s} at 0x{id:x}>".format(
@@ -199,9 +211,13 @@ class Clifford(object):
         return True
         
     def inv(self):
+        r"""
+        Calculates the inverse :math:`C^{-1}` of this Clifford operator
+        :math:`C`, such that :math:`C^{-1} \cdot C` is the identity Clifford.
         """
-        
-        """
+        # Since BSM doesn't consider phases, what we get is the inverse up to
+        # a Pauli correction. Since Pauli operators are self inverse, we can
+        # find the correction as (almost_inv * self).
         almost_inv = self.as_bsm().inv().as_clifford()
         return almost_inv * self * almost_inv
         
@@ -244,6 +260,21 @@ class Clifford(object):
                 rolling_pauli=rolling_pauli*self.xout[idx]*self.zout[idx]
                 rolling_pauli.mul_phase(1)
         return rolling_pauli 
+        
+    def __call__(self, other):
+        if isinstance(other, Pauli):
+            return self.conjugate_pauli(other)
+        if isinstance(other, PauliList):
+            return PauliList(*map(self, other))
+        elif isinstance(other, stab.StabilizerCode):
+            return stab.StabilizerCode(
+                self(other.group_generators),
+                self(other.logical_xs),
+                self(other.logical_zs))
+        else:
+            return NotImplemented
+
+    ## EQUALITY OPERATORS ##
 
     def __eq__(self,other):
         if isinstance(other, Clifford):
@@ -254,6 +285,7 @@ class Clifford(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    ## ALGEBRAIC OPERATORS ##
 
     def __mul__(self,other):
         """multiplies two Cliffords, self and other, by conjugating the
@@ -300,18 +332,7 @@ class Clifford(object):
             zedtwos.append(id_self_size & other.zout[idx])
         return Clifford(exones+extwos,zedones+zedtwos)
 
-    def __call__(self, other):
-        if isinstance(other, Pauli):
-            return self.conjugate_pauli(other)
-        if isinstance(other, PauliList):
-            return PauliList(*map(self, other))
-        elif isinstance(other, stab.StabilizerCode):
-            return stab.StabilizerCode(
-                self(other.group_generators),
-                self(other.logical_xs),
-                self(other.logical_zs))
-        else:
-            return NotImplemented
+    ## CONSTRAINT SOLVING ##
         
     def constraint_completions(self):
         """
@@ -394,6 +415,8 @@ class Clifford(object):
                 yield completion
                 
         return
+
+    ## TYPE CONVERSIONS ##
 
     def as_bsm(self):
         """

@@ -246,6 +246,56 @@ class StabilizerCode(object):
         
         return decoder, recovery_list
 
+    def minimize_distance_from(self, other, quiet=True):
+        """
+        Reorders the stabilizer group generators of this code to minimize
+        the Hamming distance with the group generators of another code,
+        using a greedy heuristic algorithm.
+        """
+        
+        self_gens = self.group_generators
+        other_gens = other.group_generators
+        
+        for idx_generator in range(len(self_gens)):
+            min_hdist    = self.nq + 1 # Effectively infinite.
+            min_wt       = self.nq + 1
+            best_gen = None
+            best_gen_decomp = ()
+            
+            for stab_elems in p.powerset(self_gens[idx_generator:]):
+                if len(stab_elems) > 0:
+                    stab_elem = reduce(op.mul, stab_elems)
+                    hd = stab_elem.hamming_dist(other_gens[idx_generator])
+                    
+                    if hd <= min_hdist and stab_elem.wt <= min_wt and (hd < min_hdist or stab_elem.wt < min_wt):
+                        min_hdist = hd
+                        min_wt    = stab_elem.wt
+                        best_gen  = stab_elem
+                        best_gen_decomp = stab_elems
+                    
+            assert best_gen is not None, "Powerset iteration failed."
+                    
+            if best_gen in self_gens:
+                # Swap so that it lies at the front.
+                idx = self_gens.index(best_gen)
+                if not quiet and idx != idx_generator:
+                    print 'Swap move: {} <-> {}'.format(idx_generator, idx)
+                self_gens[idx_generator], self_gens[idx] = self_gens[idx], self_gens[idx_generator]
+                
+            else:
+                # Set the head element to best_gen, correcting the rest
+                # as needed.
+                if self_gens[idx_generator] in best_gen_decomp:
+                    if not quiet:
+                        print 'Set move: {}  =  {}'.format(idx_generator, best_gen)
+                    self_gens[idx_generator] = best_gen
+                else:
+                    if not quiet:
+                        print 'Mul move: {} *=  {}'.format(idx_generator, best_gen)
+                    self_gens[idx_generator] *= best_gen
+                    
+        return self
+
     ## BLOCK CODE METHODS ##
 
     def block_logical_pauli(self, P):
