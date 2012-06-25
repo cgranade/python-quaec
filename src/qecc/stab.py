@@ -25,12 +25,14 @@
 ## IMPORTS ##
 
 import operator as op
+import itertools as it
+import math
 
 import PauliClass as p # Sorry for the confusing notation here.
 import CliffordClass as c
 import paulicollections as pc
 
-
+from collections import defaultdict
 from singletons import EmptyClifford, Unspecified
 
 import warnings
@@ -119,6 +121,15 @@ class StabilizerCode(object):
         Warning: this property is currently very slow to compute.
         """
         return min(P.wt for P in self.normalizer_group(mod_s=True))
+        
+    @property
+    def n_correctable(self):
+        r"""
+        The number of errors :math:`t` correctable by this code, defined by
+        :math:`\left\lfloor \frac{d - 1}{2} \right\rfloor`, where :math:`d` is
+        the distance of the code, given by the ``distance`` property.
+        """
+        return math.floor((self.distance - 1) / 2)
  
     ## GROUP ENUMERATION METHODS ##
  
@@ -178,10 +189,55 @@ class StabilizerCode(object):
         return C.constraint_completions()
         
     def star_decoder(self, for_enc=None):
+        r"""
+        Returns a tuple of a decoding Clifford and a :class:`qecc.PauliList`
+        specifying the recovery operation to perform as a function of the result
+        of a :math:`Z^{\otimes{n - k}}` measurement on the ancilla register.
+        
+        For syndromes corresponding to errors of weight greater than the distance,
+        the relevant element of the recovery list will be set to
+        :obj:`qecc.Unspecified`.
+        
+        :param for_enc: Reserved for future implementation.
         """
-        Not yet implemented.
-        """
-        raise NotImplementedError("Not yet implemented.")
+        def error_to_pauli(error):
+            if error == p.I.as_clifford():
+                return "I"
+            if error == p.X.as_clifford():
+                return "X"
+            if error == p.Y.as_clifford():
+                return "Y"
+            if error == p.Z.as_clifford():
+                return "Z"
+        
+        encoder = self.encoding_cliffords().next()
+        decoder = encoder.inv()
+        if decoder * encoder != c.eye_c(self.nq):
+            warnings.warn("Decoder is not a true inverse of the encoder, but is off by a Pauli operator. This may cause the syndromes to be rearranged.")
+        
+        errors = pc.PauliList(p.eye_p(self.nq)) + pc.PauliList(p.paulis_by_weight(self.nq, self.n_correctable))
+        
+        syndrome_dict = defaultdict(lambda: Unspecified)
+        syndrome_meas = [p.elem_gen(self.nq, idx, 'Z') for idx in range(self.nq_logical, self.nq)]
+                
+        for error in errors:
+            effective_gate = decoder * error.as_clifford() * encoder
+            # FIXME: the following line emulates measurement until we have a real
+            #        measurement simulation method.
+            syndrome = tuple([effective_gate(meas).ph / 2 for meas in syndrome_meas])
+            
+            if syndrome in syndrome_dict:
+                raise RuntimeError('Syndrome {} has collided.'.format(syndrome))
+                
+            syndrome_dict[syndrome] = "".join([
+                # FIXME: the following is a broken hack to get the phases on the logical qubit register.
+                error_to_pauli(c.Clifford([effective_gate.xout[idx][idx]], [effective_gate.zout[idx][idx]]))
+                for idx in range(self.nq_logical)
+            ])
+        
+        recovery_list = pc.PauliList(syndrome_dict[syndrome] for syndrome in it.product(range(2), repeat=self.n_constraints))
+        
+        return decoder, recovery_list
 
     ## BLOCK CODE METHODS ##
 
