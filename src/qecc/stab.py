@@ -198,7 +198,9 @@ class StabilizerCode(object):
         the relevant element of the recovery list will be set to
         :obj:`qecc.Unspecified`.
         
-        :param for_enc: Reserved for future implementation.
+        :param for_enc: If not ``None``, specifies to use a given Clifford
+            operator as the encoder, instead of the first element yielded by
+            :meth:`encoding_cliffords`.
         """
         def error_to_pauli(error):
             if error == p.I.as_clifford():
@@ -210,7 +212,10 @@ class StabilizerCode(object):
             if error == p.Z.as_clifford():
                 return "Z"
         
-        encoder = self.encoding_cliffords().next()
+        if for_enc is None:
+            encoder = self.encoding_cliffords().next()
+        else:
+            encoder = for_enc
         decoder = encoder.inv()
         
         errors = pc.PauliList(p.eye_p(self.nq)) + pc.PauliList(p.paulis_by_weight(self.nq, self.n_correctable))
@@ -224,14 +229,18 @@ class StabilizerCode(object):
             #        measurement simulation method.
             syndrome = tuple([effective_gate(meas).ph / 2 for meas in syndrome_meas])
             
-            if syndrome in syndrome_dict:
-                raise RuntimeError('Syndrome {} has collided.'.format(syndrome))
-                
-            syndrome_dict[syndrome] = "".join([
+            recovery = "".join([
                 # FIXME: the following is a broken hack to get the phases on the logical qubit register.
                 error_to_pauli(c.Clifford([effective_gate.xout[idx][idx]], [effective_gate.zout[idx][idx]]))
                 for idx in range(self.nq_logical)
             ])
+            
+            # For degenerate codes, the syndromes can collide, so long as we
+            # correct the same way for each.
+            if syndrome in syndrome_dict and syndrome_dict[syndrome] != recovery:
+                raise RuntimeError('Syndrome {} has collided.'.format(syndrome))
+                
+            syndrome_dict[syndrome] = recovery
         
         recovery_list = pc.PauliList(syndrome_dict[syndrome] for syndrome in it.product(range(2), repeat=self.n_constraints))
         
