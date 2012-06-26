@@ -50,8 +50,14 @@ class PauliList(list):
     """
 
     def __init__(self, *paulis):
-        if len(paulis) == 1 and isinstance(paulis[0], Sequence) and not isinstance(paulis[0], str):
-            paulis = map(pc.ensure_pauli, paulis[0])
+        if len(paulis) == 1:
+            single_arg = paulis[0]
+            if isinstance(single_arg, str):
+                paulis = [pc.Pauli(single_arg)]
+            elif isinstance(single_arg, Sequence) or hasattr(single_arg, '__iter__'):
+                paulis = map(pc.ensure_pauli, single_arg)
+            else:
+                paulis = map(pc.ensure_pauli, paulis)
         else:
             paulis = map(pc.ensure_pauli, paulis)
             

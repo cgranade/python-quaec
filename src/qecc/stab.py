@@ -25,12 +25,14 @@
 ## IMPORTS ##
 
 import operator as op
+import itertools as it
+import math
 
 import PauliClass as p # Sorry for the confusing notation here.
 import CliffordClass as c
 import paulicollections as pc
 
-
+from collections import defaultdict
 from singletons import EmptyClifford, Unspecified
 
 import warnings
@@ -45,7 +47,17 @@ __all__ = [
 
 class StabilizerCode(object):
     r"""
-    TODO
+    Class representing a stabilizer code specified by the generators of its
+    stabilizer group and by representatives for the logical operators acting
+    on the code.
+    
+    :param group_generators: Generators :math:`N_i` such that the stabilizer
+        group :math:`S` of the represented code is given by
+        :math:`S = \left\langle N_i \right\rangle`.
+    :param logical_xs: Representatives for the logical :math:`X` operators
+        acting on encoded states.
+    :param logical_zs: Representatives for the logical :math:`Z` operators
+        acting on encoded states.
     """
     
     ## CONSTRUCTOR ##
@@ -76,7 +88,14 @@ class StabilizerCode(object):
         """
         The number of physical qubits into which this code encodes data.
         """
-        return len(iter(gen for gen in self.group_generators + self.logical_xs + self.logical_zs if gen is not Unspecified).next())
+        try:
+            return len(iter(
+                gen
+                for gen in self.group_generators + self.logical_xs + self.logical_zs
+                if gen is not Unspecified
+            ).next())
+        except StopIteration:
+            return 0
         
     @property
     def n_constraints(self):
@@ -96,12 +115,21 @@ class StabilizerCode(object):
     def distance(self):
         r"""
         The distance of this code, defined by :math:`\min\text{wt} \{
-        P | P \in \text{N}(S) \\ S \}`, where :math:`S` is the stabilizer group
+        P | P \in \text{N}(S) \backslash S \}`, where :math:`S` is the stabilizer group
         for this code.
         
         Warning: this property is currently very slow to compute.
         """
         return min(P.wt for P in self.normalizer_group(mod_s=True))
+        
+    @property
+    def n_correctable(self):
+        r"""
+        The number of errors :math:`t` correctable by this code, defined by
+        :math:`\left\lfloor \frac{d - 1}{2} \right\rfloor`, where :math:`d` is
+        the distance of the code, given by the ``distance`` property.
+        """
+        return math.floor((self.distance - 1) / 2)
  
     ## GROUP ENUMERATION METHODS ##
  
@@ -136,7 +164,7 @@ class StabilizerCode(object):
     def normalizer_group(self, mod_s=False):
         r"""
         Returns all elements of the normalizer of the stabilizer group. If
-        ``mod_s`` is ``True``, returns the set :math:`N(S)\\S`.
+        ``mod_s`` is ``True``, returns the set :math:`N(S)\backslash S`.
         """
         for Pbar in self.logical_pauli_group(incl_identity=not mod_s):
             for normalizer_element in self.stabilizer_group(coset_rep=Pbar):
@@ -145,17 +173,128 @@ class StabilizerCode(object):
     ## EN/DE/TRANSCODING METHODS ##
         
     def encoding_cliffords(self):
+        r"""
+        Returns an iterator onto all Clifford operators that encode into this
+        stabilizer code, starting from an input register such that the state to
+        be encoded is a state of the first :math:`k` qubits, and such that the
+        rest of the qubits in the input register are initialized to
+        :math:`\left|0\right\rangle`.
+        
+        :yields: instances ``C`` of :class:`qecc.Clifford` such that
+            ``C(q.StabilizerCode.unencoded_state(k, n - k))`` equals this code.
+        """
         C = c.Clifford(
             self.logical_xs + ([Unspecified] * self.n_constraints),
             self.logical_zs + self.group_generators)
         return C.constraint_completions()
         
     def star_decoder(self, for_enc=None):
-        raise NotImplementedError("Not yet implemented.")
+        r"""
+        Returns a tuple of a decoding Clifford and a :class:`qecc.PauliList`
+        specifying the recovery operation to perform as a function of the result
+        of a :math:`Z^{\otimes{n - k}}` measurement on the ancilla register.
+        
+        For syndromes corresponding to errors of weight greater than the distance,
+        the relevant element of the recovery list will be set to
+        :obj:`qecc.Unspecified`.
+        
+        :param for_enc: If not ``None``, specifies to use a given Clifford
+            operator as the encoder, instead of the first element yielded by
+            :meth:`encoding_cliffords`.
+        """
+        def error_to_pauli(error):
+            if error == p.I.as_clifford():
+                return "I"
+            if error == p.X.as_clifford():
+                return "X"
+            if error == p.Y.as_clifford():
+                return "Y"
+            if error == p.Z.as_clifford():
+                return "Z"
+        
+        if for_enc is None:
+            encoder = self.encoding_cliffords().next()
+        else:
+            encoder = for_enc
+        decoder = encoder.inv()
+        
+        errors = pc.PauliList(p.eye_p(self.nq)) + pc.PauliList(p.paulis_by_weight(self.nq, self.n_correctable))
+        
+        syndrome_dict = defaultdict(lambda: Unspecified)
+        syndrome_meas = [p.elem_gen(self.nq, idx, 'Z') for idx in range(self.nq_logical, self.nq)]
+                
+        for error in errors:
+            effective_gate = decoder * error.as_clifford() * encoder
+            # FIXME: the following line emulates measurement until we have a real
+            #        measurement simulation method.
+            syndrome = tuple([effective_gate(meas).ph / 2 for meas in syndrome_meas])
+            
+            recovery = "".join([
+                # FIXME: the following is a broken hack to get the phases on the logical qubit register.
+                error_to_pauli(c.Clifford([effective_gate.xout[idx][idx]], [effective_gate.zout[idx][idx]]))
+                for idx in range(self.nq_logical)
+            ])
+            
+            # For degenerate codes, the syndromes can collide, so long as we
+            # correct the same way for each.
+            if syndrome in syndrome_dict and syndrome_dict[syndrome] != recovery:
+                raise RuntimeError('Syndrome {} has collided.'.format(syndrome))
+                
+            syndrome_dict[syndrome] = recovery
+        
+        recovery_list = pc.PauliList(syndrome_dict[syndrome] for syndrome in it.product(range(2), repeat=self.n_constraints))
+        
+        return decoder, recovery_list
 
-    def recovery_operator(self,bitstring):
-        if isinstance(bitstring, str):
-            bitstring = map(int, bitstring)
+    def minimize_distance_from(self, other, quiet=True):
+        """
+        Reorders the stabilizer group generators of this code to minimize
+        the Hamming distance with the group generators of another code,
+        using a greedy heuristic algorithm.
+        """
+        
+        self_gens = self.group_generators
+        other_gens = other.group_generators
+        
+        for idx_generator in range(len(self_gens)):
+            min_hdist    = self.nq + 1 # Effectively infinite.
+            min_wt       = self.nq + 1
+            best_gen = None
+            best_gen_decomp = ()
+            
+            for stab_elems in p.powerset(self_gens[idx_generator:]):
+                if len(stab_elems) > 0:
+                    stab_elem = reduce(op.mul, stab_elems)
+                    hd = stab_elem.hamming_dist(other_gens[idx_generator])
+                    
+                    if hd <= min_hdist and stab_elem.wt <= min_wt and (hd < min_hdist or stab_elem.wt < min_wt):
+                        min_hdist = hd
+                        min_wt    = stab_elem.wt
+                        best_gen  = stab_elem
+                        best_gen_decomp = stab_elems
+                    
+            assert best_gen is not None, "Powerset iteration failed."
+                    
+            if best_gen in self_gens:
+                # Swap so that it lies at the front.
+                idx = self_gens.index(best_gen)
+                if not quiet and idx != idx_generator:
+                    print 'Swap move: {} <-> {}'.format(idx_generator, idx)
+                self_gens[idx_generator], self_gens[idx] = self_gens[idx], self_gens[idx_generator]
+                
+            else:
+                # Set the head element to best_gen, correcting the rest
+                # as needed.
+                if self_gens[idx_generator] in best_gen_decomp:
+                    if not quiet:
+                        print 'Set move: {}  =  {}'.format(idx_generator, best_gen)
+                    self_gens[idx_generator] = best_gen
+                else:
+                    if not quiet:
+                        print 'Mul move: {} *=  {}'.format(idx_generator, best_gen)
+                    self_gens[idx_generator] *= best_gen
+                    
+        return self
 
     ## BLOCK CODE METHODS ##
 
@@ -207,10 +346,10 @@ class StabilizerCode(object):
     ## CONCATENATION ##
         
     def concatenate(self,other):
-        """
+        r"""
         Returns the stabilizer for a concatenated code, given the 
         stabilizers for two codes. At this point, it only works for two
-        k=1 codes.
+        :math:`k=1` codes.
         """
         
         if self.nq_logical > 1 or other.nq_logical > 1:
@@ -255,35 +394,90 @@ class StabilizerCode(object):
 
     @staticmethod
     def ancilla_register(nq=1):
+        r"""
+        Creates an instance of :class:`qecc.StabilizerCode` representing an
+        ancilla register of ``nq`` qubits, initialized in the state
+        :math:`\left|0\right\rangle^{\otimes \text{nq}}`.
+        
+        :rtype: qecc.StabilizerCode
+        """
         return StabilizerCode(
             p.elem_gens(nq)[1],
             [], []
         )
 
     @staticmethod
-    def unencoded_state(nq_logical=1, nq_ancilla=0):    
+    def unencoded_state(nq_logical=1, nq_ancilla=0):
+        """
+        Creates an instance of :class:`qecc.StabilizerCode` representing an
+        unencoded register of ``nq_logical`` qubits tensored with an ancilla
+        register of ``nq_ancilla`` qubits.
+        
+        :param int nq_logical: Number of qubits to 
+        :rtype: qecc.StabilizerCode
+        """
         return (
             StabilizerCode([], *p.elem_gens(nq_logical)) &
             StabilizerCode.ancilla_register(nq_ancilla)
         )
 
     @staticmethod
-    def flip_code(dist, stab_kind='Z'):
-        nq=2*dist+1
+    def flip_code(n_correctable, stab_kind=p.Z):
+        """
+        Creates an instance of :class:`qecc.StabilizerCode` representing a
+        code that protects against weight-``n_correctable`` flip errors of a
+        single kind.
+        
+        This method generalizes the bit-flip and phase-flip codes, corresponding
+        to ``stab_kind=qecc.Z`` and ``stab_kind=qecc.X``, respectively.
+        
+        :param int n_correctable: Maximum weight of the errors that can be
+            corrected by this code.
+        :param qecc.Pauli stab_kind: Single-qubit Pauli operator specifying
+            which kind of operators to use for the new stabilizer code.
+        :rtype: qecc.StabilizerCode
+        """
+        nq = 2 * n_correctable + 1
+        stab_kind = p.ensure_pauli(stab_kind)
+        if len(stab_kind) != 1:
+            raise ValueError("stab_kind must be single-qubit.")
+        
         return StabilizerCode(
-            ['I'*j + (stab_kind * 2) + 'I'*(nq-j-2) for j in range(nq-1)],
+            [p.eye_p(j) & stab_kind & stab_kind & p.eye_p(nq-j-2) for j in range(nq-1)],
             ['X'*nq], ['Z'*nq]
         )
 
     @staticmethod
-    def bit_flip_code(x_dist):
-        return StabilizerCode.flip_code(x_dist, stab_kind='Z')
+    def bit_flip_code(n_correctable):
+        """
+        Creates an instance of :class:`qecc.StabilizerCode` representing a
+        code that protects against weight-``n_correctable`` bit-flip errors.
+        
+        :param int n_correctable: Maximum weight of the bit-flip errors that can
+            be corrected by this code.
+        :rtype: qecc.StabilizerCode
+        """
+        return StabilizerCode.flip_code(n_correctable, stab_kind=p.Z)
     @staticmethod
-    def phase_flip_code(z_dist):
-        return StabilizerCode.flip_code(z_dist, stab_kind='X')
+    def phase_flip_code(n_correctable):
+        """
+        Creates an instance of :class:`qecc.StabilizerCode` representing a
+        code that protects against weight-``n_correctable`` phase-flip errors.
+        
+        :param int n_correctable: Maximum weight of the phase-flip errors that
+            can be corrected by this code.
+        :rtype: qecc.StabilizerCode
+        """
+        return StabilizerCode.flip_code(n_correctable, stab_kind=p.X)
 
     @staticmethod
     def perfect_5q_code():
+        """
+        Creates an instance of :class:`qecc.StabilizerCode` representing the
+        5-qubit perfect code.
+        
+        :rtype: qecc.StabilizerCode
+        """
         return StabilizerCode(
             [
                 'XZZXI',
@@ -296,6 +490,12 @@ class StabilizerCode(object):
 
     @staticmethod
     def steane_code():
+        """
+        Creates an instance of :class:`qecc.StabilizerCode` representing the
+        7-qubit Steane code.
+        
+        :rtype: qecc.StabilizerCode
+        """
         return StabilizerCode(
             [
                 'XXXXIII',
@@ -310,18 +510,33 @@ class StabilizerCode(object):
 
     @staticmethod
     def shor_code():
+        """
+        Creates an instance of :class:`qecc.StabilizerCode` representing the
+        9-qubit Shor code.
+        
+        :rtype: qecc.StabilizerCode
+        """        
         return StabilizerCode.bit_flip_code(1).concatenate(StabilizerCode.phase_flip_code(1))        
 
     @staticmethod
     def css_code(C1, C2):
+        """
+        Not yet implemented.
+        """
         raise NotImplementedError("Not yet implemented.")
 
     @staticmethod
     def reed_muller_code(r,t):
+        """
+        Not yet implemented.
+        """
         raise NotImplementedError("Coming Soon: Reed-Muller Codes")
-
+        
     @staticmethod
     def reed_solomon_code(r,t):
+        """
+        Not yet implemented.
+        """
         raise NotImplementedError("Coming Soon: Reed-Solomon Codes")
         
 

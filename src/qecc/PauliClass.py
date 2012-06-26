@@ -44,7 +44,8 @@ __all__ = [
     'ensure_pauli', 'com', 'pauli_group', 'from_generators',
     'is_in_normalizer', 'elem_gen', 'elem_gens', 'eye_p', 'ns_mod_s',
     'pad', 'mutually_commuting_sets',
-    'clifford_bottoms'
+    'clifford_bottoms',
+    'paulis_by_weight'
     ]
         
 ## CONSTANTS ##
@@ -365,6 +366,11 @@ class Pauli(object):
                 #     - The anticommuting generator (0) has no match, and must
                 #       be excluded.
                 return PauliList(*group_gens[1:])
+                
+    ## COMPARISON METHODS ##
+    
+    def hamming_dist(self, other):
+        return (self * other).wt
 
 ## MORE CONSTANTS ##
 
@@ -392,6 +398,22 @@ def powerset(iterable):
     powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+        
+def paulis_by_weight(nq, wt):
+    def error_by_idxs(idxs, err_string):
+        return reduce(mul, starmap(elem_gen, zip([nq]*len(idxs), idxs, err_string)))
+        
+    if wt == 0:
+        return eye_p(nq)
+    elif wt == 1:
+        return iter(elem_gen(nq, idx, kind) for kind in ['X', 'Y', 'Z'] for idx in range(nq))
+    else:
+        return chain(
+            paulis_by_weight(nq, wt - 1),
+            (error_by_idxs(idxs, err_string) for err_string in product('XYZ', repeat=wt) for idxs in combinations(range(nq), wt))
+        )
+        
+        
             
 def com(P, Q):
     r"""
