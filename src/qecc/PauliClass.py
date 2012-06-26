@@ -27,7 +27,7 @@
 from itertools import product, chain, permutations, combinations, ifilter, ifilterfalse, imap, starmap, izip
 from copy import copy
 import bsf
-from operator import mul
+from operator import mul, and_
 import pred
 
 from paulicollections import PauliList
@@ -267,7 +267,21 @@ class Pauli(object):
         Yields the number of qubits on which the Pauli ``self`` acts.
         """
         return len(self.op)
-           
+
+    @staticmethod
+    def from_string(bitstring,p_1):
+        """
+        Returns a phaseless Pauli from a bitstring. The intended use of
+        this function is as a quick means of specifying binary Paulis.
+        p_1 is the one_qubit Pauli that a '1' represents.
+        """
+        p_1 = ensure_pauli(p_1)
+        
+        if isinstance(bitstring, str):
+            bitstring = map(int, bitstring)
+            
+        return reduce(and_,[p_1**j for j in bitstring])
+        
     def as_unitary(self):
         """
         Returns a :class:`numpy.ndarray` containing a unitary matrix

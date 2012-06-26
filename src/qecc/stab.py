@@ -153,6 +153,10 @@ class StabilizerCode(object):
     def star_decoder(self, for_enc=None):
         raise NotImplementedError("Not yet implemented.")
 
+    def recovery_operator(self,bitstring):
+        if isinstance(bitstring, str):
+            bitstring = map(int, bitstring)
+
     ## BLOCK CODE METHODS ##
 
     def block_logical_pauli(self, P):
@@ -315,6 +319,7 @@ class StabilizerCode(object):
     @staticmethod
     def reed_muller_code(r,t):
         raise NotImplementedError("Coming Soon: Reed-Muller Codes")
+
     @staticmethod
     def reed_solomon_code(r,t):
         raise NotImplementedError("Coming Soon: Reed-Solomon Codes")

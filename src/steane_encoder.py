@@ -1,6 +1,6 @@
 import qecc as q
 import operator as op
-from itertools import starmap, product
+from itertools import starmap, product, compress
 from collections import defaultdict
 
 def error_to_pauli(error):
@@ -18,19 +18,19 @@ if __name__ == "__main__":
     enc = stab_code.encoding_cliffords().next()
     dec = enc.inv()
 
-    print "Encoder circuit:"
-    print "========================================================================"
+    #print "Encoder circuit:"
+    #print "========================================================================"
     circuit = enc.as_bsm().circuit_decomposition().replace_cz_by_cnot().cancel_selfinv_gates()
     circuit = sum(circuit.group_by_time(pad_with_waits=True), q.Circuit())
 
     # We use group_by_time to find where to add wait locations, then
     # recombine the circuit to obtain the decoder.
-    print circuit
+    #print circuit
 
 
-    print "\n\n"
-    print "Syndrome propagation:"
-    print "========================================================================"
+    #print "\n\n"
+    #print "Syndrome propagation:"
+    #print "========================================================================"
 
     faults = [q.elem_gen(7, idx, P) for idx in range(7) for P in ['X', 'Y', 'Z']]
     synd_meas = [q.elem_gen(7, idx, kind) for idx, kind in zip(range(1,7), 'ZZZZZZ')]
@@ -61,7 +61,7 @@ if __name__ == "__main__":
             if recovery[syndrome] != error:
                 raise RuntimeError("Collision.")
 
-    print "Recovery operators for all weight-1 errors:"
+    #print "Recovery operators for all weight-1 errors:"
 
     inv_recovery = defaultdict(list)
     for syndrome in product(range(2), repeat=6):
@@ -73,3 +73,23 @@ if __name__ == "__main__":
             "".join(map(str, syndrome)) for syndrome in syndromes
         ]))
         
+    def mabuchi_operators(stab_code,known_operators=q.PauliList()):
+        n_constraints=stab_code.n_constraints
+        enc = stab_code.encoding_cliffords().next()
+        dec = enc.inv()
+        synd_meas = [q.elem_gen(stab_code.nq, idx, kind) for idx, kind in zip(range(1,stab_code.nq), 'Z'*n_constraints)]
+        known_syndromes=[]
+        for op in known_operators:
+            #Calculate syndrome
+            eff = dec * op.as_clifford() * enc
+            known_syndromes.append([eff.conjugate_pauli(meas).ph / 2 for meas in synd_meas])
+        code_gens=stab_code.group_generators
+        for bits in product(range(2),repeat=n_constraints):
+            if bits in known_syndromes:
+                yield known_operators[known_syndromes.index(bits)]
+            else:
+                anti_coms=compress(code_gens,bits)
+                coms=compress(code_gens,map(lambda p: 1-p,bits))
+                print coms
+                print anti_coms
+                yield q.solve_commutation_constraints(coms,anti_coms)
