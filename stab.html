@@ -274,6 +274,14 @@ operator as the encoder, instead of the first element yielded by
 </dd></dl>
 
 <dl class="method">
+<dt id="qecc.StabilizerCode.minimize_distance_from">
+<tt class="descname">minimize_distance_from</tt><big>(</big><em>other</em>, <em>quiet=True</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.minimize_distance_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reorders the stabilizer group generators of this code to minimize
+the Hamming distance with the group generators of another code,
+using a greedy heuristic algorithm.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="qecc.StabilizerCode.block_logical_pauli">
 <tt class="descname">block_logical_pauli</tt><big>(</big><em>P</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.block_logical_pauli" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a Pauli operator <img class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> acting on <img class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/>, finds a Pauli
