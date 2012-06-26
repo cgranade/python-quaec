@@ -75,12 +75,8 @@ def solve_commutation_constraints(
     >>> list(ifilter(lambda P: P.wt <= 2, q.solve_commutation_constraints(q.PauliList('XXI', 'IZZ', 'IYI'), q.PauliList('YIY'))))
     [i^0 XII, i^0 IIZ]
     """
-    
-    # Start by checking that the arguments make sense.
-    if len(commutation_constraints) == 0 and len(anticommutation_constraints) == 0:
-        raise ValueError("At least one constraint must be specified.")
         
-    # Next, normalize our arguments to be PauliLists, so that we can obtain
+    # Normalize our arguments to be PauliLists, so that we can obtain
     # centralizers easily.
     if not isinstance(commutation_constraints, PauliList):
         commutation_constraints = PauliList(commutation_constraints)
@@ -89,6 +85,11 @@ def solve_commutation_constraints(
         # slightly more sane to have both constraints represented by the same
         # sequence type.
         anticommutation_constraints = PauliList(anticommutation_constraints)
+
+    # Then check that the arguments make sense.
+    if len(commutation_constraints) == 0 and len(anticommutation_constraints) == 0:
+
+        raise ValueError("At least one constraint must be specified.")
         
     # We finish putting arguments in the right form by defaulting to searching
     # over the Pauli group on $n$ qubits.

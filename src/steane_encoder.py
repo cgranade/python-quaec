@@ -72,24 +72,3 @@ if __name__ == "__main__":
         print "{}: {}".format(recovery_operator, ", ".join([
             "".join(map(str, syndrome)) for syndrome in syndromes
         ]))
-        
-    def mabuchi_operators(stab_code,known_operators=q.PauliList()):
-        n_constraints=stab_code.n_constraints
-        enc = stab_code.encoding_cliffords().next()
-        dec = enc.inv()
-        synd_meas = [q.elem_gen(stab_code.nq, idx, kind) for idx, kind in zip(range(1,stab_code.nq), 'Z'*n_constraints)]
-        known_syndromes=[]
-        for op in known_operators:
-            #Calculate syndrome
-            eff = dec * op.as_clifford() * enc
-            known_syndromes.append([eff.conjugate_pauli(meas).ph / 2 for meas in synd_meas])
-        code_gens=stab_code.group_generators
-        for bits in product(range(2),repeat=n_constraints):
-            if bits in known_syndromes:
-                yield known_operators[known_syndromes.index(bits)]
-            else:
-                anti_coms=compress(code_gens,bits)
-                coms=compress(code_gens,map(lambda p: 1-p,bits))
-                print coms
-                print anti_coms
-                yield q.solve_commutation_constraints(coms,anti_coms)

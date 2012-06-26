@@ -34,7 +34,6 @@ import paulicollections as pc
 
 from collections import defaultdict
 from singletons import EmptyClifford, Unspecified
-from constraint_solvers import *
 
 import warnings
 
@@ -111,11 +110,7 @@ class StabilizerCode(object):
         The number of logical qubits admitted by this code.
         """
         return self.nq - self.n_constraints
-
-    @property
-    def logical_ys(self):
-        return pc.PauliList((ex * zed).mul_phase(1) for (ex,zed) in zip(self.logical_xs,self.logical_zs))     
-
+        
     @property
     def distance(self):
         r"""
@@ -301,6 +296,10 @@ class StabilizerCode(object):
                     
         return self
 
+    def recovery_operator(self,bitstring):
+        if isinstance(bitstring, str):
+            bitstring = map(int, bitstring)
+
     ## BLOCK CODE METHODS ##
 
     def block_logical_pauli(self, P):
@@ -329,38 +328,7 @@ class StabilizerCode(object):
         return reduce(op.and_, 
                 (replace_dict[sq_op] for sq_op in P.op),
                 p.eye_p(0))
-
-    def mabuchi_operators(stab_code,known_operators=pc.PauliList()):
-        """
-        Given a stabilizer code, this function yields Pauli operators
-        that satisfy all possible commutation relations with the
-        stabilizer group generators. This is a strict superset of the 
-        detectable errors. To increase the speed of this function, 
-        the keyword argument "known_operators" allows the input of the
-        detectable errors themselves. 
-        """
-        n_constraints=stab_code.n_constraints
-        enc = stab_code.encoding_cliffords().next()
-        dec = enc.inv()
-        synd_meas = [p.elem_gen(stab_code.nq, idx, kind) for idx, kind in zip(range(1,stab_code.nq), 'Z'*n_constraints)]
-        known_syndromes=[]
-        for op in known_operators:
-            #Calculate syndromes of known operators, and append to
-            #known syndromes
-            eff = dec * op.as_clifford() * enc
-            known_syndromes.append([eff.conjugate_pauli(meas).ph / 2 for meas in synd_meas])
-        code_gens=stab_code.group_generators
-        for bits in it.product(range(2),repeat=n_constraints):
-            if bits in known_syndromes:
-                #If the operator is known, output:
-                yield known_operators[known_syndromes.index(bits)]
-            else:
-                #If the operator is unknown, find a satisfactory operator
-                #by solving commutation constraints. 
-                anti_coms=list(it.compress(code_gens,bits))
-                coms=list(it.compress(code_gens,[1-bit for bit in bits]))
-                yield min(solve_commutation_constraints(coms,anti_coms),key=lambda j: j.wt)
-
+    
     ## OPERATORS ##
     
     def __and__(self, other):
@@ -567,7 +535,11 @@ class StabilizerCode(object):
         Not yet implemented.
         """
         raise NotImplementedError("Coming Soon: Reed-Muller Codes")
+<<<<<<< HEAD
+
+=======
         
+>>>>>>> ecaf4238b12dd27a2d9013f5648be762c9bd682d
     @staticmethod
     def reed_solomon_code(r,t):
         """
