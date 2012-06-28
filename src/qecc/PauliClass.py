@@ -102,7 +102,7 @@ class Pauli(object):
         Yields the number of qubits on which the Pauli ``self`` acts.
         """
         return len(self.op)
-                
+                    
     def __mul__(self, other):
         """
         Multiplies two Paulis, ``self`` and ``other`` symbolically, using tabulated single-Pauli multiplication.
@@ -314,6 +314,11 @@ class Pauli(object):
             is is supported.
         """
         return len([op for op in self.op if op != 'I'])
+
+    def cust_wt(self,char):
+        if char not in VALID_OPS:
+            raise ValueError('Generators cannot be selected outside I, X, Y, Z.')
+        return len([op for op in self.op if op == char])
         
     def ct(self):
         """
