@@ -168,6 +168,11 @@ acting on encoded states.</li>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="qecc.StabilizerCode.logical_ys">
+<tt class="descname">logical_ys</tt><a class="headerlink" href="#qecc.StabilizerCode.logical_ys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="qecc.StabilizerCode.distance">
 <tt class="descname">distance</tt><a class="headerlink" href="#qecc.StabilizerCode.distance" title="Permalink to this definition">¶</a></dt>
 <dd><p>The distance of this code, defined by <img class="math" src="_images/math/533ab002f6997faaabc9a30c17a5035ecb821cbd.png" alt="\min\text{wt} \{
@@ -288,6 +293,17 @@ using a greedy heuristic algorithm.</p>
 operator <img class="math" src="_images/math/91640f7a4eecd5a74c8a865c03846d837a6491d0.png" alt="\overline{P}"/> on <img class="math" src="_images/math/352c8227b306ecb073ce0371932c5b7fe3241232.png" alt="nk"/> qubits that corresponds
 to the logical operator acting across <img class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> blocks of this code.</p>
 <p>Note that this method is only supported for single logical qubit codes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.StabilizerCode.mabuchi_operators">
+<tt class="descname">mabuchi_operators</tt><big>(</big><em>stab_code</em>, <em>known_operators=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.mabuchi_operators" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a stabilizer code, this function yields Pauli operators
+that satisfy all possible commutation relations with the
+stabilizer group generators. This is a strict superset of the 
+detectable errors. To increase the speed of this function, 
+the keyword argument &#8220;known_operators&#8221; allows the input of the
+detectable errors themselves.</p>
 </dd></dl>
 
 <dl class="method">
