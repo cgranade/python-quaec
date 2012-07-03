@@ -77,6 +77,8 @@ def circuit_decomposition_part1(bsm):
             if idx_pivot1 != pivot:
                 left_gateseq.append(("SWAP", pivot, idx_pivot1))
                 bsm.left_SWAP(pivot, idx_pivot1)
+
+        assert bsm[pivot, pivot] == 1, "Pivot element not correctly set."
         
         # STEP 2. Do column reduction on the pivot column of XX, using left CNOT
         #         to elimate any other 1s in that column.

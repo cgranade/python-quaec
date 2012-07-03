@@ -571,8 +571,8 @@ class StabilizerCode(object):
     @staticmethod
     def reed_solomon_code(r,t):
         """
+
         Not yet implemented.
+
         """
         raise NotImplementedError("Coming Soon: Reed-Solomon Codes")
-        
-

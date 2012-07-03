@@ -532,7 +532,9 @@ class BinarySymplecticMatrix(object):
         # The circuit decomposition algorithm is long enough that it was moved
         # into another module, bsf_decomp.
         left, right = bsf_decomp.circuit_decomposition_part1(self.copy())
-        return circuit.Circuit(*(left + right))
+        circ = circuit.Circuit(*(right + list(reversed(left))))
+        assert all(circ.as_clifford().as_bsm()._arr == self._arr), "Decomposition failed to produce desired BSM."
+        return circ
         
         
 ## BSM FUNCTIONS ##
