@@ -102,7 +102,7 @@ def circuit_decomposition_part1(bsm):
             else:
                 idx_next_1 += pivot + 1
                 
-            right_gateseq.append(("CNOT", pivot, idx_next_1))
+            right_gateseq.append(("CNOT", idx_next_1, pivot))
             bsm.right_CNOT(idx_next_1, pivot)
         
         

@@ -525,7 +525,7 @@ class BinarySymplecticMatrix(object):
         """
         return BinarySymplecticMatrix(self._arr.copy())
         
-    def circuit_decomposition(self):
+    def circuit_decomposition(self, validate=True):
         """
         Decomposes the binary symplectic matrix 
         """
@@ -533,7 +533,8 @@ class BinarySymplecticMatrix(object):
         # into another module, bsf_decomp.
         left, right = bsf_decomp.circuit_decomposition_part1(self.copy())
         circ = circuit.Circuit(*(right + list(reversed(left))))
-        assert all(circ.as_clifford().as_bsm()._arr == self._arr), "Decomposition failed to produce desired BSM."
+        if validate:
+            assert all(circ.as_clifford().as_bsm()._arr == self._arr), "Decomposition failed to produce desired BSM."
         return circ
         
         

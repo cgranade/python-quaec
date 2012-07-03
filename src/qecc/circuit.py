@@ -363,7 +363,7 @@ class Circuit(list):
             raise RuntimeError('All locations must be Clifford gates in order to represent a circuit as a Clifford operator.')
             
         nq = self.nq
-        return reduce(mul, (loc.as_clifford(nq) for loc in self), cc.eye_c(nq))
+        return reduce(mul, (loc.as_clifford(nq) for loc in reversed(self)), cc.eye_c(nq))
         
 
     ## CIRCUIT SIMPLIFICATION METHODS ##
