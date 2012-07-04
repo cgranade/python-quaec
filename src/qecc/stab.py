@@ -193,7 +193,7 @@ class StabilizerCode(object):
             self.logical_zs + self.group_generators)
         return C.constraint_completions()
         
-    def star_decoder(self, for_enc=None):
+    def star_decoder(self, for_enc=None, as_dict=False):
         r"""
         Returns a tuple of a decoding Clifford and a :class:`qecc.PauliList`
         specifying the recovery operation to perform as a function of the result
@@ -206,6 +206,8 @@ class StabilizerCode(object):
         :param for_enc: If not ``None``, specifies to use a given Clifford
             operator as the encoder, instead of the first element yielded by
             :meth:`encoding_cliffords`.
+        :param bool as_dict: If ``True``, returns a dictionary from recovery
+            operators to syndromes that indicate that recovery.
         """
         def error_to_pauli(error):
             if error == p.I.as_clifford():
@@ -247,9 +249,19 @@ class StabilizerCode(object):
                 
             syndrome_dict[syndrome] = recovery
         
-        recovery_list = pc.PauliList(syndrome_dict[syndrome] for syndrome in it.product(range(2), repeat=self.n_constraints))
-        
-        return decoder, recovery_list
+        if as_dict:
+            outdict = dict()
+            keyfn = lambda (syndrome, recovery): recovery
+            data = sorted(syndrome_dict.items(), key=keyfn)
+            for recovery, syndrome_group in it.groupby(data, keyfn):
+                outdict[recovery] = [syn[0] for syn in syndrome_group]
+            
+            return decoder, outdict
+            
+        else:
+            recovery_list = pc.PauliList(syndrome_dict[syndrome] for syndrome in it.product(range(2), repeat=self.n_constraints))
+            
+            return decoder, recovery_list
 
     def minimize_distance_from(self, other, quiet=True):
         """
