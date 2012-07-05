@@ -259,7 +259,7 @@ rest of the qubits in the input register are initialized to
 
 <dl class="method">
 <dt id="qecc.StabilizerCode.star_decoder">
-<tt class="descname">star_decoder</tt><big>(</big><em>for_enc=None</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.star_decoder" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">star_decoder</tt><big>(</big><em>for_enc=None</em>, <em>as_dict=False</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.star_decoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a tuple of a decoding Clifford and a <a class="reference internal" href="paulicollections.html#qecc.PauliList" title="qecc.PauliList"><tt class="xref py py-class docutils literal"><span class="pre">qecc.PauliList</span></tt></a>
 specifying the recovery operation to perform as a function of the result
 of a <img class="math" src="_images/math/8edfdad39af4fc825ca6266cab678ebd1f4da65b.png" alt="Z^{\otimes{n - k}}"/> measurement on the ancilla register.</p>
@@ -270,9 +270,14 @@ the relevant element of the recovery list will be set to
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>for_enc</strong> &#8211; If not <tt class="xref docutils literal"><span class="pre">None</span></tt>, specifies to use a given Clifford
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>for_enc</strong> &#8211; If not <tt class="xref docutils literal"><span class="pre">None</span></tt>, specifies to use a given Clifford
 operator as the encoder, instead of the first element yielded by
-<tt class="xref py py-meth docutils literal"><span class="pre">encoding_cliffords()</span></tt>.</td>
+<tt class="xref py py-meth docutils literal"><span class="pre">encoding_cliffords()</span></tt>.</li>
+<li><strong>as_dict</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <tt class="xref docutils literal"><span class="pre">True</span></tt>, returns a dictionary from recovery
+operators to syndromes that indicate that recovery.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
