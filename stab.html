@@ -128,7 +128,7 @@ manner using <a class="reference internal" href="#qecc.StabilizerCode" title="qe
 <h3><a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a><a class="headerlink" href="#qecc-stabilizercode" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="qecc.StabilizerCode">
-<em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">StabilizerCode</tt><big>(</big><em>group_generators</em>, <em>logical_xs</em>, <em>logical_zs</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">StabilizerCode</tt><big>(</big><em>group_generators</em>, <em>logical_xs</em>, <em>logical_zs</em>, <em>label=None</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class representing a stabilizer code specified by the generators of its
 stabilizer group and by representatives for the logical operators acting
 on the code.</p>
@@ -144,6 +144,7 @@ group <img class="math" src="_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a
 acting on encoded states.</li>
 <li><strong>logical_zs</strong> &#8211; Representatives for the logical <img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> operators
 acting on encoded states.</li>
+<li><strong>label</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; User-facing name for the stabilizer code.</li>
 </ul>
 </td>
 </tr>
@@ -302,7 +303,7 @@ to the logical operator acting across <img class="math" src="_images/math/8c3256
 
 <dl class="method">
 <dt id="qecc.StabilizerCode.mabuchi_operators">
-<tt class="descname">mabuchi_operators</tt><big>(</big><em>stab_code</em>, <em>known_operators=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.mabuchi_operators" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">mabuchi_operators</tt><big>(</big><em>stab_code</em>, <em>known_operators=None</em>, <em>wt2=False</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.mabuchi_operators" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a stabilizer code, this function yields Pauli operators
 that satisfy all possible commutation relations with the
 stabilizer group generators. This is a strict superset of the 
@@ -355,7 +356,7 @@ register of <tt class="docutils literal"><span class="pre">nq_ancilla</span></tt
 
 <dl class="staticmethod">
 <dt id="qecc.StabilizerCode.flip_code">
-<em class="property">static </em><tt class="descname">flip_code</tt><big>(</big><em>n_correctable</em>, <em>stab_kind=i^0 Z</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.flip_code" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descname">flip_code</tt><big>(</big><em>n_correctable</em>, <em>stab_kind='Z'</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.flip_code" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a> representing a
 code that protects against weight-<tt class="docutils literal"><span class="pre">n_correctable</span></tt> flip errors of a
 single kind.</p>
