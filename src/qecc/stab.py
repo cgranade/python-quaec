@@ -330,7 +330,7 @@ class StabilizerCode(object):
                 (replace_dict[sq_op] for sq_op in P.op),
                 p.eye_p(0))
 
-    def mabuchi_operators(stab_code,known_operators=pc.PauliList()):
+    def mabuchi_operators(stab_code,known_operators=pc.PauliList(),wt2=False):
         """
         Given a stabilizer code, this function yields Pauli operators
         that satisfy all possible commutation relations with the
@@ -359,8 +359,11 @@ class StabilizerCode(object):
                 #by solving commutation constraints. 
                 anti_coms=list(it.compress(code_gens,bits))
                 coms=list(it.compress(code_gens,[1-bit for bit in bits]))
-                yield min(solve_commutation_constraints(coms,anti_coms),key=lambda j: j.wt)
-
+                if wt2:
+                    yield min(solve_commutation_constraints(coms,anti_coms),key=lambda j: j.wt)
+                else:
+                    yield min(solve_commutation_constraints(coms,anti_coms),key=lambda j: j.wt)
+                    
     ## OPERATORS ##
     
     def __and__(self, other):
