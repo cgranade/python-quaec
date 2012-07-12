@@ -1,11 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 ##
-# constraint_solvers.py: Solvers for various Pauli and Clifford constraint
+# constraint_solvers.py: Solvers for various pc.Pauli and Clifford constraint
 #     problems.
 ##
-# © 2012 Christopher E. Granade (cgranade@gmail.com) and
-#     Ben Criger (bcriger@gmail.com).
+# © 2012 Christopher E. Granade (cgranade@gmail.pc.com) and
+#     Ben Criger (bcriger@gmail.pc.com).
 # This file is a part of the QuaEC project.
 # Licensed under the AGPL version 3.
 ##
@@ -31,7 +31,7 @@ __all__ = [
 
 ## IMPORTS ##
 
-from PauliClass import Pauli, elem_gens, com, from_generators
+import PauliClass as pc
 from paulicollections import PauliList
 from pred import AllPredicate
 from itertools import ifilter
@@ -44,7 +44,7 @@ def solve_commutation_constraints(
         search_in_gens=None
     ):
     r"""
-    Given commutation constraints on a Pauli operator, yields an iterator onto
+    Given commutation constraints on a pc.Pauli operator, yields an iterator onto
     all solutions of those constraints.
     
     :param commutation_constraints: A list of operators :math:`\{A_i\}` such
@@ -55,7 +55,7 @@ def solve_commutation_constraints(
         :math:`\{B_i, P\} = 0` for all :math:`i`.
     :param search_in_gens: A list of operators :math:`\{N_i\}` that generate
         the group in which to search for solutions. If ``None``, defaults to
-        the elementary generators of the Pauli group on :math:`n` qubits, where
+        the elementary generators of the pc.Pauli group on :math:`n` qubits, where
         :math:`n` is given by the length of the commutation and anticommutation
         constraints.
     :returns: An iterator ``it`` such that ``list(it)`` contains all operators
@@ -92,10 +92,10 @@ def solve_commutation_constraints(
         raise ValueError("At least one constraint must be specified.")
         
     # We finish putting arguments in the right form by defaulting to searching
-    # over the Pauli group on $n$ qubits.
+    # over the pc.Pauli group on $n$ qubits.
     if search_in_gens is None:
         nq = len(commutation_constraints[0] if len(commutation_constraints) > 0 else anticommutation_constraints[0])
-        Xs, Zs = elem_gens(nq)
+        Xs, Zs = pc.elem_gens(nq)
         search_in_gens = Xs + Zs
     
     # Now we update our search by restricting to the centralizer of the
@@ -105,9 +105,9 @@ def solve_commutation_constraints(
     # Finally, we return a filter iterator on the elements of the given
     # centralizer that selects elements which anticommute appropriately.
     anticommutation_predicate = AllPredicate(*map(
-        lambda acc: (lambda P: com(P, acc) == 1),
+        lambda acc: (lambda P: pc.com(P, acc) == 1),
         anticommutation_constraints
         ))
     assert len(search_in_gens) > 0
-    return ifilter(anticommutation_predicate, from_generators(search_in_gens))
+    return ifilter(anticommutation_predicate, pc.from_generators(search_in_gens))
 

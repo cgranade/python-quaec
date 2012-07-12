@@ -31,10 +31,10 @@ import math
 import PauliClass as p # Sorry for the confusing notation here.
 import CliffordClass as c
 import paulicollections as pc
+import constraint_solvers as cs
 
 from collections import defaultdict
 from singletons import EmptyClifford, Unspecified
-from constraint_solvers import *
 
 import warnings
 
@@ -346,7 +346,7 @@ class StabilizerCode(object):
                 (replace_dict[sq_op] for sq_op in P.op),
                 p.eye_p(0))
 
-    def mabuchi_operators(stab_code,known_operators=pc.PauliList(),wt2=False):
+    def mabuchi_operators(stab_code, known_operators=None, wt2=False):
         """
         Given a stabilizer code, this function yields Pauli operators
         that satisfy all possible commutation relations with the
@@ -355,6 +355,10 @@ class StabilizerCode(object):
         the keyword argument "known_operators" allows the input of the
         detectable errors themselves. 
         """
+        
+        if known_operators is None:
+            known_operators = pc.PauliList()
+            
         n_constraints=stab_code.n_constraints
         enc = stab_code.encoding_cliffords().next()
         dec = enc.inv()
@@ -376,9 +380,9 @@ class StabilizerCode(object):
                 anti_coms=list(it.compress(code_gens,bits))
                 coms=list(it.compress(code_gens,[1-bit for bit in bits]))
                 if wt2:
-                    yield min(solve_commutation_constraints(coms,anti_coms),key=lambda j: j.wt)
+                    yield min(cs.solve_commutation_constraints(coms,anti_coms),key=lambda j: j.wt)
                 else:
-                    yield min(solve_commutation_constraints(coms,anti_coms),key=lambda j: j.wt)
+                    yield min(cs.solve_commutation_constraints(coms,anti_coms),key=lambda j: j.wt)
                     
     ## OPERATORS ##
     
@@ -477,7 +481,7 @@ class StabilizerCode(object):
         )
 
     @staticmethod
-    def flip_code(n_correctable, stab_kind=p.Z):
+    def flip_code(n_correctable, stab_kind='Z'):
         """
         Creates an instance of :class:`qecc.StabilizerCode` representing a
         code that protects against weight-``n_correctable`` flip errors of a
