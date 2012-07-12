@@ -59,28 +59,32 @@ class StabilizerCode(object):
         acting on encoded states.
     :param logical_zs: Representatives for the logical :math:`Z` operators
         acting on encoded states.
+    :param str label: User-facing name for the stabilizer code.
     """
     
     ## CONSTRUCTOR ##
     
-    def __init__(self, group_generators, logical_xs, logical_zs):
+    def __init__(self, group_generators, logical_xs, logical_zs, label=None):
         self.group_generators = pc.PauliList(*group_generators)
         self.logical_xs = pc.PauliList(*logical_xs)
         self.logical_zs = pc.PauliList(*logical_zs)
+        self.label = label
         
     ## PRETTY PRINTING ##
         
     def __repr__(self):
-        return "<[[{n}, {k}, {d}]] StabilizerCode at {id:0x}>".format(
+        return "<[[{n}, {k}, {d}]] StabilizerCode{label_or_space}at {id:0x}>".format(
             n=self.nq, k=self.nq_logical,
             d=self.distance if self.nq < 6 else "?",
-            id=id(self)
+            id=id(self),
+            label_or_space=' "{}" '.format(self.label) if self.label is not None else ""
         )
     
     def __str__(self):
-        return "S = <{group_generators}>\nXbars = {0.logical_xs}\nZbars = {0.logical_zs}".format(
+        retstr = "S = <{group_generators}>\nXbars = {0.logical_xs}\nZbars = {0.logical_zs}".format(
             self,
             group_generators=", ".join(map(str, self.group_generators)))
+        return ((self.label + "\n") if self.label is not None else "") + retstr
        
     ## READ-ONLY PROPERTIES ##
         
@@ -492,7 +496,8 @@ class StabilizerCode(object):
         
         return StabilizerCode(
             [p.eye_p(j) & stab_kind & stab_kind & p.eye_p(nq-j-2) for j in range(nq-1)],
-            ['X'*nq], ['Z'*nq]
+            ['X'*nq], ['Z'*nq],
+            label='{}-flip code (t = {})'.format(stab_kind.op, n_correctable)
         )
 
     @staticmethod
@@ -506,6 +511,7 @@ class StabilizerCode(object):
         :rtype: qecc.StabilizerCode
         """
         return StabilizerCode.flip_code(n_correctable, stab_kind=p.Z)
+        
     @staticmethod
     def phase_flip_code(n_correctable):
         """
@@ -533,7 +539,8 @@ class StabilizerCode(object):
                 'XIXZZ',
                 'ZXIXZ'
             ],
-            ['XXXXX'], ['ZZZZZ']
+            ['XXXXX'], ['ZZZZZ'],
+            label='5-qubit perfect code'
         )
 
     @staticmethod
@@ -553,7 +560,8 @@ class StabilizerCode(object):
                 'ZZIIZZI',
                 'ZIZIZIZ'                
             ],
-            ['XXXXXXX'], ['ZZZZZZZ']
+            ['XXXXXXX'], ['ZZZZZZZ'],
+            label='7-qubit Steane code'
         )
 
     @staticmethod
@@ -564,7 +572,9 @@ class StabilizerCode(object):
         
         :rtype: qecc.StabilizerCode
         """        
-        return StabilizerCode.bit_flip_code(1).concatenate(StabilizerCode.phase_flip_code(1))        
+        stab = StabilizerCode.bit_flip_code(1).concatenate(StabilizerCode.phase_flip_code(1))
+        stab.label = '9-qubit Shor code'
+        return stab
 
     @staticmethod
     def css_code(C1, C2):
