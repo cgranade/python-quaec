@@ -29,6 +29,7 @@ from copy import copy
 import bsf
 from operator import mul, and_
 import pred
+from circuit import Circuit, Location
 
 from paulicollections import PauliList
 from unitary_reps import pauli_as_unitary
@@ -241,6 +242,14 @@ class Pauli(object):
                 zeds=zeds+'0' 
         return bsf.BinarySymplecticVector(exes,zeds)
 
+    def as_circuit(self):
+        """ Transforms an n-qubit Pauli to a serial circuit on 
+        n qubits. Neglects global phases."""
+        gatelist=[]
+        for idx, letter in enumerate(self.op):
+            gatelist.append((letter,idx))
+        return Circuit(*gatelist)
+        
     def __eq__(self,other):
         """
         Tests if two input Paulis, :obj:`self` and :obj:`other`, are equal.
@@ -417,9 +426,7 @@ def paulis_by_weight(nq, wt):
             paulis_by_weight(nq, wt - 1),
             (error_by_idxs(idxs, err_string) for err_string in product('XYZ', repeat=wt) for idxs in combinations(range(nq), wt))
         )
-        
-        
-            
+                    
 def com(P, Q):
     r"""
     Given two elements *P* and *Q* of a Pauli group, returns 0 if :math:`[P, Q] = 0`
