@@ -443,6 +443,7 @@ class Clifford(object):
     def circuit_decomposition(self):
         pauli_correct = paulify((self.as_bsm().circuit_decomposition().as_clifford())*self.inv()).as_circuit()
         return (self.as_bsm().circuit_decomposition())+pauli_correct
+        
 ## FUNCTIONS ##
 def eye_c(nq):
     """

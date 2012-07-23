@@ -247,7 +247,8 @@ class Pauli(object):
         n qubits. Neglects global phases."""
         gatelist=[]
         for idx, letter in enumerate(self.op):
-            gatelist.append((letter,idx))
+            if letter != "I":
+                gatelist.append((letter,idx))
         return Circuit(*gatelist)
         
     def __eq__(self,other):
