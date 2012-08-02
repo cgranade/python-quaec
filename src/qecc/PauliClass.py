@@ -415,6 +415,10 @@ def powerset(iterable):
     return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
         
 def paulis_by_weight(nq, wt):
+    """
+    Produces an iterator including all Pauli operators on ``nq`` qubits
+    of weight ``wt``.
+    """
     def error_by_idxs(idxs, err_string):
         return reduce(mul, starmap(elem_gen, zip([nq]*len(idxs), idxs, err_string)))
         

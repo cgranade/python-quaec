@@ -42,6 +42,7 @@ def solve_commutation_constraints(
         commutation_constraints=[],
         anticommutation_constraints=[],
         search_in_gens=None
+        search_in_set=None
     ):
     r"""
     Given commutation constraints on a pc.Pauli operator, yields an iterator onto
@@ -58,6 +59,12 @@ def solve_commutation_constraints(
         the elementary generators of the pc.Pauli group on :math:`n` qubits, where
         :math:`n` is given by the length of the commutation and anticommutation
         constraints.
+    :param search_in_set: An iterable of operators to which the search for 
+        satisfying assignments is restricted. This differs from ``search_in_gens``
+        in that it specifies the entire set, not a generating set. When this
+        parameter is specified, a brute-force search is executed. Use only
+        when the search set is small, and cannot be expressed using its generating
+        set. 
     :returns: An iterator ``it`` such that ``list(it)`` contains all operators
         within the group :math:`G = \langle N_1, \dots, N_k \rangle\rangle`
         given by ``search_in_gens``, consistent with the commutation and
@@ -90,7 +97,21 @@ def solve_commutation_constraints(
     if len(commutation_constraints) == 0 and len(anticommutation_constraints) == 0:
 
         raise ValueError("At least one constraint must be specified.")
-        
+
+    #We default to executing a brute-force search if the search set is
+    #explicitly specified:
+    if search_in_set is not None:
+        commutation_predicate = AllPredicate(*map(
+            lambda acc: (lambda P: pc.com(P, acc) == 0),
+            anticommutation_constraints
+            ))
+        commuters = filter(commutation_predicate, search_in_set)
+        anticommutation_predicate = AllPredicate(*map(
+            lambda acc: (lambda P: pc.com(P, acc) == 1),
+            anticommutation_constraints
+            ))
+        return filter(anticommutation_predicate, commuters)
+
     # We finish putting arguments in the right form by defaulting to searching
     # over the pc.Pauli group on $n$ qubits.
     if search_in_gens is None:

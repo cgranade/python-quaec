@@ -345,47 +345,7 @@ class StabilizerCode(object):
         return reduce(op.and_, 
                 (replace_dict[sq_op] for sq_op in P.op),
                 p.eye_p(0))
-
-    def mabuchi_operators(stab_code, known_operators=None, wt2=False):
-        """
-        Given a stabilizer code, this function yields Pauli operators
-        that satisfy all possible commutation relations with the
-        stabilizer group generators. This is a strict superset of the 
-        detectable errors. To increase the speed of this function, 
-        the keyword argument "known_operators" allows the input of the
-        detectable errors themselves. 
-        """
-        
-        if known_operators is None:
-            known_operators = pc.PauliList()
-            
-        n_constraints=stab_code.n_constraints
-        enc = stab_code.encoding_cliffords().next()
-        dec = enc.inv()
-        synd_meas = [p.elem_gen(stab_code.nq, idx, kind) for idx, kind in zip(range(1,stab_code.nq), 'Z'*n_constraints)]
-        known_syndromes=[]
-        for op in known_operators:
-            #Calculate syndromes of known operators, and append to
-            #known syndromes
-            eff = dec * op.as_clifford() * enc
-            known_syndromes.append((eff.conjugate_pauli(meas).ph / 2 for meas in synd_meas))
-        code_gens=stab_code.group_generators
-        for bits in it.product(range(2),repeat=n_constraints):
-            if bits in known_syndromes:
-                #If the operator is known, output:
-                yield known_operators[known_syndromes.index(bits)]
-            else:
-                #If the operator is unknown, find a short list of 
-                #satisfactory operators by solving commutation 
-                #constraints. 
-                anti_coms=list(it.compress(code_gens,bits))
-                coms=list(it.compress(code_gens,[1-bit for bit in bits]))
-                if wt2:
-                    yield it.ifilter(lambda h: h.wt==2,cs.solve_commutation_constraints(coms,anti_coms))
-                else:
-                    testweight=min(cs.solve_commutation_constraints(coms,anti_coms),key=lambda j: j.wt).wt
-                    yield p.Pauli(min(cs.solve_commutation_constraints(coms,anti_coms),key=lambda j: j.wt).op)
-                    
+                
     ## OPERATORS ##
     
     def __and__(self, other):
