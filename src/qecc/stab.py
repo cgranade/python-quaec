@@ -368,21 +368,23 @@ class StabilizerCode(object):
             #Calculate syndromes of known operators, and append to
             #known syndromes
             eff = dec * op.as_clifford() * enc
-            known_syndromes.append([eff.conjugate_pauli(meas).ph / 2 for meas in synd_meas])
+            known_syndromes.append((eff.conjugate_pauli(meas).ph / 2 for meas in synd_meas))
         code_gens=stab_code.group_generators
         for bits in it.product(range(2),repeat=n_constraints):
             if bits in known_syndromes:
                 #If the operator is known, output:
                 yield known_operators[known_syndromes.index(bits)]
             else:
-                #If the operator is unknown, find a satisfactory operator
-                #by solving commutation constraints. 
+                #If the operator is unknown, find a short list of 
+                #satisfactory operators by solving commutation 
+                #constraints. 
                 anti_coms=list(it.compress(code_gens,bits))
                 coms=list(it.compress(code_gens,[1-bit for bit in bits]))
                 if wt2:
-                    yield min(cs.solve_commutation_constraints(coms,anti_coms),key=lambda j: j.wt)
+                    yield it.ifilter(lambda h: h.wt==2,cs.solve_commutation_constraints(coms,anti_coms))
                 else:
-                    yield min(cs.solve_commutation_constraints(coms,anti_coms),key=lambda j: j.wt)
+                    testweight=min(cs.solve_commutation_constraints(coms,anti_coms),key=lambda j: j.wt).wt
+                    yield p.Pauli(min(cs.solve_commutation_constraints(coms,anti_coms),key=lambda j: j.wt).op)
                     
     ## OPERATORS ##
     

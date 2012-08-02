@@ -46,7 +46,7 @@ __all__ = [
     'is_in_normalizer', 'elem_gen', 'elem_gens', 'eye_p', 'ns_mod_s',
     'pad', 'mutually_commuting_sets',
     'clifford_bottoms',
-    'paulis_by_weight'
+    'paulis_by_weight','remove_phase'
     ]
         
 ## CONSTANTS ##
@@ -641,6 +641,10 @@ def clifford_bottoms(c_top):
     for possible_set in product(*possible_zs):
         if all(imap(lambda twolist: pred.commutes_with(twolist[0])(twolist[1]),combinations(possible_set,2))):
             yield possible_set
+
+def remove_phase(pauli):
+    return Pauli(pauli.op)
+
 ## MAIN ##
 
 if __name__ == "__main__":
