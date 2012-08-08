@@ -41,7 +41,7 @@ from itertools import ifilter
 def solve_commutation_constraints(
         commutation_constraints=[],
         anticommutation_constraints=[],
-        search_in_gens=None
+        search_in_gens=None,
         search_in_set=None
     ):
     r"""
