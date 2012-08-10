@@ -317,6 +317,15 @@ class StabilizerCode(object):
                     
         return self
 
+    def stabilizer_subspace(self):
+        r"""
+        Returns a :math:`2^{k} \times 2^{n}` array whose rows form a basis for
+        the codespace of this code. Please note that by necessity, this code
+        is exponentially slow as a function of the numbers of physical and
+        logical qubits.
+        """
+        return self.group_generators.stabilizer_subspace()
+
     ## BLOCK CODE METHODS ##
 
     def block_logical_pauli(self, P):
