@@ -293,6 +293,15 @@ using a greedy heuristic algorithm.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="qecc.StabilizerCode.stabilizer_subspace">
+<tt class="descname">stabilizer_subspace</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.stabilizer_subspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <img class="math" src="_images/math/003069682f7b6326efa876331191008c5f0a1400.png" alt="2^{k} \times 2^{n}"/> array whose rows form a basis for
+the codespace of this code. Please note that by necessity, this code
+is exponentially slow as a function of the numbers of physical and
+logical qubits.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="qecc.StabilizerCode.block_logical_pauli">
 <tt class="descname">block_logical_pauli</tt><big>(</big><em>P</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.block_logical_pauli" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a Pauli operator <img class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> acting on <img class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/>, finds a Pauli
