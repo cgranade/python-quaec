@@ -121,6 +121,12 @@ class StabilizerCode(object):
         return pc.PauliList((ex * zed).mul_phase(1) for (ex,zed) in zip(self.logical_xs,self.logical_zs))     
 
     @property
+    def logical_ops(self):
+        """Returns a list of all logical operators for a code in the
+        form [Xs, Ys, Zs]."""
+        return self.logical_xs+self.logical_ys+self.logical_zs
+
+    @property
     def distance(self):
         r"""
         The distance of this code, defined by :math:`\min\text{wt} \{
