@@ -103,7 +103,7 @@ def solve_commutation_constraints(
     if search_in_set is not None:
         commutation_predicate = AllPredicate(*map(
             lambda acc: (lambda P: pc.com(P, acc) == 0),
-            anticommutation_constraints
+            commutation_constraints
             ))
         commuters = filter(commutation_predicate, search_in_set)
         anticommutation_predicate = AllPredicate(*map(
