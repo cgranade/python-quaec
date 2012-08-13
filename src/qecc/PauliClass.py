@@ -423,7 +423,7 @@ def paulis_by_weight(nq, wt):
         return reduce(mul, starmap(elem_gen, zip([nq]*len(idxs), idxs, err_string)))
         
     if wt == 0:
-        return eye_p(nq)
+        return iter([eye_p(nq)])
     elif wt == 1:
         return iter(elem_gen(nq, idx, kind) for kind in ['X', 'Y', 'Z'] for idx in range(nq))
     else:
