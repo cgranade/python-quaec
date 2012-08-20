@@ -378,7 +378,26 @@ class StabilizerCode(object):
             (self.logical_zs & p.eye_p(other.nq)) +
             (p.eye_p(self.nq) & other.logical_zs),
         )
-        
+
+    ## PERMUTATION ##
+    def permute_gens(self,perm):
+        r"""
+        Returns a stabilizer code with generators related to the 
+        generators of self, with every instance of {X,Y,Z} replaced with
+        {perm[0],perm[1],perm[2]}. perm is a list containing 'X','Y',
+        and 'Z' in any order.  
+        """
+        new_group_generators=pc.PauliList()
+        for pauli in self.group_generators:
+            new_group_generators.append(p.permute_op(pauli,perm))
+        new_log_xs=pc.PauliList()
+        for pauli in self.logical_xs:
+            new_log_xs.append(p.permute_op(pauli,perm))
+        new_log_zs=pc.PauliList()
+        for pauli in self.logical_zs:
+            new_log_zs.append(p.permute_op(pauli,perm))
+        return StabilizerCode(new_group_generators,new_log_xs,new_log_zs)
+
     ## CONCATENATION ##
         
     def concatenate(self,other):

@@ -46,7 +46,7 @@ __all__ = [
     'is_in_normalizer', 'elem_gen', 'elem_gens', 'eye_p', 'ns_mod_s',
     'pad', 'mutually_commuting_sets',
     'clifford_bottoms',
-    'paulis_by_weight','remove_phase'
+    'paulis_by_weight','remove_phase','permute_op'
     ]
         
 ## CONSTANTS ##
@@ -603,9 +603,20 @@ def mutually_commuting_sets(n_elems, n_bits=None, group_gens=None, exclude=None)
             c_gens=P.centralizer_gens(group_gens)
             for S in mutually_commuting_sets(n_elems-1,group_gens=c_gens, exclude=exclude+[P]):
                 yield (P,)+S
-        
-    
-    
+
+def permute_op(pauli,perm):
+    new_operator=''
+    for letter in pauli.op:
+        if letter == 'X':
+            new_operator=new_operator+perm[0]
+        elif letter == 'Y':
+            new_operator=new_operator+perm[1]
+        elif letter == 'Z':
+            new_operator=new_operator+perm[2]
+        elif letter == 'I':
+            new_operator=new_operator+'I'
+    return Pauli(new_operator,phase=pauli.ph)
+
 def pad(setP, n_eb=0, lower_right=None):
     r"""
     """
