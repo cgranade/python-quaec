@@ -46,7 +46,7 @@ __all__ = [
     'is_in_normalizer', 'elem_gen', 'elem_gens', 'eye_p', 'ns_mod_s',
     'pad', 'mutually_commuting_sets',
     'clifford_bottoms',
-    'paulis_by_weight','remove_phase','permute_op'
+    'paulis_by_weight','remove_phase'
     ]
         
 ## CONSTANTS ##
@@ -195,6 +195,57 @@ class Pauli(object):
         """
         self.ph = (self.ph + ph) % 4
         return self
+
+    def permute_op(self, perm):
+        r"""
+        Returns a new :class:`qecc.Pauli` instance whose operator part
+        is related to the operator part of this Pauli, so that
+        :math:`\sigma_{\mu}` is mapped to :math:`\sigma_{\pi(\mu)}` for some
+        permutation :math:`\pi` of the objects :math:`{X, Y, Z}`. 
+        
+        For example:
+        
+        >>> import qecc as q
+        >>> P = q.Pauli('XYZXYZ')
+        >>> print P.permute_op('ZXY')
+        i^0 ZXYZXY
+        
+        Note that the result is **not** guaranteed to be the result of a
+        Clifford operator acting on this Pauli, as permutation may not respect
+        the phases introduced by taking products. For example:
+        
+        >>> import qecc as q
+        >>> P = q.Pauli('XYZ')
+        >>> Q = q.Pauli('YYZ')
+        >>> P * Q
+        i^1 ZII
+        >>> Pp = P.permute_op('ZYX')
+        >>> Qp = Q.permute_op('ZYX')
+        >>> Pp * Qp
+        i^3 XII
+
+        :param list perm: A list indicating which permutation is to be
+            performed.
+        :return: A new instance `Q` of :class:`qecc.Pauli` that is related to
+            this instance by a permutation of :math:`X`, :math:`Y` and
+            :math:`Z`.
+        """
+        
+        new_operator=''
+        
+        for letter in self.op:
+            if letter == 'X':
+                new_operator += perm[0]
+            elif letter == 'Y':
+                new_operator += perm[1]
+            elif letter == 'Z':
+                new_operator += perm[2]
+            elif letter == 'I':
+                new_operator=new_operator+'I'
+                
+        return Pauli(new_operator, phase=self.ph)
+    
+    ## CONVERSION METHODS ##
 
     def as_gens(self):
         """
@@ -603,19 +654,6 @@ def mutually_commuting_sets(n_elems, n_bits=None, group_gens=None, exclude=None)
             c_gens=P.centralizer_gens(group_gens)
             for S in mutually_commuting_sets(n_elems-1,group_gens=c_gens, exclude=exclude+[P]):
                 yield (P,)+S
-
-def permute_op(pauli,perm):
-    new_operator=''
-    for letter in pauli.op:
-        if letter == 'X':
-            new_operator=new_operator+perm[0]
-        elif letter == 'Y':
-            new_operator=new_operator+perm[1]
-        elif letter == 'Z':
-            new_operator=new_operator+perm[2]
-        elif letter == 'I':
-            new_operator=new_operator+'I'
-    return Pauli(new_operator,phase=pauli.ph)
 
 def pad(setP, n_eb=0, lower_right=None):
     r"""

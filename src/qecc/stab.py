@@ -378,24 +378,47 @@ class StabilizerCode(object):
             (self.logical_zs & p.eye_p(other.nq)) +
             (p.eye_p(self.nq) & other.logical_zs),
         )
+        
+    def __eq__(self, other):
+        
+        if not isinstance(other, StabilizerCode):
+            return NotImplemented
+        
+        # NOTE: We do not check the label as that is unimportant for
+        #       equality of two codes.
+        return (
+            self.group_generators == other.group_generators and
+            self.logical_xs == other.logical_xs and
+            self.logical_zs == other.logical_zs
+        )
+        
 
     ## PERMUTATION ##
-    def permute_gens(self,perm):
+    def permute_gen_ops(self, perm):
         r"""
         Returns a stabilizer code with generators related to the 
-        generators of self, with every instance of {X,Y,Z} replaced with
-        {perm[0],perm[1],perm[2]}. perm is a list containing 'X','Y',
-        and 'Z' in any order.  
+        generators of `self`, with every instance of {X,Y,Z} replaced with
+        {perm[0],perm[1],perm[2]}.
+        
+        :param list perm: A list containing 'X','Y',  and 'Z' in any order,
+            indicating which permutation is to be applied.
+            
+        >>> new_stab = StabilizerCode.bit_flip_code(1).permute_gen_ops('ZYX')
+        >>> assert new_stab == StabilizerCode.phase_flip_code(1)
         """
-        new_group_generators=pc.PauliList()
+        
+        new_group_generators=pc.PauliList()        
         for pauli in self.group_generators:
-            new_group_generators.append(p.permute_op(pauli,perm))
+            new_group_generators.append(pauli.permute_op(perm))
+            
         new_log_xs=pc.PauliList()
         for pauli in self.logical_xs:
-            new_log_xs.append(p.permute_op(pauli,perm))
+            new_log_xs.append(pauli.permute_op(perm))
+            
         new_log_zs=pc.PauliList()
         for pauli in self.logical_zs:
-            new_log_zs.append(p.permute_op(pauli,perm))
+            new_log_zs.append(pauli.permute_op(perm))
+            
         return StabilizerCode(new_group_generators,new_log_xs,new_log_zs)
 
     ## CONCATENATION ##
