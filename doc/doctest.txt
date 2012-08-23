@@ -1,0 +1,344 @@
+Running Sphinx v1.0.8
+loading pickled environment... done
+building [doctest]: targets for 8 source files that are out of date
+updating environment: 0 added, 0 changed, 0 removed
+looking for now-outdated files... none found
+running tests...
+
+Document: index
+---------------
+1 items passed all tests:
+   2 tests in default
+2 tests in 1 items.
+2 passed and 0 failed.
+Test passed.
+
+Document: circuits
+------------------
+**********************************************************************
+File "circuits.rst", line 53, in default
+Failed example:
+    print loc
+Expected:
+            CNOT    0 2
+Got:
+        CNOT    0 2
+**********************************************************************
+File "circuits.rst", line 55, in default
+Failed example:
+    print circ
+Expected:
+            CNOT    0 2
+            H       1
+            X       0
+Got:
+        CNOT    0 2
+        H       1
+        X       0
+**********************************************************************
+File "circuits.rst", line 90, in default
+Failed example:
+    print circ
+Expected:
+            CNOT    0 2
+            H       1
+            X       0
+            H       1
+Got:
+        CNOT    0 2
+        H       1
+        X       0
+        H       1
+**********************************************************************
+File "circuits.rst", line 95, in default
+Failed example:
+    print circ.cancel_selfinv_gates()
+Expected:
+            CNOT    0 2
+            X       0
+Got:
+        CNOT    0 2
+        X       0
+**********************************************************************
+File "circuits.rst", line 99, in default
+Failed example:
+    print circ.replace_cz_by_cnot()
+Expected:
+            H       2
+            CNOT    0 2
+            H       2
+            H       1
+            X       0
+Got:
+        H       2
+        CNOT    0 2
+        H       2
+        H       1
+        X       0
+**********************************************************************
+File "circuits.rst", line 105, in default
+Failed example:
+    print "\n\t--\n".join(map(str, circ.group_by_time()))
+Expected:
+            H       2
+            --
+            CNOT    0 2
+            --
+            H       2
+            H       1
+            X       0
+Got:
+        H       2
+    	--
+        CNOT    0 2
+    	--
+        H       2
+        H       1
+        X       0
+**********************************************************************
+File "circuits.rst", line 99, in default
+Failed example:
+    print circ
+Expected:
+            H       2
+            CNOT    0 2
+            H       2
+            H       1
+            X       0
+Got:
+        H       2
+        CNOT    0 2
+        H       2
+        H       1
+        X       0
+**********************************************************************
+File "circuits.rst", line 112, in default
+Failed example:
+    print circ.as_clifford()
+Expected:
+    XII |->  +XIZ
+    IXI |->  +IZI
+    IIX |->  +ZIX
+    ZII |->  +ZII
+    IZI |->  +IXI
+    IIZ |->  +IIZ
+Got:
+    XII |->  +XIZ
+    IXI |->  +IZI
+    IIX |->  -ZIX
+    ZII |->  -ZII
+    IZI |->  +IXI
+    IIZ |->  +IIZ
+**********************************************************************
+File "circuits.rst", line 126, in default
+Failed example:
+    print circ.as_qcviewer()
+Expected:
+    .v q1 q2 q3
+    .i q1
+    .o q2 q3
+    BEGIN
+            H       q3
+            tof     q1 q3
+            H       q3
+            H       q2
+            X       q1
+    END
+Got:
+    .v q1 q2 q3
+    .i q1
+    .o q1
+    BEGIN
+    	Z	q1 q3
+    	H	q2
+    	X	q1
+    END
+    <BLANKLINE>
+**********************************************************************
+File "circuits.rst", line 144, in default
+Failed example:
+    print circ.as_qcviewer(inputs=(0,), outputs=(0,), qubit_names=["in1", "anc1", "anc2"])
+Expected:
+    .v in1 anc1 anc2
+    .i in1
+    .o in1
+    BEGIN
+            H       anc2
+            tof     in1 anc2
+            H       anc2
+            H       anc1
+            X       in1
+    END
+Got:
+    .v in1 anc1 anc2
+    .i in1
+    .o in1
+    BEGIN
+    	Z	in1 anc2
+    	H	anc1
+    	X	in1
+    END
+    <BLANKLINE>
+**********************************************************************
+1 items had failures:
+  10 of  22 in default
+22 tests in 1 items.
+12 passed and 10 failed.
+***Test Failed*** 10 failures.
+
+Document: stab
+--------------
+**********************************************************************
+File "stab.rst", line 36, in default
+Failed example:
+    stab = q.perfect_5q_code()
+Exception raised:
+    Traceback (most recent call last):
+      File "C:\Python27\lib\doctest.py", line 1254, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[0]>", line 1, in <module>
+        stab = q.perfect_5q_code()
+    AttributeError: 'module' object has no attribute 'perfect_5q_code'
+**********************************************************************
+File "stab.rst", line 37, in default
+Failed example:
+    print stab
+Expected:
+    S = <i^0 XZZXI, i^0 IXZZX, i^0 XIXZZ, i^0 ZXIXZ>
+    Xbars = PauliList(i^0 XXXXX)
+    Zbars = PauliList(i^0 ZZZZZ)
+Got:
+    S = <i^0 ZZI, i^0 IZZ>
+    Xbars = PauliList(i^0 XXX)
+    Zbars = PauliList(i^0 ZZZ)
+**********************************************************************
+File "stab.rst", line 44, in default
+Failed example:
+    print (stab.nq, stab.nq_logical, stab.distance)
+Expected:
+    (5, 1, 3)
+Got:
+    (3, 1, 1)
+**********************************************************************
+File "stab.rst", line 72, in default
+Failed example:
+    print enc
+Expected:
+    X[0] |->  +X[0] X[1] X[2] X[3] X[4]
+    X[1] |->  +X[0] X[2] X[3] X[4]
+    X[2] |->  +X[1] X[2]
+    X[3] |->  +Y[0] X[1] X[3] Y[4]
+    X[4] |->  +X[0] X[1] Y[3] Y[4]
+    Z[0] |->  +Z[0] Z[1] Z[2] Z[3] Z[4]
+    Z[1] |->  +X[0] Z[1] Z[2] X[3]
+    Z[2] |->  +X[1] Z[2] Z[3] X[4]
+    Z[3] |->  +X[0] X[2] Z[3] Z[4]
+    Z[4] |->  +Z[0] X[1] X[3] Z[4]
+Got:
+    XII |->  +XXX
+    IXI |->  +IXX
+    IIX |->  +XXI
+    ZII |->  +ZZZ
+    IZI |->  +ZZI
+    IIZ |->  +IZZ
+**********************************************************************
+File "stab.rst", line 83, in default
+Failed example:
+    print enc.inv()
+Expected:
+    X[0] |->  +X[0] Z[3] X[4]
+    X[1] |->  +X[0] X[1]
+    X[2] |->  +X[0] X[1] X[2]
+    X[3] |->  +X[0] X[2] X[3] Z[4]
+    X[4] |->  +X[0] Y[3] Y[4]
+    Z[0] |->  +Z[0] Y[1] Y[3] Z[4]
+    Z[1] |->  +Z[0] Y[2] Z[3] Y[4]
+    Z[2] |->  +Z[0] Z[1] Z[2] X[3]
+    Z[3] |->  +Z[0] Y[1] Z[3] Y[4]
+    Z[4] |->  +Z[0] Z[1] X[2] Z[3] Z[4]
+Got:
+    XII |->  +XXI
+    IXI |->  +XXX
+    IIX |->  +XIX
+    ZII |->  +ZIZ
+    IZI |->  +ZZZ
+    IIZ |->  +ZZI
+**********************************************************************
+File "stab.rst", line 83, in default
+Failed example:
+    print stab & stab
+Expected:
+    S = <i^0 X[0] Z[1] Z[2] X[3], i^0 X[1] Z[2] Z[3] X[4], i^0 X[0] X[2] Z[3] Z[4], i^0 Z[0] X[1] X[3] Z[4], i^0 X[5] Z[6] Z[7] X[8], i^0 X[6] Z[7] Z[8] X[9], i^0 X[5] X[7] Z[8] Z[9], i^0 Z[5] X[6] X[8] Z[9]>
+    Xbars = PauliList(i^0 XXXXXIIIII, i^0 IIIIIXXXXX)
+    Zbars = PauliList(i^0 ZZZZZIIIII, i^0 IIIIIZZZZZ)
+Got:
+    S = <i^0 Z[0] Z[1], i^0 Z[1] Z[2], i^0 Z[3] Z[4], i^0 Z[4] Z[5]>
+    Xbars = PauliList(i^0 XXXIII, i^0 IIIXXX)
+    Zbars = PauliList(i^0 ZZZIII, i^0 IIIZZZ)
+**********************************************************************
+File "stab.rst", line 10, in default
+Failed example:
+    new_stab = StabilizerCode.bit_flip_code(1).permute_gen_ops('ZYX')
+Exception raised:
+    Traceback (most recent call last):
+      File "C:\Python27\lib\doctest.py", line 1254, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[0]>", line 1, in <module>
+        new_stab = StabilizerCode.bit_flip_code(1).permute_gen_ops('ZYX')
+    NameError: name 'StabilizerCode' is not defined
+**********************************************************************
+File "stab.rst", line 11, in default
+Failed example:
+    assert new_stab == StabilizerCode.phase_flip_code(1)
+Exception raised:
+    Traceback (most recent call last):
+      File "C:\Python27\lib\doctest.py", line 1254, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[1]>", line 1, in <module>
+        assert new_stab == StabilizerCode.phase_flip_code(1)
+    NameError: name 'new_stab' is not defined
+**********************************************************************
+1 items had failures:
+   8 of  13 in default
+13 tests in 1 items.
+5 passed and 8 failed.
+***Test Failed*** 8 failures.
+
+Document: groups
+----------------
+1 items passed all tests:
+  32 tests in default
+32 tests in 1 items.
+32 passed and 0 failed.
+Test passed.
+
+Document: predicates
+--------------------
+1 items passed all tests:
+  18 tests in default
+18 tests in 1 items.
+18 passed and 0 failed.
+Test passed.
+
+Document: bsf
+-------------
+1 items passed all tests:
+   4 tests in default
+4 tests in 1 items.
+4 passed and 0 failed.
+Test passed.
+
+Document: paulicollections
+--------------------------
+1 items passed all tests:
+   6 tests in default
+6 tests in 1 items.
+6 passed and 0 failed.
+Test passed.
+
+Doctest summary
+===============
+   97 tests
+   18 failures in tests
+    0 failures in setup code
+build finished with problems.

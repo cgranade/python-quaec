@@ -45,11 +45,11 @@ Printing a circuit or location results in that instance being represented in
 the QuASM format, a plaintext representation of quantum circuits.
 
 >>> print loc
-        CNOT    0 2
+    CNOT    0 2
 >>> print circ
-        CNOT    0 2
-        H       1
-        X       0
+    CNOT    0 2
+    H       1
+    X       0
         
 The number of qubits, depth and size of each location and circuit can be found
 by querying the appropriate properties of a :class:`qecc.Location` or :class:`qecc.Circuit`:
@@ -64,38 +64,38 @@ including simplifications and representations in terms of depth-1 subcircuits.
 
 >>> circ = q.Circuit(('CNOT', 0, 2), ('H', 1), ('X', 0), ('H', 1))
 >>> print circ
-        CNOT    0 2
-        H       1
-        X       0
-        H       1
+    CNOT    0 2
+    H       1
+    X       0
+    H       1
 >>> print circ.cancel_selfinv_gates()
-        CNOT    0 2
-        X       0
+    CNOT    0 2
+    X       0
 >>> circ = q.Circuit(('CZ', 0, 2), ('H', 1), ('X', 0))
 >>> print circ.replace_cz_by_cnot()
-        H       2
-        CNOT    0 2
-        H       2
-        H       1
-        X       0
->>> print "\n\t--\n".join(map(str, circ.group_by_time()))
-        H       2
-        --
-        CNOT    0 2
-        --
-        H       2
-        H       1
-        X       0
+    H       2
+    CNOT    0 2
+    H       2
+    H       1
+    X       0
+>>> print "\n    --\n".join(map(str, circ.group_by_time()))
+    H       2
+    --
+    CNOT    0 2
+    --
+    H       2
+    H       1
+    X       0
         
 Note that, except for :meth:`qecc.Circuit.group_by_time`, each of these
 transformations mutates the circuit, so that the original circuit is lost.
 
 >>> print circ
-        H       2
-        CNOT    0 2
-        H       2
-        H       1
-        X       0
+    H       2
+    CNOT    0 2
+    H       2
+    H       1
+    X       0
 
 If a circuit consists entirely of Clifford gate locations, then its entire
 action may be represented as a :class:`qecc.Clifford` instance:
@@ -104,8 +104,8 @@ action may be represented as a :class:`qecc.Clifford` instance:
 >>> print circ.as_clifford()
 XII |->  +XIZ
 IXI |->  +IZI
-IIX |->  +ZIX
-ZII |->  +ZII
+IIX |->  -ZIX
+ZII |->  -ZII
 IZI |->  +IXI
 IIZ |->  +IIZ
 
@@ -115,14 +115,13 @@ integration with QCViewer's functionality.
 >>> print circ.as_qcviewer()
 .v q1 q2 q3
 .i q1
-.o q2 q3
+.o q1
 BEGIN
-        H       q3
-        tof     q1 q3
-        H       q3
-        H       q2
-        X       q1
+    Z    q1 q3
+    H    q2
+    X    q1
 END
+<BLANKLINE>
 
 Note that, by default, qubits in the QCViewer export are named "q1", "q2" and so
 on. This may be overriden by passing a sequence of strings as the
@@ -135,12 +134,11 @@ arguments, respectively.
 .i in1
 .o in1
 BEGIN
-        H       anc2
-        tof     in1 anc2
-        H       anc2
-        H       anc1
-        X       in1
+    Z    in1 anc2
+    H    anc1
+    X    in1
 END
+<BLANKLINE>
 
 .. _QCViewer: http://qcirc.iqc.uwaterloo.ca/index.php?n=Projects.QCViewer
 

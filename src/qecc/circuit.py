@@ -111,7 +111,7 @@ class Location(object):
         self._is_clifford = bool(self.kind in self.CLIFFORD_GATE_KINDS)
         
     def __str__(self):
-        return "\t{}\t{}".format(self.kind, ' '.join(map(str, self.qubits)))
+        return "    {:<4}    {}".format(self.kind, ' '.join(map(str, self.qubits)))
     def __repr__(self):
         return "<{} Location on qubits {}>".format(self.kind, self.qubits)
     def __hash__(self):
@@ -210,7 +210,7 @@ class Location(object):
             0 , 1
         """
         # FIXME: link to QCViewer in the docstring here.
-        return '\t{gatename}\t{gatespec}\n'.format(
+        return '    {gatename}    {gatespec}\n'.format(
             gatename=self.QCVIEWER_NAMES[self.kind],
             gatespec=qubits_str(self.qubits, qubit_names),
             )
@@ -317,10 +317,10 @@ class Circuit(list):
         >>> import qecc as q
         >>> circ = q.Circuit(('CNOT', 0, 2), ('H', 2), ('SWAP', 1, 2), ('I', 0))
         >>> print circ.as_quasm()
-                CNOT    0 2
-                H       2
-                SWAP    1 2
-                I       0
+            CNOT    0 2
+            H       2
+            SWAP    1 2
+            I       0
         """
         return str(self)
 
