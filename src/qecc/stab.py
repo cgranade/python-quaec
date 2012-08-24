@@ -363,26 +363,46 @@ class StabilizerCode(object):
                 p.eye_p(0))
 
     #TODO: Find a nice place to put this method.            
-    def measure_gen_onto_ancilla(self,gen_idx):
+    def measure_gen_onto_ancilla(self, gen_idx):
         """
         Produces a circuit that measures the stabilizer code generator 
-        ``self.group_generators[gen_idx]`` onto the qubit indicated by 
-        ``anc_idx``.
+        ``self.group_generators[gen_idx]`` onto the qubit labelled by 
+        ``stab.nq`` (that is, the next qubit not in the physical register
+        used by the code).
+        
+        :param int gen_idx: Index of a generator of the stabilizer group, as
+            specified by the ``group_generators`` property of this instance.
+        :returns qecc.Circuit: A circuit that maps a measurement of
+            ``group_generators[gen_idx]`` onto a measurement of :math:`Z` on the
+            ancilla qubit alone.
         """
-        circ=circuit.Circuit()
-        for qubit_idx in range(len(self.group_generators[gen_idx].op)):
-            operator = (self.group_generators[gen_idx].op)[qubit_idx]
+        
+        circ = circuit.Circuit()
+        for qubit_idx, operator in enumerate(self.group_generators[gen_idx].op):
+            # operator = (self.group_generators[gen_idx].op)[qubit_idx]
             if operator == 'I':
                 pass
             elif operator == 'X':
-                circ+=circuit.Circuit(('CNOT',qubit_idx,self.nq))
+                circ += circuit.Circuit(('CNOT',qubit_idx,self.nq))
             elif operator == 'Y':
-                circ+=circuit.Circuit(circuit.Location('P',qubit_idx),circuit.Location('CNOT',qubit_idx,self.nq),circuit.Location('P',qubit_idx))
+                circ += circuit.Circuit(circuit.Location('P',qubit_idx),circuit.Location('CNOT',qubit_idx,self.nq),circuit.Location('P',qubit_idx))
             elif operator == 'Z':
-                circ+=circuit.Circuit(circuit.Location('H',qubit_idx),circuit.Location('CNOT',qubit_idx,self.nq),circuit.Location('H',qubit_idx))
+                circ += circuit.Circuit(circuit.Location('H',qubit_idx),circuit.Location('CNOT',qubit_idx,self.nq),circuit.Location('H',qubit_idx))
             else:
                 raise ValueError("Pauli operator not I, X, Y, or Z")
+                
         return circ
+        
+    def syndrome_meas_circuit(self):
+        # TODO: add docstring
+        
+        return sum((
+                self.measure_gen_onto_ancilla(idx_gen).relabel_qubits({self.nq: self.nq + idx_gen})
+                for idx_gen in xrange(len(self.group_generators))
+            ),
+            circuit.Circuit()
+        )
+            
 
     ## OPERATORS ##
     
