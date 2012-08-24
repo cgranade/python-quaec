@@ -360,7 +360,34 @@ class StabilizerCode(object):
         return reduce(op.and_, 
                 (replace_dict[sq_op] for sq_op in P.op),
                 p.eye_p(0))
-                
+
+    #TODO: Find a nice place to put this method.            
+    def measure_gen_onto_ancilla(self,gen_idx):
+        """
+        Produces a circuit that measures the stabilizer code generator 
+        ``self.group_generators[gen_idx]`` onto the qubit indicated by 
+        ``anc_idx``.
+        """
+        cliff_left_constraints=[pauli&p.Pauli('I') 
+                                for pauli in self.group_generators
+                                ]+[p.eye_p(self.nq)&p.Pauli('Z')]
+        cliff_right_constraints=[pauli&p.Pauli('I') 
+                                for pauli in self.group_generators
+                                ]+[self.group_generators[gen_idx]
+                                &p.Pauli('Z')]
+        assert len(cliff_left_constraints)<=self.nq+1, 'Stabilizer code is overspecified.'
+        if len(cliff_left_constraints)<self.nq+1:
+            cliff_left_constraints+=[p.Unspecified]*(
+                                    self.nq+1-len(cliff_left_constraints))
+            cliff_right_constraints+=[p.Unspecified]*(
+                                     self.nq+1-len(cliff_right_constraints))
+
+        cliff_out_left=c.Clifford(cliff_left_constraints,
+        [p.Unspecified]*(self.nq+1)).constraint_completions().next()
+        cliff_out_right=c.Clifford(cliff_right_constraints,
+        [p.Unspecified]*(self.nq+1)).constraint_completions().next()
+        return (cliff_out_right*cliff_out_left.inv()).circuit_decomposition()
+
     ## OPERATORS ##
     
     def __and__(self, other):

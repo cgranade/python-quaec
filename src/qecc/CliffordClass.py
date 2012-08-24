@@ -307,8 +307,8 @@ class Clifford(object):
         return NotImplemented
 
     def __and__(self,other):
-        """Takes the tensor product of two Cliffords *self* and
-         *other*."""
+        """Takes the tensor product of two Cliffords ``self`` and
+         ``other``."""
         if other is EmptyClifford:
             return self
             
