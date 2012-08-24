@@ -490,6 +490,10 @@ class BinarySymplecticMatrix(object):
         this method will return a matrix :math:`G` such that :math:`H G` is
         not the identity matrix.
         
+        .. todo::
+            Cite that this inversion works due to the properties of symplectic
+            matrix groups.
+        
         :param bool check_validity: If ``True``, then the matrix is first
             checked to ensure that it is a valid Clifford.
         :raises: :class:`qecc.InvalidCliffordError` if ``check_validity`` is ``True``
@@ -527,7 +531,10 @@ class BinarySymplecticMatrix(object):
         
     def circuit_decomposition(self, validate=True):
         """
-        Decomposes the binary symplectic matrix 
+        Decomposes the binary symplectic matrix using the algorithm of [AG04]_.
+        
+        .. todo::
+            Complete docstring.
         """
         # The circuit decomposition algorithm is long enough that it was moved
         # into another module, bsf_decomp.
