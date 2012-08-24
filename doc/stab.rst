@@ -13,7 +13,7 @@ Introduction
 ============
 
 QuaEC includes a class, :class:`qecc.StabilizerCode`, that represents
-error-correcting codes specified using the stabilizer formalism. To construct
+error-correcting codes specified using the stabilizer formalism [Got97]_. To construct
 a stabilizer code in QuaEC, the generators of a stabilizer group must be
 specified along with a particular assignment of logical operators acting on
 states encoded in the stabilizer code.

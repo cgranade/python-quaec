@@ -26,6 +26,7 @@ Contents
    circuits
    predicates
    utils
+   bibliography
 
 Introduction
 ============
