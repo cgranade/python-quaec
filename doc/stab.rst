@@ -74,11 +74,11 @@ Stabilizer codes may be combined by the tensor product (reprsented in QuaEC by
 ``&``), or by concatenation:
 
 >>> print stab & stab
-S = <i^0 X[0] Z[1] Z[2] X[3], i^0 X[1] Z[2] Z[3] X[4], i^0 X[0] X[2] Z[3] Z[4], i^0 Z[0] X[1] X[3] Z[4], i^0 X[5] Z[6] Z[7] X[8], i^0 X[6] Z[7] Z[8] X[9], i^0 X[5] X[7] Z[8] Z[9], i^0 Z[5] X[6] X[8] Z[9]>
+S = <i^0 XZZXIIIIII, i^0 IXZZXIIIII, i^0 XIXZZIIIII, i^0 ZXIXZIIIII, i^0 IIIIIXZZXI, i^0 IIIIIIXZZX, i^0 IIIIIXIXZZ, i^0 IIIIIZXIXZ>
 Xbars = PauliList(i^0 XXXXXIIIII, i^0 IIIIIXXXXX)
 Zbars = PauliList(i^0 ZZZZZIIIII, i^0 IIIIIZZZZZ)
 >>> print q.StabilizerCode.bit_flip_code(1).concatenate(q.StabilizerCode.phase_flip_code(1))
-S = <i^0 Z[0] Z[1], i^0 Z[1] Z[2], i^0 Z[3] Z[4], i^0 Z[4] Z[5], i^0 Z[6] Z[7], i^0 Z[7] Z[8], i^0 X[0] X[1] X[2] X[3] X[4] X[5], i^0 X[3] X[4] X[5] X[6] X[7] X[8]>
+S = <i^0 Z[0] Z[1], i^0 Z[1] Z[2], i^0 Z[3] Z[4], i^0 Z[4] Z[5], i^0 Z[6] Z[7], i^0 Z[7] Z[8], i^0 XXXXXXIII, i^0 IIIXXXXXX>
 Xbars = PauliList(i^0 XXXXXXXXX)
 Zbars = PauliList(i^0 ZZZZZZZZZ)
 
