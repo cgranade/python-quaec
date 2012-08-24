@@ -294,6 +294,35 @@ SYMBOL I
 </div>
 </dd></dl>
 
+<dl class="method">
+<dt id="qecc.Location.relabel_qubits">
+<tt class="descname">relabel_qubits</tt><big>(</big><em>relabel_dict</em><big>)</big><a class="headerlink" href="#qecc.Location.relabel_qubits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new location related to this one by a relabeling of the
+qubits. The relabelings are to be indicated by a dictionary that
+specifies what each qubit index is to be mapped to.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loc</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="s">&#39;CNOT&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">loc</span>
+<span class="go">    CNOT    0 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">loc</span><span class="o">.</span><span class="n">relabel_qubits</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="mi">2</span><span class="p">})</span>
+<span class="go">    CNOT    0 2</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>relabel_dict</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; If <cite>i</cite> is a key of <cite>relabel_dict</cite>, then qubit
+<cite>i</cite> will be replaced by <cite>relabel_dict[i]</cite> in the returned location.</td>
+</tr>
+<tr class="field"><th class="field-name" colspan="2">Returns qecc.Location:</th></tr>
+<tr class="field"><td>&nbsp;</td><td class="field-body">A new location with the qubits relabeled as 
+specified by <cite>relabel_dict</cite>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -429,6 +458,35 @@ subcircuit.</td>
 </tr>
 <tr class="field"><th class="field-name">Yields :</th><td class="field-body">each depth-1 subcircuit, corresponding to time steps of the
 circuit</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.Circuit.relabel_qubits">
+<tt class="descname">relabel_qubits</tt><big>(</big><em>relabel_dict</em><big>)</big><a class="headerlink" href="#qecc.Circuit.relabel_qubits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new circuit related to this one by a relabeling of the
+qubits. The relabelings are to be indicated by a dictionary that
+specifies what each qubit index is to be mapped to.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loc</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="s">&#39;CNOT&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">loc</span>
+<span class="go">    CNOT    0 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">loc</span><span class="o">.</span><span class="n">relabel_qubits</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="mi">2</span><span class="p">})</span>
+<span class="go">    CNOT    0 2</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>relabel_dict</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; If <cite>i</cite> is a key of <cite>relabel_dict</cite>, then qubit
+<cite>i</cite> will be replaced by <cite>relabel_dict[i]</cite> in the returned circuit.</td>
+</tr>
+<tr class="field"><th class="field-name" colspan="2">Returns qecc.Location:</th></tr>
+<tr class="field"><td>&nbsp;</td><td class="field-body">A new circuit with the qubits relabeled as 
+specified by <cite>relabel_dict</cite>.</td>
 </tr>
 </tbody>
 </table>
