@@ -32,6 +32,7 @@ import PauliClass as p # Sorry for the confusing notation here.
 import CliffordClass as c
 import paulicollections as pc
 import constraint_solvers as cs
+import circuit as circuit
 
 from collections import defaultdict
 from singletons import EmptyClifford, Unspecified
@@ -368,25 +369,20 @@ class StabilizerCode(object):
         ``self.group_generators[gen_idx]`` onto the qubit indicated by 
         ``anc_idx``.
         """
-        cliff_left_constraints=[pauli&p.Pauli('I') 
-                                for pauli in self.group_generators
-                                ]+[p.eye_p(self.nq)&p.Pauli('Z')]
-        cliff_right_constraints=[pauli&p.Pauli('I') 
-                                for pauli in self.group_generators
-                                ]+[self.group_generators[gen_idx]
-                                &p.Pauli('Z')]
-        assert len(cliff_left_constraints)<=self.nq+1, 'Stabilizer code is overspecified.'
-        if len(cliff_left_constraints)<self.nq+1:
-            cliff_left_constraints+=[p.Unspecified]*(
-                                    self.nq+1-len(cliff_left_constraints))
-            cliff_right_constraints+=[p.Unspecified]*(
-                                     self.nq+1-len(cliff_right_constraints))
-
-        cliff_out_left=c.Clifford(cliff_left_constraints,
-        [p.Unspecified]*(self.nq+1)).constraint_completions().next()
-        cliff_out_right=c.Clifford(cliff_right_constraints,
-        [p.Unspecified]*(self.nq+1)).constraint_completions().next()
-        return (cliff_out_right*cliff_out_left.inv()).circuit_decomposition()
+        circ=circuit.Circuit()
+        for qubit_idx in range(len(self.group_generators[gen_idx].op)):
+            operator = (self.group_generators[gen_idx].op)[qubit_idx]
+            if operator == 'I':
+                pass
+            elif operator == 'X':
+                circ+=circuit.Circuit(('CNOT',qubit_idx,self.nq))
+            elif operator == 'Y':
+                circ+=circuit.Circuit(circuit.Location('P',qubit_idx),circuit.Location('CNOT',qubit_idx,self.nq),circuit.Location('P',qubit_idx))
+            elif operator == 'Z':
+                circ+=circuit.Circuit(circuit.Location('H',qubit_idx),circuit.Location('CNOT',qubit_idx,self.nq),circuit.Location('H',qubit_idx))
+            else:
+                raise ValueError("Pauli operator not I, X, Y, or Z")
+        return circ
 
     ## OPERATORS ##
     
