@@ -23,19 +23,17 @@
 ##
 
 ## IMPORTS ##
-
+from __future__ import division
 from itertools import product, chain, permutations, combinations, ifilter, ifilterfalse, imap, starmap, izip
 from copy import copy
 import bsf
 from operator import mul, and_
+
 import pred
 from circuit import Circuit, Location
-
 from paulicollections import PauliList
 from unitary_reps import pauli_as_unitary
-
 from singletons import Unspecified
-
 import  CliffordClass as cc
 
 ## ALL ##
@@ -77,17 +75,17 @@ class Pauli(object):
 
     def __init__(self, operator, phase=0):
 
-        # NB: operator is a string which contains I, X, Y, Z. We throw an error if it isn't.
+        # Operator is a string which contains I, X, Y, Z. We throw an error if it isn't.
 
-        for paulicounter in range(len(operator)):
-            if operator[paulicounter] not in VALID_OPS:
+        for one_bit_operator in operator:
+            if one_bit_operator not in VALID_OPS:
                 raise ValueError("Input operators I, X, Y or Z.")
 
-        # NB: phase will be defined as an integer from 0 to 3. If it's not integral, we throw an error.
+        # Phase will be defined as an integer from 0 to 3. If it's not integral, we throw an error.
         if not isinstance(phase, int):
             raise ValueError("Input phase must be an integer, preferably 0 to 3.")
 
-        #If it's not in the range, that's cool, we mod 'til it is.
+        #If a phase outside of range(4) is input, we use its remainder, mod 4.
         if not( phase > -1 and phase < 4):
             phase= phase % 4
             
@@ -116,7 +114,9 @@ class Pauli(object):
 
         if not(len(p1)==len(p2)):
             raise ValueError("These Paulis are not the same length")
-            
+
+        #We initialize a Pauli with an empty op-string, updating the operator
+        #and phase using a multiplication table:    
         newP = Pauli('', p1.ph + p2.ph)
         for paulicounter in range(len(p1)):
             ph, op = MULT_TABLE[(p1.op[paulicounter], p2.op[paulicounter])]
@@ -128,13 +128,19 @@ class Pauli(object):
         return newP
 
     def __pow__(self,num):
-        if num % 2 == 0:
+        """
+        Exponentiates a Pauli ``self`` by an integer ``num``, using the fact 
+        that every element of the Pauli group squares to the identity. 
+        """
+        if not isinstance(num,int):
+            raise ValueError("Paulis can only be exponentiated with integers")
+        elif num % 2 == 0:
             return eye_p(len(self))
         elif num % 2 == 1:
             return self
         else:
-            raise ValueError("Paulis can only be exponentiated with integers")
-            
+            raise ValueError("Unknown exponentiation error")
+
     def __repr__(self):
         """
         Representation for Paulis, printing Paulis in the format ``i^{phase} {op}``.
@@ -142,15 +148,42 @@ class Pauli(object):
         return "i^{k} {op}".format(k=self.ph, op=self.op)
 
     def __str__(self):
+        """
+        Determines whether the Pauli ``self`` is sparse (acting as the identity
+        on a majority of qubits as determined by :param SPARSE_THRESH:), and 
+        returns a string in one of two formats, depending on sparsity.
+        
+        For example:
+
+        >>> import qecc as q
+        >>> print q.Pauli('IXIZIII')
+        i^0 X[1] Z[3]
+
+        >>> import qecc as q
+        >>> print q.Pauli('IXIZIIX')
+        i^0 IXIZIIX
+        
+        Note that Paulis which do not act on more than :param SPARSE_NQ: qubits 
+        are never printed in the sparse format:  
+
+        >>> import qecc as q
+        >>> print q.Pauli('IXII')
+        i^0 IXII
+
+        """
+        
         SPARSE_NQ     = 5
         SPARSE_THRESH = 0.3
-        
-        if len(self) <= SPARSE_NQ or self.wt / len(self) > SPARSE_THRESH:
+
+        if len(self) <= SPARSE_NQ or self.wt/len(self) > SPARSE_THRESH:
             return repr(self)
         else:
             return self.str_sparse()
             
     def __getitem__(self, idxs):
+        """
+        Returns the action of a Pauli ``self`` on a single qubit ``idxs``.
+        """
         return Pauli(self.op[idxs], phase=self.ph)
             
     def str_sparse(self, incl_ph=True):
@@ -377,6 +410,10 @@ class Pauli(object):
         return len([op for op in self.op if op != 'I'])
 
     def cust_wt(self,char):
+        """
+        Returns the number of qubits in the Pauli ``self`` which are acted upon
+        by the single-qubit operator ``char``.
+        """
         if char not in VALID_OPS:
             raise ValueError('Generators cannot be selected outside I, X, Y, Z.')
         return len([op for op in self.op if op == char])
