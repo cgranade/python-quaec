@@ -53,7 +53,7 @@
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>QuaEC includes a class, <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a>, that represents
-error-correcting codes specified using the stabilizer formalism. To construct
+error-correcting codes specified using the stabilizer formalism <a class="reference internal" href="bibliography.html#got97">[Got97]</a>. To construct
 a stabilizer code in QuaEC, the generators of a stabilizer group must be
 specified along with a particular assignment of logical operators acting on
 states encoded in the stabilizer code.</p>
@@ -67,8 +67,9 @@ states encoded in the stabilizer code.</p>
 </div>
 <p>For convienence, several static methods are provided to create instances for
 well-known stabilizer codes.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">stab</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">perfect_5q_code</span><span class="p">()</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">stab</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">StabilizerCode</span><span class="o">.</span><span class="n">perfect_5q_code</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">stab</span>
+<span class="go">5-qubit perfect code</span>
 <span class="go">S = &lt;i^0 XZZXI, i^0 IXZZX, i^0 XIXZZ, i^0 ZXIXZ&gt;</span>
 <span class="go">Xbars = PauliList(i^0 XXXXX)</span>
 <span class="go">Zbars = PauliList(i^0 ZZZZZ)</span>
@@ -97,26 +98,26 @@ manner using <a class="reference internal" href="#qecc.StabilizerCode" title="qe
 <span class="go">Z[3] |-&gt;  +X[0] X[2] Z[3] Z[4]</span>
 <span class="go">Z[4] |-&gt;  +Z[0] X[1] X[3] Z[4]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">enc</span><span class="o">.</span><span class="n">inv</span><span class="p">()</span>
-<span class="go">X[0] |-&gt;  +X[0] Z[3] X[4]</span>
+<span class="go">X[0] |-&gt;  -X[0] Z[3] X[4]</span>
 <span class="go">X[1] |-&gt;  +X[0] X[1]</span>
 <span class="go">X[2] |-&gt;  +X[0] X[1] X[2]</span>
-<span class="go">X[3] |-&gt;  +X[0] X[2] X[3] Z[4]</span>
+<span class="go">X[3] |-&gt;  -X[0] X[2] X[3] Z[4]</span>
 <span class="go">X[4] |-&gt;  +X[0] Y[3] Y[4]</span>
-<span class="go">Z[0] |-&gt;  +Z[0] Y[1] Y[3] Z[4]</span>
-<span class="go">Z[1] |-&gt;  +Z[0] Y[2] Z[3] Y[4]</span>
+<span class="go">Z[0] |-&gt;  -Z[0] Y[1] Y[3] Z[4]</span>
+<span class="go">Z[1] |-&gt;  -Z[0] Y[2] Z[3] Y[4]</span>
 <span class="go">Z[2] |-&gt;  +Z[0] Z[1] Z[2] X[3]</span>
-<span class="go">Z[3] |-&gt;  +Z[0] Y[1] Z[3] Y[4]</span>
-<span class="go">Z[4] |-&gt;  +Z[0] Z[1] X[2] Z[3] Z[4]</span>
+<span class="go">Z[3] |-&gt;  -Z[0] Y[1] Z[3] Y[4]</span>
+<span class="go">Z[4] |-&gt;  -Z[0] Z[1] X[2] Z[3] Z[4]</span>
 </pre></div>
 </div>
 <p>Stabilizer codes may be combined by the tensor product (reprsented in QuaEC by
 <tt class="docutils literal"><span class="pre">&amp;</span></tt>), or by concatenation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">stab</span> <span class="o">&amp;</span> <span class="n">stab</span>
-<span class="go">S = &lt;i^0 X[0] Z[1] Z[2] X[3], i^0 X[1] Z[2] Z[3] X[4], i^0 X[0] X[2] Z[3] Z[4], i^0 Z[0] X[1] X[3] Z[4], i^0 X[5] Z[6] Z[7] X[8], i^0 X[6] Z[7] Z[8] X[9], i^0 X[5] X[7] Z[8] Z[9], i^0 Z[5] X[6] X[8] Z[9]&gt;</span>
+<span class="go">S = &lt;i^0 XZZXIIIIII, i^0 IXZZXIIIII, i^0 XIXZZIIIII, i^0 ZXIXZIIIII, i^0 IIIIIXZZXI, i^0 IIIIIIXZZX, i^0 IIIIIXIXZZ, i^0 IIIIIZXIXZ&gt;</span>
 <span class="go">Xbars = PauliList(i^0 XXXXXIIIII, i^0 IIIIIXXXXX)</span>
 <span class="go">Zbars = PauliList(i^0 ZZZZZIIIII, i^0 IIIIIZZZZZ)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">q</span><span class="o">.</span><span class="n">StabilizerCode</span><span class="o">.</span><span class="n">bit_flip_code</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">StabilizerCode</span><span class="o">.</span><span class="n">phase_flip_code</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-<span class="go">S = &lt;i^0 Z[0] Z[1], i^0 Z[1] Z[2], i^0 Z[3] Z[4], i^0 Z[4] Z[5], i^0 Z[6] Z[7], i^0 Z[7] Z[8], i^0 X[0] X[1] X[2] X[3] X[4] X[5], i^0 X[3] X[4] X[5] X[6] X[7] X[8]&gt;</span>
+<span class="go">S = &lt;i^0 Z[0] Z[1], i^0 Z[1] Z[2], i^0 Z[3] Z[4], i^0 Z[4] Z[5], i^0 Z[6] Z[7], i^0 Z[7] Z[8], i^0 XXXXXXIII, i^0 IIIXXXXXX&gt;</span>
 <span class="go">Xbars = PauliList(i^0 XXXXXXXXX)</span>
 <span class="go">Zbars = PauliList(i^0 ZZZZZZZZZ)</span>
 </pre></div>
@@ -172,6 +173,13 @@ acting on encoded states.</li>
 <dt id="qecc.StabilizerCode.logical_ys">
 <tt class="descname">logical_ys</tt><a class="headerlink" href="#qecc.StabilizerCode.logical_ys" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.StabilizerCode.logical_ops">
+<tt class="descname">logical_ops</tt><a class="headerlink" href="#qecc.StabilizerCode.logical_ops" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of all logical operators for a code in the
+form [Xs, Ys, Zs].</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="qecc.StabilizerCode.distance">
@@ -308,6 +316,27 @@ logical qubits.</p>
 operator <img class="math" src="_images/math/91640f7a4eecd5a74c8a865c03846d837a6491d0.png" alt="\overline{P}"/> on <img class="math" src="_images/math/352c8227b306ecb073ce0371932c5b7fe3241232.png" alt="nk"/> qubits that corresponds
 to the logical operator acting across <img class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> blocks of this code.</p>
 <p>Note that this method is only supported for single logical qubit codes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.StabilizerCode.permute_gen_ops">
+<tt class="descname">permute_gen_ops</tt><big>(</big><em>perm</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.permute_gen_ops" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a stabilizer code with generators related to the 
+generators of <cite>self</cite>, with every instance of {X,Y,Z} replaced with
+{perm[0],perm[1],perm[2]}.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>perm</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; A list containing &#8216;X&#8217;,&#8217;Y&#8217;,  and &#8216;Z&#8217; in any order,
+indicating which permutation is to be applied.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">new_stab</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">StabilizerCode</span><span class="o">.</span><span class="n">bit_flip_code</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">permute_gen_ops</span><span class="p">(</span><span class="s">&#39;ZYX&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">new_stab</span><span class="o">.</span><span class="n">group_generators</span> <span class="o">==</span> <span class="n">q</span><span class="o">.</span><span class="n">StabilizerCode</span><span class="o">.</span><span class="n">phase_flip_code</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">group_generators</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">

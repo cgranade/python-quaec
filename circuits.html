@@ -83,11 +83,11 @@ an instance of <a class="reference internal" href="#qecc.Location" title="qecc.L
 <p>Printing a circuit or location results in that instance being represented in
 the QuASM format, a plaintext representation of quantum circuits.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">loc</span>
-<span class="go">        CNOT    0 2</span>
+<span class="go">    CNOT    0 2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span>
-<span class="go">        CNOT    0 2</span>
-<span class="go">        H       1</span>
-<span class="go">        X       0</span>
+<span class="go">    CNOT    0 2</span>
+<span class="go">    H       1</span>
+<span class="go">    X       0</span>
 </pre></div>
 </div>
 <p>The number of qubits, depth and size of each location and circuit can be found
@@ -102,38 +102,38 @@ by querying the appropriate properties of a <a class="reference internal" href="
 including simplifications and representations in terms of depth-1 subcircuits.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">circ</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Circuit</span><span class="p">((</span><span class="s">&#39;CNOT&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;H&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;X&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;H&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span>
-<span class="go">        CNOT    0 2</span>
-<span class="go">        H       1</span>
-<span class="go">        X       0</span>
-<span class="go">        H       1</span>
+<span class="go">    CNOT    0 2</span>
+<span class="go">    H       1</span>
+<span class="go">    X       0</span>
+<span class="go">    H       1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span><span class="o">.</span><span class="n">cancel_selfinv_gates</span><span class="p">()</span>
-<span class="go">        CNOT    0 2</span>
-<span class="go">        X       0</span>
+<span class="go">    CNOT    0 2</span>
+<span class="go">    X       0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">circ</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Circuit</span><span class="p">((</span><span class="s">&#39;CZ&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;H&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;X&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span><span class="o">.</span><span class="n">replace_cz_by_cnot</span><span class="p">()</span>
-<span class="go">        H       2</span>
-<span class="go">        CNOT    0 2</span>
-<span class="go">        H       2</span>
-<span class="go">        H       1</span>
-<span class="go">        X       0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;</span><span class="se">\n\t</span><span class="s">--</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">circ</span><span class="o">.</span><span class="n">group_by_time</span><span class="p">()))</span>
-<span class="go">        H       2</span>
-<span class="go">        --</span>
-<span class="go">        CNOT    0 2</span>
-<span class="go">        --</span>
-<span class="go">        H       2</span>
-<span class="go">        H       1</span>
-<span class="go">        X       0</span>
+<span class="go">    H       2</span>
+<span class="go">    CNOT    0 2</span>
+<span class="go">    H       2</span>
+<span class="go">    H       1</span>
+<span class="go">    X       0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">    --</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">circ</span><span class="o">.</span><span class="n">group_by_time</span><span class="p">()))</span>
+<span class="go">    H       2</span>
+<span class="go">    --</span>
+<span class="go">    CNOT    0 2</span>
+<span class="go">    --</span>
+<span class="go">    H       2</span>
+<span class="go">    H       1</span>
+<span class="go">    X       0</span>
 </pre></div>
 </div>
 <p>Note that, except for <a class="reference internal" href="#qecc.Circuit.group_by_time" title="qecc.Circuit.group_by_time"><tt class="xref py py-meth docutils literal"><span class="pre">qecc.Circuit.group_by_time()</span></tt></a>, each of these
 transformations mutates the circuit, so that the original circuit is lost.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span>
-<span class="go">        H       2</span>
-<span class="go">        CNOT    0 2</span>
-<span class="go">        H       2</span>
-<span class="go">        H       1</span>
-<span class="go">        X       0</span>
+<span class="go">    H       2</span>
+<span class="go">    CNOT    0 2</span>
+<span class="go">    H       2</span>
+<span class="go">    H       1</span>
+<span class="go">    X       0</span>
 </pre></div>
 </div>
 <p>If a circuit consists entirely of Clifford gate locations, then its entire
@@ -142,8 +142,8 @@ action may be represented as a <a class="reference internal" href="groups.html#q
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span><span class="o">.</span><span class="n">as_clifford</span><span class="p">()</span>
 <span class="go">XII |-&gt;  +XIZ</span>
 <span class="go">IXI |-&gt;  +IZI</span>
-<span class="go">IIX |-&gt;  +ZIX</span>
-<span class="go">ZII |-&gt;  +ZII</span>
+<span class="go">IIX |-&gt;  -ZIX</span>
+<span class="go">ZII |-&gt;  -ZII</span>
 <span class="go">IZI |-&gt;  +IXI</span>
 <span class="go">IIZ |-&gt;  +IIZ</span>
 </pre></div>
@@ -153,14 +153,13 @@ integration with QCViewer&#8217;s functionality.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span><span class="o">.</span><span class="n">as_qcviewer</span><span class="p">()</span>
 <span class="go">.v q1 q2 q3</span>
 <span class="go">.i q1</span>
-<span class="go">.o q2 q3</span>
+<span class="go">.o q1</span>
 <span class="go">BEGIN</span>
-<span class="go">        H       q3</span>
-<span class="go">        tof     q1 q3</span>
-<span class="go">        H       q3</span>
-<span class="go">        H       q2</span>
-<span class="go">        X       q1</span>
+<span class="go">    Z    q1 q3</span>
+<span class="go">    H    q2</span>
+<span class="go">    X    q1</span>
 <span class="go">END</span>
+<span class="go">&lt;BLANKLINE&gt;</span>
 </pre></div>
 </div>
 <p>Note that, by default, qubits in the QCViewer export are named &#8220;q1&#8221;, &#8220;q2&#8221; and so
@@ -173,12 +172,11 @@ arguments, respectively.</p>
 <span class="go">.i in1</span>
 <span class="go">.o in1</span>
 <span class="go">BEGIN</span>
-<span class="go">        H       anc2</span>
-<span class="go">        tof     in1 anc2</span>
-<span class="go">        H       anc2</span>
-<span class="go">        H       anc1</span>
-<span class="go">        X       in1</span>
+<span class="go">    Z    in1 anc2</span>
+<span class="go">    H    anc1</span>
+<span class="go">    X    in1</span>
 <span class="go">END</span>
+<span class="go">&lt;BLANKLINE&gt;</span>
 </pre></div>
 </div>
 </div>
@@ -352,10 +350,10 @@ indicate the qubits upon which the location acts.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">circ</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Circuit</span><span class="p">((</span><span class="s">&#39;CNOT&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;H&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;SWAP&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;I&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">circ</span><span class="o">.</span><span class="n">as_quasm</span><span class="p">()</span>
-<span class="go">        CNOT    0 2</span>
-<span class="go">        H       2</span>
-<span class="go">        SWAP    1 2</span>
-<span class="go">        I       0</span>
+<span class="go">    CNOT    0 2</span>
+<span class="go">    H       2</span>
+<span class="go">    SWAP    1 2</span>
+<span class="go">    I       0</span>
 </pre></div>
 </div>
 </dd></dl>
