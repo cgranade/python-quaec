@@ -215,7 +215,27 @@ class Location(object):
             gatespec=qubits_str(self.qubits, qubit_names),
             )
         
+    ## OTHER METHODS ##
     
+    def relabel_qubits(self, relabel_dict):
+        """
+        Returns a new location related to this one by a relabeling of the
+        qubits. The relabelings are to be indicated by a dictionary that
+        specifies what each qubit index is to be mapped to.
+        
+        >>> import qecc as q
+        >>> loc = q.Location('CNOT', 0, 1)
+        >>> print loc
+            CNOT    0 1
+        >>> print loc.relabel_qubits({1: 2})
+            CNOT    0 2
+            
+        :param dict relabel_dict: If `i` is a key of `relabel_dict`, then qubit
+            `i` will be replaced by `relabel_dict[i]` in the returned location.
+        :returns qecc.Location: A new location with the qubits relabeled as 
+            specified by `relabel_dict`.
+        """
+        return Location(self.kind, *tuple(relabel_dict[i] if i in relabel_dict else i for i in self.qubits))
 
 def ensure_loc(loc):
     if isinstance(loc, tuple):
@@ -455,3 +475,26 @@ class Circuit(list):
             group_acc += [('I', qubit) for qubit in range(nq) if not found[qubit]]
         yield group_acc
 
+    ## OTHER METHODS ##
+    
+    def relabel_qubits(self, relabel_dict):
+        """
+        Returns a new circuit related to this one by a relabeling of the
+        qubits. The relabelings are to be indicated by a dictionary that
+        specifies what each qubit index is to be mapped to.
+        
+        >>> import qecc as q
+        >>> loc = q.Location('CNOT', 0, 1)
+        >>> print loc
+            CNOT    0 1
+        >>> print loc.relabel_qubits({1: 2})
+            CNOT    0 2
+            
+        :param dict relabel_dict: If `i` is a key of `relabel_dict`, then qubit
+            `i` will be replaced by `relabel_dict[i]` in the returned circuit.
+        :returns qecc.Location: A new circuit with the qubits relabeled as 
+            specified by `relabel_dict`.
+        """
+        return Circuit(*[
+            loc.relabel_qubits(relabel_dict) for loc in self
+        ])
