@@ -319,6 +319,34 @@ to the logical operator acting across <img class="math" src="_images/math/8c3256
 </dd></dl>
 
 <dl class="method">
+<dt id="qecc.StabilizerCode.measure_gen_onto_ancilla">
+<tt class="descname">measure_gen_onto_ancilla</tt><big>(</big><em>gen_idx</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.measure_gen_onto_ancilla" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a circuit that measures the stabilizer code generator 
+<tt class="docutils literal"><span class="pre">self.group_generators[gen_idx]</span></tt> onto the qubit labelled by 
+<tt class="docutils literal"><span class="pre">stab.nq</span></tt> (that is, the next qubit not in the physical register
+used by the code).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>gen_idx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Index of a generator of the stabilizer group, as
+specified by the <tt class="docutils literal"><span class="pre">group_generators</span></tt> property of this instance.</td>
+</tr>
+<tr class="field"><th class="field-name" colspan="2">Returns qecc.Circuit:</th></tr>
+<tr class="field"><td>&nbsp;</td><td class="field-body">A circuit that maps a measurement of
+<tt class="docutils literal"><span class="pre">group_generators[gen_idx]</span></tt> onto a measurement of <img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> on the
+ancilla qubit alone.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.StabilizerCode.syndrome_meas_circuit">
+<tt class="descname">syndrome_meas_circuit</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.syndrome_meas_circuit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="qecc.StabilizerCode.permute_gen_ops">
 <tt class="descname">permute_gen_ops</tt><big>(</big><em>perm</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.permute_gen_ops" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a stabilizer code with generators related to the 
