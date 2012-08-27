@@ -475,6 +475,11 @@ class Circuit(list):
             group_acc += [('I', qubit) for qubit in range(nq) if not found[qubit]]
         yield group_acc
 
+    def pad_with_waits(self):
+        # TODO: write docstring, noting that a copy is returned and that the
+        #        original Circuit is unmodified!
+        return sum(self.group_by_time(pad_with_waits=True), Circuit())
+
     ## OTHER METHODS ##
     
     def relabel_qubits(self, relabel_dict):

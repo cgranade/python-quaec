@@ -44,7 +44,6 @@ from copy import copy, deepcopy
 from itertools import product, chain, combinations
 from PauliClass import *
 from bsf import *
-import stab # Not import * so as to avoid cyclic dependencies.
 from numpy import hstack, newaxis
 from exceptions import *
 
@@ -443,6 +442,7 @@ class Clifford(object):
     def circuit_decomposition(self):
         pauli_correct = paulify((self.as_bsm().circuit_decomposition().as_clifford())*self.inv()).as_circuit()
         return (self.as_bsm().circuit_decomposition())+pauli_correct
+      
         
 ## FUNCTIONS ##
 def eye_c(nq):
@@ -683,3 +683,9 @@ def clifford_group(nq, consider_phases=False):
                 else:
                     yield completion
 
+## MORE IMPORTS ##
+# Due to circular dependencies, we need for some things in this module to be
+# defined /before/ we import stab, even though it's used before.
+# The easiest way to ensure this is to import at the end, even though that's
+# in general bad style.
+import stab
