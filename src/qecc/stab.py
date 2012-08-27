@@ -382,7 +382,7 @@ class StabilizerCode(object):
                 circ+=circuit.Circuit(circuit.Location('H',qubit_idx),circuit.Location('CNOT',qubit_idx,self.nq),circuit.Location('H',qubit_idx))
             else:
                 raise ValueError("Pauli operator not I, X, Y, or Z")
-        return circ
+        return circ.cancel_selfinv_gates()
 
     ## OPERATORS ##
     
