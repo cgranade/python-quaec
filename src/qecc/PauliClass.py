@@ -113,7 +113,7 @@ class Pauli(object):
         p2 = other
 
         if not(len(p1)==len(p2)):
-            raise ValueError("These Paulis are not the same length")
+            raise ValueError("These Paulis are not the same length.")
 
         #We initialize a Pauli with an empty op-string, updating the operator
         #and phase using a multiplication table:    
@@ -694,6 +694,15 @@ def mutually_commuting_sets(n_elems, n_bits=None, group_gens=None, exclude=None)
 
 def pad(setP, n_eb=0, lower_right=None):
     r"""
+    Takes a set of :class:`qecc.Pauli` objects, and returns a new set, 
+    appending ``n_eb`` qubits, with stabilizer operators specified by
+    ``lower_right``.
+    Example:
+    >>>import qecc as q
+    >>>pauli_set=map(q.Pauli,['XXX','YIY','ZZI'])
+    >>>q.pad(pauli_set,n_eb=2,lower_right=map(q.Pauli,['IX','ZI']))
+    [i^0 XXXII, i^0 YIYII, i^0, ZZIII, i^0 IIIIX, i^0 IIIZI]
+
     """
     
     # Ensure that we have lists, and make a copy.

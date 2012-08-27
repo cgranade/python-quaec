@@ -92,6 +92,7 @@ class BinarySymplecticVector(object):
     ## MAGIC METHODS ##
     
     def __len__(self):
+        """Number of qubits on which ``self`` acts."""
         return len(self._x)
 
     def __repr__(self):
@@ -153,6 +154,9 @@ class BinarySymplecticVector(object):
 #FUNCTIONS FOR BSV CLASS     
 
 def bitstring_to_letterstring(bitstring,letter):
+    """Internal function, replaces all instances of 1 in ``bitstring``
+    with the letter in ``letter``.
+    """
     outstring=''
     for idx in range(len(bitstring)):
         if bitstring[idx]==0:
@@ -166,6 +170,8 @@ def parity(bitarray):
     return reduce(logical_xor,bitarray)
 
 def bitwise_inner_product(v1,v2):
+    """Internal function, returns the bitwise inner product of two bitstrings.
+    """
     return parity(bitwise_and(v1,v2))
 
 def all_pauli_bsvs(nq):
@@ -573,6 +579,10 @@ def bsmzeros(nq):
         zeros((2 * (nq),) * 2, dtype=int))
 
 def array_to_pauli(bsv_array):
+    """
+    Function wrapper for type conversion from binary symplectic vector 
+    to :class:`qecc.Pauli`. See `as_pauli`. 
+    """
     return BinarySymplecticVector(bsv_array).as_pauli()    
 
 def directsum(A, B):

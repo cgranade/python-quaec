@@ -338,7 +338,7 @@ class StabilizerCode(object):
     def block_logical_pauli(self, P):
         r"""
         Given a Pauli operator :math:`P` acting on :math:`k`, finds a Pauli
-        operator :math:`\overline{P}` on :math:`nk` qubits that corresponds
+        operator :math:`\overline{P}` on :math:`n_k` qubits that corresponds
         to the logical operator acting across :math:`k` blocks of this code.
         
         Note that this method is only supported for single logical qubit codes.
@@ -390,10 +390,11 @@ class StabilizerCode(object):
                 circ += circuit.Circuit(circuit.Location('H',qubit_idx),circuit.Location('CNOT',qubit_idx,self.nq),circuit.Location('H',qubit_idx))
             else:
                 raise ValueError("Pauli operator not I, X, Y, or Z")
-        return circ.cancel_selfinv_gates()
+        return circ
 
     def syndrome_meas_circuit(self):
-        # TODO: add docstring
+        """Returns a circuit which measures all stabilizer generators
+        onto ancillae, using ``measure_gen_onto_ancilla``."""
         
         return sum((
                 self.measure_gen_onto_ancilla(idx_gen).relabel_qubits({self.nq: self.nq + idx_gen})
@@ -405,7 +406,9 @@ class StabilizerCode(object):
     ## OPERATORS ##
     
     def __and__(self, other):
-    
+        """Returns the Kronecker product of two stabilizer codes,
+        given each of the constituent codes. """
+        
         if not isinstance(other, StabilizerCode):
             return NotImplemented
         

@@ -339,8 +339,8 @@ class Clifford(object):
         with this operator for all outputs that are specified. Note that all
         yielded operators assign the phase 0 to all outputs, by convention.
         
-        If this operator is fully specified, the iterator will yield exactly one
-        element, which will be equal to this operator.
+        If this operator is fully specified, the iterator will yield exactly
+        one element, which will be equal to this operator.
         
         For example:
         
@@ -610,7 +610,9 @@ gen_cliff = generic_clifford
 
 def transcoding_cliffords(stab_in,xs_in,zs_in,stab_out,xs_out,zs_out):
     r"""
-    
+    Returns an iterator onto all :class:`qecc.Clifford` objects which 
+    take states specified by ``stab_in``, ``xs_in``, and ``zs_in``, and
+    return states specified by ``stab_out``, ``xs_out``, and ``zs_out``.
     """
     #Preliminaries:
     nq_in=len(stab_in[0])
@@ -687,5 +689,5 @@ def clifford_group(nq, consider_phases=False):
 # Due to circular dependencies, we need for some things in this module to be
 # defined /before/ we import stab, even though it's used before.
 # The easiest way to ensure this is to import at the end, even though that's
-# in general bad style.
+# bad style, in general.
 import stab

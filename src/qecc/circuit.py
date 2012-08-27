@@ -311,6 +311,8 @@ class Circuit(list):
     
     @staticmethod
     def from_quasm(source):
+        """Returns a :class:`qecc.Circuit` object from a QuASM-formatted
+        file, producing one location per line."""
         if not isinstance(source, str):
             # Assume source is a file-like, so that iter(source) returns lines
             # in the file.
@@ -476,8 +478,10 @@ class Circuit(list):
         yield group_acc
 
     def pad_with_waits(self):
-        # TODO: write docstring, noting that a copy is returned and that the
-        #        original Circuit is unmodified!
+        """
+        Returns a copy of the :class:`qecc.Circuit` ``self``, which contains
+        explicit wait locations. 
+        """
         return sum(self.group_by_time(pad_with_waits=True), Circuit())
 
     ## OTHER METHODS ##
