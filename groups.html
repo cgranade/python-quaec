@@ -416,7 +416,15 @@ generators, respectively.</td>
 <dl class="function">
 <dt id="qecc.pad">
 <tt class="descclassname">qecc.</tt><tt class="descname">pad</tt><big>(</big><em>setP</em>, <em>n_eb=0</em>, <em>lower_right=None</em><big>)</big><a class="headerlink" href="#qecc.pad" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Takes a set of <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> objects, and returns a new set, 
+appending <tt class="docutils literal"><span class="pre">n_eb</span></tt> qubits, with stabilizer operators specified by
+<tt class="docutils literal"><span class="pre">lower_right</span></tt>.
+Example:
+&gt;&gt;&gt;import qecc as q
+&gt;&gt;&gt;pauli_set=map(q.Pauli,[&#8216;XXX&#8217;,&#8217;YIY&#8217;,&#8217;ZZI&#8217;])
+&gt;&gt;&gt;q.pad(pauli_set,n_eb=2,lower_right=map(q.Pauli,[&#8216;IX&#8217;,&#8217;ZI&#8217;]))
+[i^0 XXXII, i^0 YIYII, i^0, ZZIII, i^0 IIIIX, i^0 IIIZI]</p>
+</dd></dl>
 
 </div>
 <div class="section" id="searching-over-pauli-group-elements">
@@ -607,8 +615,8 @@ represented by this instance.</td>
 <dd><p>Yields an iterator onto possible Clifford operators whose outputs agree
 with this operator for all outputs that are specified. Note that all
 yielded operators assign the phase 0 to all outputs, by convention.</p>
-<p>If this operator is fully specified, the iterator will yield exactly one
-element, which will be equal to this operator.</p>
+<p>If this operator is fully specified, the iterator will yield exactly
+one element, which will be equal to this operator.</p>
 <p>For example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Clifford</span><span class="p">([</span><span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;XI&#39;</span><span class="p">),</span> <span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;IX&#39;</span><span class="p">)],</span> <span class="p">[</span><span class="n">q</span><span class="o">.</span><span class="n">Unspecified</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">Unspecified</span><span class="p">])</span>

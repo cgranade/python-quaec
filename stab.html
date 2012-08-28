@@ -313,7 +313,7 @@ logical qubits.</p>
 <dt id="qecc.StabilizerCode.block_logical_pauli">
 <tt class="descname">block_logical_pauli</tt><big>(</big><em>P</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.block_logical_pauli" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a Pauli operator <img class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> acting on <img class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/>, finds a Pauli
-operator <img class="math" src="_images/math/91640f7a4eecd5a74c8a865c03846d837a6491d0.png" alt="\overline{P}"/> on <img class="math" src="_images/math/352c8227b306ecb073ce0371932c5b7fe3241232.png" alt="nk"/> qubits that corresponds
+operator <img class="math" src="_images/math/91640f7a4eecd5a74c8a865c03846d837a6491d0.png" alt="\overline{P}"/> on <img class="math" src="_images/math/a65540896dbfc5605e7767c8cacaa9d429e14d11.png" alt="n_k"/> qubits that corresponds
 to the logical operator acting across <img class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> blocks of this code.</p>
 <p>Note that this method is only supported for single logical qubit codes.</p>
 </dd></dl>
@@ -344,7 +344,9 @@ ancilla qubit alone.</td>
 <dl class="method">
 <dt id="qecc.StabilizerCode.syndrome_meas_circuit">
 <tt class="descname">syndrome_meas_circuit</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.syndrome_meas_circuit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns a circuit which measures all stabilizer generators
+onto ancillae, using <tt class="docutils literal"><span class="pre">measure_gen_onto_ancilla</span></tt>.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="qecc.StabilizerCode.permute_gen_ops">
