@@ -214,11 +214,14 @@ class StabilizerCode(object):
         :param synd: a string, list, or tuple with entries consisting only of
         0 or 1. This parameter will be certified before use. 
         """
+
         synd=map(int, synd) #Ensures synd is a list of integers
         acceptable_syndrome = all([bit == 0 or bit == 1 for bit in synd])
         if not acceptable_syndrome:
             raise ValueError("Please input a syndrome which is an iterable onto 0 and 1.")
-        if len(synd) != self.nq - self.nq_logical
+        if len(synd) != self.nq - self.nq_logical:
+            raise ValueError("Syndrome must account for n-k bits of syndrome data.")
+        
         #We produce commutation and anti_commutation constraints from synd.
         anti_coms=list(it.compress(self.group_generators,synd))
         coms=list(it.compress(self.group_generators,[1-bit for bit in synd]))
@@ -233,7 +236,15 @@ class StabilizerCode(object):
             if low_weight_ops:
                 break 
         return low_weight_ops[0]
-        
+
+    def syndromes_and_recovery_operators(self):
+        r"""
+        Outputs an iterator onto tuples of syndromes and appropriate recovery
+        operators.
+        """
+        for bitstring in it.product([0,1],repeat=self.nq-self.nq_logical):
+            yield (bitstring, self.syndrome_to_recovery_operator(bitstring))
+    
     def star_decoder(self, for_enc=None, as_dict=False):
         r"""
         Returns a tuple of a decoding Clifford and a :class:`qecc.PauliList`
