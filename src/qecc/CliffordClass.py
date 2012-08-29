@@ -28,6 +28,7 @@
     
 import PauliClass as _pc
 import bsf as _bsf
+import utils as u
 
 try:
     reload(_pc)
@@ -540,36 +541,51 @@ def pauli_gate(pauli):
     """
     nq = len(pauli.op)
     return Clifford(*tuple(
-        [gen.mul_phase(2*com(pauli,gen))  for gen in gen_set]
+        [gen.mul_phase(2*com(pauli,gen)) for gen in gen_set]
         for gen_set in elem_gens(nq)
     ))
 
-def paulify(clinput):
+@u.deprecated("Deprecated; see method from_clifford in PauliClass.")
+def paulify(cliff_in):
     """
-    Tests an input Clifford ``clinput`` to determine if it is, in
+    Tests an input Clifford ``cliff_in`` to determine if it is, in
     fact, a Pauli. If so, it outputs the Pauli. If not, it
     returns the Clifford. 
-
-    BE WARNED: If you turn a Pauli 
-    into a Clifford and back again, the phase will be lost.
+    :arg cliff_in: Representation of Clifford operator to be converted, 
+    if possible.
+    :rtype: :class:`qecc.Pauli`
+    Example:
+    >>>import qecc as q
+    >>>cliff=q.Clifford([q.Pauli('XI',2),q.Pauli('IX')],map(q.Pauli,['ZI','IZ']))
+    >>>q.paulify(cliff)
+    i^0 ZI
+    
+    Converting a Pauli into a Clifford and back again will erase
+    the phase:
+    >>>import qecc as q
+    >>>paul=q.Pauli('YZ',3)
+    >>>cliff=q.pauli_gate(paul)
+    >>>q.paulify(cliff)
+    i^0 YZ
+    
     """
     
-    nq=len(clinput.xout) #Determine number of qubits.
+    nq=len(cliff_in.xout) #Determine number of qubits.
     test_ex,test_zed=elem_gens(nq) #Get paulis to compare.
     """If the Paulis input to the Clifford are only altered in phase, then the Clifford is also a Pauli."""
-    for ex_clif,zed_clif,ex_test,zed_test in zip(clinput.xout, clinput.zout,test_ex,test_zed):
+    for ex_clif,zed_clif,ex_test,zed_test in zip(cliff_in.xout, cliff_in.zout,test_ex,test_zed):
         if ex_clif.op != ex_test.op or zed_clif.op != zed_test.op:
             print "Clifford is not Pauli."
-            return clinput
+            return cliff_in
         #If the Clifford is Pauli, determine which by examining operators with altered phases.
         exact=eye_p(nq)
         zedact=eye_p(nq) #Initialize accumulators
         """If a negative sign appears on a given generator, assign a Pauli to that qubit that conjugates the generator to a minus sign, e.g. ZXZ = -X """
         for idx_x in range(nq):
-            if clinput.xout[idx_x].ph==2:
+            if cliff_in.xout[idx_x].ph==2:
                 exact.op = replace_one_character(exact.op, idx_x, 'Z')
         for idx_z in range(nq):
-            if clinput.zout[idx_z].ph==2:
+            if cliff_in.zout[idx_z].ph==2:
                 zedact.op = replace_one_character(zedact.op, idx_z, 'X')
         return Pauli((exact*zedact).op)
 
@@ -608,11 +624,19 @@ def generic_clifford(paulis_in, paulis_out):
 # For backwards compatibility, we define gen_cliff as an alias.
 gen_cliff = generic_clifford
 
+@u.deprecated("Deprecated, see method transcoding_cliffords in StabilizerCode")
 def transcoding_cliffords(stab_in,xs_in,zs_in,stab_out,xs_out,zs_out):
     r"""
     Returns an iterator onto all :class:`qecc.Clifford` objects which 
     take states specified by ``stab_in``, ``xs_in``, and ``zs_in``, and
     return states specified by ``stab_out``, ``xs_out``, and ``zs_out``.
+
+    :arg stab_in: Stabilizer generating set for input code
+    :arg xs_in: Logical :math:`X` operators for input code
+    :arg zs_in: Logical :math:`Z` operators for input code
+    :arg stab_out: Stabilizer generating set for output code
+    :arg xs_out: Logical :math:`X` operators for output code
+    :arg zs_out: Logical :math:`Z` operators for output code
     """
     #Preliminaries:
     nq_in=len(stab_in[0])
@@ -650,7 +674,7 @@ def transcoding_cliffords(stab_in,xs_in,zs_in,stab_out,xs_out,zs_out):
         else:
             yield gen_cliff(list_left,completion.xout+completion.zout)
 
-
+@u.deprecated("Deprecated, see min_len_transcoding_clifford in StabilizerCode")
 def min_len_transcoding_clifford(paulis_in,paulis_out):
     circuit_iter=map(lambda p: p.as_bsm().circuit_decomposition(), transcoding_cliffords(paulis_in,paulis_out))
     return min(*circuit_iter)

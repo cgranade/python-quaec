@@ -92,7 +92,7 @@ class StabilizerCode(object):
     @property
     def nq(self):
         """
-        The number of physical qubits into which this code encodes data.
+        The number of physical qubits into which this code encodes.
         """
         try:
             return len(iter(
@@ -119,6 +119,8 @@ class StabilizerCode(object):
 
     @property
     def logical_ys(self):
+        """Derives logical :math:`Y` operators, given logical :math:`X`
+        and :math:`Z` operators."""
         return pc.PauliList((ex * zed).mul_phase(1) for (ex,zed) in zip(self.logical_xs,self.logical_zs))     
 
     @property
@@ -203,6 +205,34 @@ class StabilizerCode(object):
             self.logical_xs + ([Unspecified] * self.n_constraints),
             self.logical_zs + self.group_generators)
         return C.constraint_completions()
+
+    def syndrome_to_recovery_operator(self,synd): 
+        r"""
+        Returns a Pauli operator which corrects an error on the stabilizer code
+        ``self``, given the syndrome ``synd``, a bitstring indicating which 
+        generators the implied error commutes with and anti-commutes with. 
+        :param synd: a string, list, or tuple with entries consisting only of
+        0 or 1. This parameter will be certified before use. 
+        """
+        synd=map(int, synd) #Ensures synd is a list of integers
+        acceptable_syndrome = all([bit == 0 or bit == 1 for bit in synd])
+        if not acceptable_syndrome:
+            raise ValueError("Please input a syndrome which is an iterable onto 0 and 1.")
+        if len(synd) != self.nq - self.nq_logical
+        #We produce commutation and anti_commutation constraints from synd.
+        anti_coms=list(it.compress(self.group_generators,synd))
+        coms=list(it.compress(self.group_generators,[1-bit for bit in synd]))
+        for op_weight in range(self.nq+1):
+            #We loop over all possible weights. As soon as we find an operator
+            #that satisfies the commutation and anti-commutation constraints,
+            #we return it:
+            low_weight_ops=map(p.remove_phase,
+                               cs.solve_commutation_constraints(coms,anti_coms,
+                               search_in_set=p.paulis_by_weight(self.nq,
+                               op_weight)))
+            if low_weight_ops:
+                break 
+        return low_weight_ops[0]
         
     def star_decoder(self, for_enc=None, as_dict=False):
         r"""
@@ -511,6 +541,62 @@ class StabilizerCode(object):
             logical_xs=map(self.block_logical_pauli, other.logical_xs),
             logical_zs=map(self.block_logical_pauli, other.logical_zs)
         )
+    ## TRANSCODING ##
+    def transcoding_cliffords(self,other):
+        r"""
+        Returns an iterator onto all :class:`qecc.Clifford` objects which 
+        take states specified by ``self``, and
+        return states specified by ``other``.
+
+        :arg other: :class:`qecc.StabilizerCode`
+        """
+        #Preliminaries:
+
+        stab_in = self.group_generators
+        stab_out = other.group_generators
+        xs_in = self.logical_xs
+        xs_out = other.logical_xs
+        zs_in = self.logical_zs
+        zs_out = other.logical_zs
+        
+        nq_in=len(stab_in[0])
+        nq_out=len(stab_out[0])
+        nq_anc=abs(nq_in-nq_out)
+
+        #Decide left side:
+        if nq_in<nq_out:
+            stab_left=stab_out
+            xs_left=xs_out
+            zs_left=zs_out
+            stab_right=stab_in
+            xs_right=xs_in
+            zs_right=zs_in
+        else:
+            stab_right=stab_out
+            xs_right=xs_out
+            zs_right=zs_out
+            stab_left=stab_in
+            xs_left=xs_in
+            zs_left=zs_in
+            
+        cliff_xouts_left=stab_left+xs_left
+        cliff_zouts_left=[Unspecified]*len(stab_left)+zs_left
+        
+        cliff_left=Clifford(cliff_xouts_left,cliff_zouts_left).constraint_completions().next()
+        list_left=cliff_left.xout+cliff_left.zout
+
+        for mcset in mutually_commuting_sets(n_gens=len(stab_left)-len(stab_right),n_bits=nq_anc):
+            temp_xouts_right=pad(stab_right,lower_right=mcset)+map(lambda p: p&eye_p(nq_anc),xs_right)
+            temp_zouts_right=[Unspecified]*len(stab_left)+map(lambda p: p&eye_p(nq_anc),zs_right)
+        for completion in Clifford(temp_xouts_right,temp_zouts_right).constraint_completions():
+            if nq_in<nq_out:
+                yield gen_cliff(completion.xout+completion.zout,list_left)
+            else:
+                yield gen_cliff(list_left,completion.xout+completion.zout)
+
+    def min_len_transcoding_clifford(self,other):
+        circuit_iter=map(lambda p: p.as_bsm().circuit_decomposition(), self.transcoding_cliffords(other))
+        return min(*circuit_iter)
 
     ## COMMON CODES ##
 

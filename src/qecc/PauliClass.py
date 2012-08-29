@@ -35,6 +35,7 @@ from paulicollections import PauliList
 from unitary_reps import pauli_as_unitary
 from singletons import Unspecified
 import  CliffordClass as cc
+import utils as u
 
 ## ALL ##
 
@@ -182,7 +183,10 @@ class Pauli(object):
             
     def __getitem__(self, idxs):
         """
-        Returns the action of a Pauli ``self`` on a single qubit ``idxs``.
+        Returns the representation of a Pauli ``self`` on a single qubit 
+        ``idxs``.
+        :param idxs: Support of returned Pauli.
+        :rtype: :class:`qecc.Pauli`
         """
         return Pauli(self.op[idxs], phase=self.ph)
             
@@ -210,6 +214,10 @@ class Pauli(object):
         return Pauli(self.op + other.op, self.ph + other.ph)
 
     def __and__(self,other):
+        """
+        Method implementing tensor products for :class:`qecc.Pauli` 
+        objects; see `tens`. 
+        """
         if not isinstance(other, Pauli):
             return NotImplemented
         return self.tens(other)
@@ -328,7 +336,11 @@ class Pauli(object):
 
     def as_circuit(self):
         """ Transforms an n-qubit Pauli to a serial circuit on 
-        n qubits. Neglects global phases."""
+        n qubits. Neglects global phases.
+
+        :rtype: :class:`qecc.Circuit`
+
+        """
         gatelist=[]
         for idx, letter in enumerate(self.op):
             if letter != "I":
@@ -360,22 +372,37 @@ class Pauli(object):
     def __len__(self):
         """
         Yields the number of qubits on which the Pauli ``self`` acts.
+
+        :rtype: int
         """
         return len(self.op)
 
     @staticmethod
     def from_string(bitstring,p_1):
         """
-        Returns a phaseless Pauli from a bitstring. The intended use of
+        Creates a multi-qubit Pauli using a bitstring and a one-qubit Pauli, by
+        replacing all instances of 1 in the bitstring with the appropriate 
+        Pauli, and replacing all instances of 0 with the identity.
+        :param list bitstring: a list of integers, each of which is either 0 or
+        1. `bitstring` can also be a string, type conversion is automatic.
+        :param str p_1: a single-qubit Pauli. 
+        :returns: a phaseless Pauli from a bitstring. The intended use of
         this function is as a quick means of specifying binary Paulis.
         p_1 is the one_qubit Pauli that a '1' represents.
+        :rtype: :class:`qecc.Pauli`
+        Example:
+        >>>import qecc as q
+        >>>bitstring = '101110111100'
+        >>>p_1=q.Pauli('X')
+        >>>q.Pauli.from_string(bitstring,p_1)
+        i^0 XIXXXIXXXXII
+                
         """
         p_1 = ensure_pauli(p_1)
-        
         if isinstance(bitstring, str):
             bitstring = map(int, bitstring)
-            
-        return reduce(and_,[p_1**j for j in bitstring])
+        
+        return reduce(and_,[(p_1.set_phase())**j for j in bitstring])
         
     def as_unitary(self):
         """
@@ -388,8 +415,11 @@ class Pauli(object):
               
     def as_clifford(self):
         """
-        Returns a :class:`qecc.Clifford` representing conjugation by this Pauli
+        Converts a Pauli into a Clifford which changes the signs of input
+        Paulis. 
+        :returns: A Clifford representing conjugation by this Pauli
         operator.
+        :rtype: :class:`qecc.Clifford`
         """
         Xs, Zs = elem_gens(len(self))
         for P in chain(Xs, Zs):
@@ -397,7 +427,49 @@ class Pauli(object):
                 P.mul_phase(2)
                 
         return cc.Clifford(Xs, Zs)
-                
+
+    def from_clifford(cliff_in):
+        """
+        Tests an input Clifford ``cliff_in`` to determine if it is, in
+        fact, a Pauli. If so, it outputs the Pauli. If not, it
+        raises an error. 
+        :arg cliff_in: Representation of Clifford operator to be converted, 
+        if possible.
+        :rtype: :class:`qecc.Pauli`
+        Example:
+        >>>import qecc as q
+        >>>cliff=q.Clifford([q.Pauli('XI',2),q.Pauli('IX')],map(q.Pauli,['ZI','IZ']))
+        >>>q.Pauli.from_clifford(cliff)
+        i^0 ZI
+        
+        Converting a Pauli into a Clifford and back again will erase
+        the phase:
+        >>>import qecc as q
+        >>>paul=q.Pauli('YZ',3)
+        >>>cliff=paul.as_clifford()
+        >>>q.Pauli.from_clifford(cliff)
+        i^0 YZ
+        
+        """
+        
+        nq=len(cliff_in.xout) #Determine number of qubits.
+        test_ex,test_zed=elem_gens(nq) #Get paulis to compare.
+        """If the Paulis input to the Clifford are only altered in phase, then the Clifford is also a Pauli."""
+        for ex_clif,zed_clif,ex_test,zed_test in zip(cliff_in.xout, cliff_in.zout,test_ex,test_zed):
+            if ex_clif.op != ex_test.op or zed_clif.op != zed_test.op:
+                raise ValueError("Clifford is not Pauli.")
+            #If the Clifford is Pauli, determine which by examining operators with altered phases.
+            exact=eye_p(nq)
+            zedact=eye_p(nq) #Initialize accumulators
+            """If a negative sign appears on a given generator, assign a Pauli to that qubit that conjugates the generator to a minus sign, e.g. ZXZ = -X """
+            for idx_x in range(nq):
+                if cliff_in.xout[idx_x].ph==2:
+                    exact.op = replace_one_character(exact.op, idx_x, 'Z')
+            for idx_z in range(nq):
+                if cliff_in.zout[idx_z].ph==2:
+                    zedact.op = replace_one_character(zedact.op, idx_z, 'X')
+            return Pauli((exact*zedact).op)
+
     @property
     def wt(self):
         """
@@ -405,13 +477,16 @@ class Pauli(object):
         
         :rtype: int (between 0 and the number of qubits on which the Pauli is defined)
         :returns: The number of qubits on which the represented Pauli operator
-            is is supported.
+            is supported.
         """
         return len([op for op in self.op if op != 'I'])
 
     def cust_wt(self,char):
         """
-        Returns the number of qubits in the Pauli ``self`` which are acted upon
+        Produces the number of qubits on which an input Pauli acts as a 
+        specified single-qubit Pauli. 
+        :param str char: a single-letter string containing an I, X, Y or Z. 
+        :returns: the number of qubits in the Pauli ``self`` which are acted upon
         by the single-qubit operator ``char``.
         """
         if char not in VALID_OPS:
@@ -489,8 +564,6 @@ def ensure_pauli(P):
     Given either a string or an instance of :class:`qecc.Pauli`, produces an
     instance of :class:`qecc.Pauli`.
     """
-    # TODO: provide a decorator that applies this function to another function's
-    #       arguments.
     return P if isinstance(P, Pauli) or P is Unspecified else Pauli(P)
         
 # Stolen from itertools cookbook.
@@ -498,7 +571,8 @@ def powerset(iterable):
     """
     Sub-function, stolen from itertools cookbook. 
 
-    powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
+    powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
+    """
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
         
@@ -506,6 +580,8 @@ def paulis_by_weight(nq, wt):
     """
     Produces an iterator including all Pauli operators on ``nq`` qubits
     of weight ``wt``.
+    :param int nq: The number of qubits on which the returned Paulis are to act.
+    :param int wt: The weight of each returned Pauli. 
     """
     def error_by_idxs(idxs, err_string):
         return reduce(mul, starmap(elem_gen, zip([nq]*len(idxs), idxs, err_string)))
@@ -692,11 +768,16 @@ def mutually_commuting_sets(n_elems, n_bits=None, group_gens=None, exclude=None)
             for S in mutually_commuting_sets(n_elems-1,group_gens=c_gens, exclude=exclude+[P]):
                 yield (P,)+S
 
+@u.deprecated("Deprecated; see PauliList.pad")
 def pad(setP, n_eb=0, lower_right=None):
     r"""
     Takes a set of :class:`qecc.Pauli` objects, and returns a new set, 
     appending ``n_eb`` qubits, with stabilizer operators specified by
     ``lower_right``.
+    :arg setP: list of Pauli operators to be padded. 
+    :param int n_eb: Number of extra bits to be appended to the system.
+    :param lower_right: list of `qecc.Pauli` operators, acting on `n_eb` qubits.
+    :rtype: list of :class:`qecc.Pauli` objects.
     Example:
     >>>import qecc as q
     >>>pauli_set=map(q.Pauli,['XXX','YIY','ZZI'])
@@ -711,7 +792,7 @@ def pad(setP, n_eb=0, lower_right=None):
     len_P=len(setP)
     n_P=len(setP[0])
 
-    if n_eb == 0 and lower_right is None or len(lower_right)==0:
+    if n_eb == 0 and lower_right is None:# or len(lower_right)==0:
         return setP
     elif len(lower_right) != 0:
         n_eb=len(lower_right[0])
@@ -730,7 +811,15 @@ def pad(setP, n_eb=0, lower_right=None):
 def clifford_bottoms(c_top):
     r"""
     This function yields the next set of nq paulis that mutually 
-    commute, and anti-commute with selected elements from c_top. 
+    commute, and anti-commute with selected elements from c_top. The intent
+    behind this function is to begin with a list of mutually commuting Paulis, 
+    and ifnd an associated set that share the same commutation relations as 
+    :math:`\left[ X_1,\ldots,X_n \range]` and 
+    :math:`\left[ Z_1,\ldots,Z_n \range]`. This allows the input and output of 
+    this function can be thought of as the :math:`X` and :math:`Z` outputs of a
+    Clifford operator. 
+    
+    :param c_top: list of :class:`qecc.Pauli` objects, which mutually commute. 
     """
     nq=len(c_top)
     possible_zs=[]

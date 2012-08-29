@@ -156,6 +156,9 @@ class BinarySymplecticVector(object):
 def bitstring_to_letterstring(bitstring,letter):
     """Internal function, replaces all instances of 1 in ``bitstring``
     with the letter in ``letter``.
+    :param list bitstring: a list or tuple, whose entries are 0 or 1. 
+    :param letter: a string with a single entry
+    :rtype: str
     """
     outstring=''
     for idx in range(len(bitstring)):
@@ -166,19 +169,28 @@ def bitstring_to_letterstring(bitstring,letter):
     return outstring
 
 def parity(bitarray):
-    """returns True if bitarray is of odd parity, False if it is of even parity."""
+    """
+    :arg list bitarray: a list containing integers of value 0 or 1.  
+    :returns: True if bitarray is of odd parity, False if it is of even parity.
+    :rtype: bool
+    """
     return reduce(logical_xor,bitarray)
 
 def bitwise_inner_product(v1,v2):
-    """Internal function, returns the bitwise inner product of two bitstrings.
+    """
+    Internal function, returns the bitwise inner product of two bitstrings.
+    The bitwise inner product is the sum (modulo 2) of the product of the
+    elements. 
     """
     return parity(bitwise_and(v1,v2))
 
 def all_pauli_bsvs(nq):
     r"""
-    For a given number of qubits ``nq``, returns an iterator that yields the
-    binary symplectic representations of each element of the Pauli group
-    :math:`\mathcal{P}_n`.
+    Lists all the Paulis on ``nq`` qubits according to their binary symplectic
+    representations. 
+    :param int nq: Number of qubits. 
+    :returns: an iterator that yields the binary symplectic representations of 
+    each element of the Pauli group :math:`\mathcal{P}_n`.
     """
     for idx_x in itertools.product([0,1],repeat=nq):
         for idx_z in itertools.product([0,1],repeat=nq):
@@ -209,7 +221,10 @@ def constrained_set(pauli_array_input,logical_array_input):
     # return output_array
 
 def commute(bsv1,bsv2):
-    """returns True if bsv1 and bsv2 commute by evaluating the symplectic inner product."""
+    """returns True if bsv1 and bsv2 commute by evaluating the symplectic inner 
+    product.
+    :rtype:bool
+    """
     return logical_not(logical_xor(bitwise_inner_product(bsv1.x,bsv2.z),bitwise_inner_product(bsv1.z,bsv2.x)))
 
 def xz_switch(bsv):

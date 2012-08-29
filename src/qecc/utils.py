@@ -26,6 +26,8 @@
 
 from itertools import imap
 from functools import wraps
+import PauliClass as PC
+import warnings
 
 ## FUNCTIONS ##
 
@@ -52,7 +54,23 @@ def memoize(func):
 
     memoized_func.__memoize_cache__ = dict()
     return memoized_func
-        
+
+def deprecated(explanation='Deprecated'):
+    def decorator(func):
+        @wraps(func)
+        def decorated(*args, **kwargs):
+            warnings.warn(explanation)
+            return func(*args, **kwargs)
+        return decorated
+    return decorator
+
+def ensure_args_pauli(func):
+    @wraps(func)
+    def pauli_tested_func(*args):
+        map(PC.ensure_pauli, args)
+        func(*args)
+    return pauli_tested_func
+            
 ## TEST ##
 
 if __name__ == "__main__":
