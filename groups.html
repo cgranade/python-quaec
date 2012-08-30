@@ -192,14 +192,35 @@ information.</p>
 <tt class="descname">as_circuit</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_circuit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transforms an n-qubit Pauli to a serial circuit on 
 n qubits. Neglects global phases.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="circuits.html#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="qecc.Pauli.from_string">
 <em class="property">static </em><tt class="descname">from_string</tt><big>(</big><em>bitstring</em>, <em>p_1</em><big>)</big><a class="headerlink" href="#qecc.Pauli.from_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a phaseless Pauli from a bitstring. The intended use of
+<dd><p>Creates a multi-qubit Pauli using a bitstring and a one-qubit Pauli, by
+replacing all instances of 1 in the bitstring with the appropriate 
+Pauli, and replacing all instances of 0 with the identity.
+:param list bitstring: a list of integers, each of which is either 0 or
+1. <cite>bitstring</cite> can also be a string, type conversion is automatic.
+:param str p_1: a single-qubit Pauli. 
+:returns: a phaseless Pauli from a bitstring. The intended use of
 this function is as a quick means of specifying binary Paulis.
-p_1 is the one_qubit Pauli that a &#8216;1&#8217; represents.</p>
+p_1 is the one_qubit Pauli that a &#8216;1&#8217; represents.
+:rtype: <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a>
+Example:
+&gt;&gt;&gt;import qecc as q
+&gt;&gt;&gt;bitstring = &#8216;101110111100&#8217;
+&gt;&gt;&gt;p_1=q.Pauli(&#8216;X&#8217;)
+&gt;&gt;&gt;q.Pauli.from_string(bitstring,p_1)
+i^0 XIXXXIXXXXII</p>
 </dd></dl>
 
 <dl class="method">
@@ -213,8 +234,34 @@ representation of this Pauli operator.</p>
 <dl class="method">
 <dt id="qecc.Pauli.as_clifford">
 <tt class="descname">as_clifford</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_clifford" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> representing conjugation by this Pauli
-operator.</p>
+<dd><p>Converts a Pauli into a Clifford which changes the signs of input
+Paulis. 
+:returns: A Clifford representing conjugation by this Pauli
+operator.
+:rtype: <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.Pauli.from_clifford">
+<tt class="descname">from_clifford</tt><big>(</big><em>cliff_in</em><big>)</big><a class="headerlink" href="#qecc.Pauli.from_clifford" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests an input Clifford <tt class="docutils literal"><span class="pre">cliff_in</span></tt> to determine if it is, in
+fact, a Pauli. If so, it outputs the Pauli. If not, it
+raises an error. 
+:arg cliff_in: Representation of Clifford operator to be converted, 
+if possible.
+:rtype: <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a>
+Example:
+&gt;&gt;&gt;import qecc as q
+&gt;&gt;&gt;cliff=q.Clifford([q.Pauli(&#8216;XI&#8217;,2),q.Pauli(&#8216;IX&#8217;)],map(q.Pauli,[&#8216;ZI&#8217;,&#8217;IZ&#8217;]))
+&gt;&gt;&gt;q.Pauli.from_clifford(cliff)
+i^0 ZI</p>
+<p>Converting a Pauli into a Clifford and back again will erase
+the phase:
+&gt;&gt;&gt;import qecc as q
+&gt;&gt;&gt;paul=q.Pauli(&#8216;YZ&#8217;,3)
+&gt;&gt;&gt;cliff=paul.as_clifford()
+&gt;&gt;&gt;q.Pauli.from_clifford(cliff)
+i^0 YZ</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -228,7 +275,7 @@ operator.</p>
 <tr class="field"><th class="field-name">Return type:</th><td class="field-body">int (between 0 and the number of qubits on which the Pauli is defined)</td>
 </tr>
 <tr class="field"><th class="field-name">Returns:</th><td class="field-body">The number of qubits on which the represented Pauli operator
-is is supported.</td>
+is supported.</td>
 </tr>
 </tbody>
 </table>
@@ -237,7 +284,10 @@ is is supported.</td>
 <dl class="method">
 <dt id="qecc.Pauli.cust_wt">
 <tt class="descname">cust_wt</tt><big>(</big><em>char</em><big>)</big><a class="headerlink" href="#qecc.Pauli.cust_wt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of qubits in the Pauli <tt class="docutils literal"><span class="pre">self</span></tt> which are acted upon
+<dd><p>Produces the number of qubits on which an input Pauli acts as a 
+specified single-qubit Pauli. 
+:param str char: a single-letter string containing an I, X, Y or Z. 
+:returns: the number of qubits in the Pauli <tt class="docutils literal"><span class="pre">self</span></tt> which are acted upon
 by the single-qubit operator <tt class="docutils literal"><span class="pre">char</span></tt>.</p>
 </dd></dl>
 
@@ -415,10 +465,14 @@ generators, respectively.</td>
 
 <dl class="function">
 <dt id="qecc.pad">
-<tt class="descclassname">qecc.</tt><tt class="descname">pad</tt><big>(</big><em>setP</em>, <em>n_eb=0</em>, <em>lower_right=None</em><big>)</big><a class="headerlink" href="#qecc.pad" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">qecc.</tt><tt class="descname">pad</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#qecc.pad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes a set of <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> objects, and returns a new set, 
 appending <tt class="docutils literal"><span class="pre">n_eb</span></tt> qubits, with stabilizer operators specified by
 <tt class="docutils literal"><span class="pre">lower_right</span></tt>.
+:arg setP: list of Pauli operators to be padded. 
+:param int n_eb: Number of extra bits to be appended to the system.
+:param lower_right: list of <cite>qecc.Pauli</cite> operators, acting on <cite>n_eb</cite> qubits.
+:rtype: list of <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> objects.
 Example:
 &gt;&gt;&gt;import qecc as q
 &gt;&gt;&gt;pauli_set=map(q.Pauli,[&#8216;XXX&#8217;,&#8217;YIY&#8217;,&#8217;ZZI&#8217;])
@@ -857,12 +911,25 @@ Pauli group to itself.</p>
 <h3>Utility Functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="qecc.paulify">
-<tt class="descclassname">qecc.</tt><tt class="descname">paulify</tt><big>(</big><em>clinput</em><big>)</big><a class="headerlink" href="#qecc.paulify" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tests an input Clifford <tt class="docutils literal"><span class="pre">clinput</span></tt> to determine if it is, in
+<tt class="descclassname">qecc.</tt><tt class="descname">paulify</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#qecc.paulify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests an input Clifford <tt class="docutils literal"><span class="pre">cliff_in</span></tt> to determine if it is, in
 fact, a Pauli. If so, it outputs the Pauli. If not, it
-returns the Clifford.</p>
-<p>BE WARNED: If you turn a Pauli 
-into a Clifford and back again, the phase will be lost.</p>
+returns the Clifford. 
+:arg cliff_in: Representation of Clifford operator to be converted, 
+if possible.
+:rtype: <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a>
+Example:
+&gt;&gt;&gt;import qecc as q
+&gt;&gt;&gt;cliff=q.Clifford([q.Pauli(&#8216;XI&#8217;,2),q.Pauli(&#8216;IX&#8217;)],map(q.Pauli,[&#8216;ZI&#8217;,&#8217;IZ&#8217;]))
+&gt;&gt;&gt;q.paulify(cliff)
+i^0 ZI</p>
+<p>Converting a Pauli into a Clifford and back again will erase
+the phase:
+&gt;&gt;&gt;import qecc as q
+&gt;&gt;&gt;paul=q.Pauli(&#8216;YZ&#8217;,3)
+&gt;&gt;&gt;cliff=q.pauli_gate(paul)
+&gt;&gt;&gt;q.paulify(cliff)
+i^0 YZ</p>
 </dd></dl>
 
 </div>

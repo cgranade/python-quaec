@@ -135,9 +135,11 @@ vector with another vector. Letting <img class="math" src="_images/math/4a66e037
 <dl class="function">
 <dt id="qecc.all_pauli_bsvs">
 <tt class="descclassname">qecc.</tt><tt class="descname">all_pauli_bsvs</tt><big>(</big><em>nq</em><big>)</big><a class="headerlink" href="#qecc.all_pauli_bsvs" title="Permalink to this definition">¶</a></dt>
-<dd><p>For a given number of qubits <tt class="docutils literal"><span class="pre">nq</span></tt>, returns an iterator that yields the
-binary symplectic representations of each element of the Pauli group
-<img class="math" src="_images/math/653f07268b36bc014788d5ac245519cad5ed5bc0.png" alt="\mathcal{P}_n"/>.</p>
+<dd><p>Lists all the Paulis on <tt class="docutils literal"><span class="pre">nq</span></tt> qubits according to their binary symplectic
+representations. 
+:param int nq: Number of qubits. 
+:returns: an iterator that yields the binary symplectic representations of 
+each element of the Pauli group <img class="math" src="_images/math/653f07268b36bc014788d5ac245519cad5ed5bc0.png" alt="\mathcal{P}_n"/>.</p>
 </dd></dl>
 
 <dl class="function">
@@ -165,7 +167,9 @@ satisfied.</p>
 <dl class="function">
 <dt id="qecc.commute">
 <tt class="descclassname">qecc.</tt><tt class="descname">commute</tt><big>(</big><em>bsv1</em>, <em>bsv2</em><big>)</big><a class="headerlink" href="#qecc.commute" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns True if bsv1 and bsv2 commute by evaluating the symplectic inner product.</p>
+<dd><p>returns True if bsv1 and bsv2 commute by evaluating the symplectic inner 
+product.
+:rtype:bool</p>
 </dd></dl>
 
 <dl class="function">

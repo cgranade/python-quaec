@@ -154,7 +154,7 @@ acting on encoded states.</li>
 <dl class="attribute">
 <dt id="qecc.StabilizerCode.nq">
 <tt class="descname">nq</tt><a class="headerlink" href="#qecc.StabilizerCode.nq" title="Permalink to this definition">¶</a></dt>
-<dd><p>The number of physical qubits into which this code encodes data.</p>
+<dd><p>The number of physical qubits into which this code encodes.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -172,7 +172,9 @@ acting on encoded states.</li>
 <dl class="attribute">
 <dt id="qecc.StabilizerCode.logical_ys">
 <tt class="descname">logical_ys</tt><a class="headerlink" href="#qecc.StabilizerCode.logical_ys" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Derives logical <img class="math" src="_images/math/ce58e4af225c93d08606c26554caaa5ae32edeba.png" alt="Y"/> operators, given logical <img class="math" src="_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/>
+and <img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> operators.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="qecc.StabilizerCode.logical_ops">
@@ -264,6 +266,30 @@ rest of the qubits in the input register are initialized to
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.StabilizerCode.syndrome_to_recovery_operator">
+<tt class="descname">syndrome_to_recovery_operator</tt><big>(</big><em>synd</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.syndrome_to_recovery_operator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Pauli operator which corrects an error on the stabilizer code
+<tt class="docutils literal"><span class="pre">self</span></tt>, given the syndrome <tt class="docutils literal"><span class="pre">synd</span></tt>, a bitstring indicating which 
+generators the implied error commutes with and anti-commutes with.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>synd</strong> &#8211; a string, list, or tuple with entries consisting only of</td>
+</tr>
+</tbody>
+</table>
+<p>0 or 1. This parameter will be certified before use.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.StabilizerCode.syndromes_and_recovery_operators">
+<tt class="descname">syndromes_and_recovery_operators</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.syndromes_and_recovery_operators" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outputs an iterator onto tuples of syndromes and appropriate recovery
+operators.</p>
 </dd></dl>
 
 <dl class="method">
@@ -376,6 +402,27 @@ indicating which permutation is to be applied.</td>
 stabilizers for two codes. At this point, it only works for two
 <img class="math" src="_images/math/5ed8470bc717a49aafe4556c7e2c2e11ddc7b687.png" alt="k=1"/> codes.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="qecc.StabilizerCode.transcoding_cliffords">
+<tt class="descname">transcoding_cliffords</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.transcoding_cliffords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterator onto all <a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> objects which 
+take states specified by <tt class="docutils literal"><span class="pre">self</span></tt>, and
+return states specified by <tt class="docutils literal"><span class="pre">other</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.StabilizerCode.min_len_transcoding_clifford">
+<tt class="descname">min_len_transcoding_clifford</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.min_len_transcoding_clifford" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="staticmethod">
 <dt id="qecc.StabilizerCode.ancilla_register">
