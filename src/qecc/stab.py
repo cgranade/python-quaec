@@ -211,10 +211,13 @@ class StabilizerCode(object):
         Returns a Pauli operator which corrects an error on the stabilizer code
         ``self``, given the syndrome ``synd``, a bitstring indicating which 
         generators the implied error commutes with and anti-commutes with. 
+
         :param synd: a string, list, or tuple with entries consisting only of
         0 or 1. This parameter will be certified before use. 
         """
-
+        if isinstance(synd,int):
+            synd=bin(synd).lstrip('0b')
+        
         synd=map(int, synd) #Ensures synd is a list of integers
         acceptable_syndrome = all([bit == 0 or bit == 1 for bit in synd])
         if not acceptable_syndrome:
@@ -243,7 +246,7 @@ class StabilizerCode(object):
         operators.
         """
         for bitstring in it.product([0,1],repeat=self.nq-self.nq_logical):
-            yield (bitstring, self.syndrome_to_recovery_operator(bitstring))
+            yield (self.syndrome_to_recovery_operator(bitstring))
     
     def star_decoder(self, for_enc=None, as_dict=False):
         r"""
