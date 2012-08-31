@@ -36,7 +36,7 @@ import utils as u
 
 __all__ = [
     'Location', 'Circuit',
-    'ensure_loc'
+    'ensure_loc', 'propagate_fault'
 ]
 
 ## INTERNAL FUNCTIONS ##
@@ -186,8 +186,7 @@ class Location(object):
                 raise ValueError('nq must be greater than or equal to the nq property.')
                 
             return self.CLIFFORD_GATE_FUNCS[self.kind](nq, *self.qubits)
-            
-        
+                       
     ## EXPORT METHODS ##
         
     def as_qcviewer(self, qubit_names=None):
@@ -507,3 +506,15 @@ class Circuit(list):
         return Circuit(*[
             loc.relabel_qubits(relabel_dict) for loc in self
         ])
+
+    ## FUNCTIONS ##
+def propagate_fault(circuitlist,fault,timestep):
+    """
+    The purpose of this method is to take a Pauli and propagate it through 
+    part of a circuit which has been grouped by timestep, with waits. 
+    """
+    fault_out=fault
+    for step in circuitlist[timestep:]:
+        fault_out=step.as_clifford().conjugate_pauli(fault_out)
+    return fault_out
+    
