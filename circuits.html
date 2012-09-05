@@ -248,6 +248,12 @@ this location without relabeling qubits. For a <a class="reference internal" hre
 from the Clifford group.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="qecc.Location.wt">
+<tt class="descname">wt</tt><a class="headerlink" href="#qecc.Location.wt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of qubits on which this location acts.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="qecc.Location.as_clifford">
 <tt class="descname">as_clifford</tt><big>(</big><em>nq=None</em><big>)</big><a class="headerlink" href="#qecc.Location.as_clifford" title="Permalink to this definition">¶</a></dt>
@@ -405,6 +411,25 @@ in the exported QCViewer circuit.</li>
 in the exported QCViewer circuit.</li>
 <li><strong>qubit_names</strong> &#8211; Names to be used for each qubit when exporting to
 QCViewer.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.Circuit.as_qcircuit">
+<tt class="descname">as_qcircuit</tt><big>(</big><em>C=None</em>, <em>R=None</em><big>)</big><a class="headerlink" href="#qecc.Circuit.as_qcircuit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Typesets this circuit using the <a class="reference external" href="http://www.cquic.org/Qcircuit/">Qcircuit</a> package for
+<img class="math" src="_images/math/27bb8d5acf15ea850c966cc6b82b448f35681a19.png" alt="\text{\LaTeX}"/>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>C</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Width (in ems) of each column.</li>
+<li><strong>R</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Height (in ems) of each column.</li>
 </ul>
 </td>
 </tr>
