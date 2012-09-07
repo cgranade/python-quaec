@@ -45,7 +45,7 @@ __all__ = [
     'is_in_normalizer', 'elem_gen', 'elem_gens', 'eye_p', 'ns_mod_s',
     'pad', 'mutually_commuting_sets',
     'clifford_bottoms',
-    'paulis_by_weight','remove_phase'
+    'paulis_by_weight','remove_phase','restricted_pauli_group','embed'
     ]
         
 ## CONSTANTS ##
@@ -464,10 +464,10 @@ class Pauli(object):
             """If a negative sign appears on a given generator, assign a Pauli to that qubit that conjugates the generator to a minus sign, e.g. ZXZ = -X """
             for idx_x in range(nq):
                 if cliff_in.xout[idx_x].ph==2:
-                    exact.op = replace_one_character(exact.op, idx_x, 'Z')
+                    exact.op = cc.replace_one_character(exact.op, idx_x, 'Z')
             for idx_z in range(nq):
                 if cliff_in.zout[idx_z].ph==2:
-                    zedact.op = replace_one_character(zedact.op, idx_z, 'X')
+                    zedact.op = cc.replace_one_character(zedact.op, idx_z, 'X')
             return Pauli((exact*zedact).op)
 
     @property
@@ -480,6 +480,21 @@ class Pauli(object):
             is supported.
         """
         return len([op for op in self.op if op != 'I'])
+
+    def reg_wt(self,region):
+        """
+        Produces the number of qubits within a subset of the register on which
+        the Pauli in question acts non-trivially.
+        :param tuple region: a tuple containing the indices on which the weight
+        is to be evaluated. 
+        :returns: the number of qubits in the sub-register on which the Pauli 
+        ``self`` does not act as the identity.
+        """
+        wt=0
+        for idx in range(len(self.op)):
+            if idx in region and self.op[idx]!='I':
+                wt+=1
+        return wt
 
     def cust_wt(self,char):
         """
@@ -595,7 +610,25 @@ def paulis_by_weight(nq, wt):
             paulis_by_weight(nq, wt - 1),
             (error_by_idxs(idxs, err_string) for err_string in product('XYZ', repeat=wt) for idxs in combinations(range(nq), wt))
         )
-                    
+
+def restricted_pauli_group(qubits_tpl,nq):
+    """
+    Outputs an iterator onto the Pauli group on the qubits specified in
+    qubits_tpl, given the total number of qubits nq. 
+    """
+    return imap(lambda pauli: embed(pauli,qubits_tpl,nq), pauli_group(len(qubits_tpl)))
+
+def embed(pauli,qubits_tpl,nq):
+    """
+    Takes a Pauli, defined on as many qubits as are in qubits_tpl, and acts it
+    on the register specified by qubits_tpl, within a register nq long.  
+    """
+    new_pauli_op='I'*nq
+    new_pauli_ph=pauli.ph
+    for idx in range(len(qubits_tpl)):
+        new_pauli_op = cc.replace_one_character(new_pauli_op, qubits_tpl[idx], pauli.op[idx])
+    return Pauli(new_pauli_op,new_pauli_ph)
+                        
 def com(P, Q):
     r"""
     Given two elements *P* and *Q* of a Pauli group, returns 0 if :math:`[P, Q] = 0`
