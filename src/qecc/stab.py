@@ -33,6 +33,7 @@ import CliffordClass as c
 import paulicollections as pc
 import constraint_solvers as cs
 import circuit as circuit
+import utils as u
 
 from collections import defaultdict
 from singletons import EmptyClifford, Unspecified
@@ -246,7 +247,46 @@ class StabilizerCode(object):
         operators.
         """
         for bitstring in it.product([0,1],repeat=self.nq-self.nq_logical):
-            yield (self.syndrome_to_recovery_operator(bitstring))
+            yield (bitstring, self.syndrome_to_recovery_operator(bitstring))
+            
+    def recovery_circuit_as_qcircuit(self, C=None, R=None):
+        """
+        Returns the recovery operator (as specified by
+        :meth:`syndromes_and_recovery_operators`), expressed as a `Qcircuit`_
+        array.
+        
+        :param float C: Width (in ems) of each column.
+        :param float R: Height (in ems) of each column.
+        
+        .. _Qcircuit: http://www.cquic.org/Qcircuit/
+        """
+        nq_data = self.nq
+        nq_anc = nq_data - self.nq_logical
+        nq = nq_data + nq_anc
+        
+        # Put a blank line of array cells coming into the circuit.
+        trans_cells = [[""] * nq]
+        
+        for bitstring, recovery_gate in self.syndromes_and_recovery_operators():
+            trans_cells.append(
+                # Data register
+                [r"\gate{{{}}} {}".format(P if P != "I" else r"\id", "\qwx" if idx != 0 else "") for idx, P in enumerate(recovery_gate.op)] +
+                # Ancilla register
+                [(r"\controlo" if bit == 0 else r"\control") + r" \cw \cwx" for bit in bitstring]
+            )
+         
+        trans_cells.append([r"\qw"] * nq_data + [r"\cw"] * nq_anc)
+         
+        # FIXME: consolidate this with Circuit.as_qcircuit().   
+        return r"""
+        \Qcircuit  {C} {R} {{
+            {0}
+        }}
+        """.format(
+            u.latex_array_contents(u.transpose(trans_cells)),
+            C="@C{}em".format(C) if C is not None else "",
+            R="@R{}em".format(R) if R is not None else ""
+            )
     
     def star_decoder(self, for_enc=None, as_dict=False):
         r"""

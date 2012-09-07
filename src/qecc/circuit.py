@@ -165,6 +165,13 @@ class Location(object):
         from the Clifford group.
         """
         return self._is_clifford
+        
+    @property
+    def wt(self):
+        """
+        Returns the number of qubits on which this location acts.
+        """
+        return len(self.qubits)
       
     ## SIMULATION METHODS ##
         
@@ -371,6 +378,52 @@ class Circuit(list):
         circ_text += 'END\n'
         
         return header + circ_text
+        
+    def as_qcircuit(self, C=None, R=None):
+        r"""
+        Typesets this circuit using the `Qcircuit`_ package for
+        :math:`\text{\LaTeX}`.
+        
+        :param float C: Width (in ems) of each column.
+        :param float R: Height (in ems) of each column.
+        
+        .. _Qcircuit: http://www.cquic.org/Qcircuit/
+        """
+             
+        trans_cells = []
+        for timestep in self.group_by_time():
+            col = [r'\qw'] * self.nq # If nothing else, place a \qw.
+            hidden_qubits = set()
+            
+            for loc in timestep:
+                if any(qubit in hidden_qubits for qubit in range(min(loc.qubits), max(loc.qubits)+1)):
+                    # A qubit is hidden, so append and reset.
+                    trans_cells.append(col)
+                    col = [r'\qw'] * self.nq # If nothing else, place a \qw.
+                    hidden_qubits = set()
+                    
+                if loc.wt == 1:
+                    col[loc.qubits[0]] = r"\gate{{{0}}}".format(loc.kind if loc.kind != "I" else r"\id")
+                elif loc.kind == 'CNOT':
+                    col[loc.qubits[0]] = r'\ctrl{{{0}}}'.format(loc.qubits[1] - loc.qubits[0])
+                    col[loc.qubits[1]] = r'\targ'
+                else:
+                    raise NotImplementedError("Location kind {0.kind} not supported by this method.".format(loc))
+
+                hidden_qubits.update(range(min(loc.qubits), max(loc.qubits)+1))
+                
+            trans_cells.append(col)
+            
+        cells = u.transpose([[''] * self.nq] + trans_cells + [[r'\qw'] * self.nq])
+        
+        return r"""
+        \Qcircuit {C} {R} {{
+            {0}
+        }}
+        """.format(u.latex_array_contents(cells),
+            C="@C{}em".format(C) if C is not None else "",
+            R="@R{}em".format(R) if R is not None else ""
+        )
 
     ## CIRCUIT SIMULATION METHODS ##
     

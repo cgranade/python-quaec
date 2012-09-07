@@ -22,14 +22,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-## IMPORTS ##
+## IMPORTS #####################################################################
 
 from itertools import imap
 from functools import wraps
 import PauliClass as PC
 import warnings
 
-## FUNCTIONS ##
+## FUNCTIONS ###################################################################
 
 def array_swap(A, B):
     temp = A.copy()
@@ -38,8 +38,16 @@ def array_swap(A, B):
     
 def inv_dict(d):
     return dict(imap(reversed, d.iteritems()))
+    
+# FIXME: Once more LaTeX utils have been written, start a new latex.py and
+#         put this function in that module.
+def latex_array_contents(cells):
+    return " \\\\\n            ".join(" & ".join(row) for row in cells)
+     
+def transpose(lol):
+    return map(list, zip(*lol))
 
-## DECORATORS ##
+## DECORATORS ##################################################################
 
 def memoize(func):
     
