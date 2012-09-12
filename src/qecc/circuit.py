@@ -31,12 +31,13 @@ import PauliClass as pc
 import CliffordClass as cc
 
 import utils as u
+import itertools as it
 
 ## ALL ##
 
 __all__ = [
     'Location', 'Circuit',
-    'ensure_loc', 'propagate_fault'
+    'ensure_loc', 'possible_output_faults', 'possible_faults'
 ]
 
 ## INTERNAL FUNCTIONS ##
@@ -570,4 +571,26 @@ def propagate_fault(circuitlist,fault,timestep):
     for step in circuitlist[timestep:]:
         fault_out=step.as_clifford().conjugate_pauli(fault_out)
     return fault_out
-    
+
+def possible_faults(loc):
+    """
+    Takes a sub-circuit which has been padded with waits, and returns an
+    iterator onto Paulis which may occur as faults after this sub-circuit. 
+    """
+    faults=iter([])
+    for gate in loc:
+        faults=it.chain(faults,pc.restricted_pauli_group(gate.qubits,loc.nq))
+    return faults
+
+def possible_output_faults(circuitlist):
+    """
+    Gives an iterator onto all possible outputs for possible faults occuring
+    within circuitlist, assuming it has been padded with waits.
+    """
+    outputs=iter([])
+    for timestep_idx in range(len(circuitlist)):
+        outputs = it.chain(outputs,
+                          it.imap(lambda fault: propagate_fault(circuitlist,
+                          fault,timestep_idx+1),
+                          possible_faults(circuitlist[timestep_idx]))) #CHECK +1
+    return outputs

@@ -216,20 +216,26 @@ class StabilizerCode(object):
         :param synd: a string, list, or tuple with entries consisting only of
         0 or 1. This parameter will be certified before use. 
         """
+        
+        # If the syndrome is an integer, change it to a bitstring by
+        # using string formatting.
         if isinstance(synd,int):
             fmt = "{{0:0>{n}b}}".format(n=self.n_constraints)   
             synd = fmt.format(synd)
+            
+        # Ensures synd is a list of integers by mapping int onto the list.
+        synd=map(int, synd)
         
-        synd=map(int, synd) #Ensures synd is a list of integers
+        # Check that the syndrome is all zeros and ones.
         acceptable_syndrome = all([bit == 0 or bit == 1 for bit in synd])
         if not acceptable_syndrome:
             raise ValueError("Please input a syndrome which is an iterable onto 0 and 1.")
         if len(synd) != self.nq - self.nq_logical:
             raise ValueError("Syndrome must account for n-k bits of syndrome data.")
         
-        #We produce commutation and anti_commutation constraints from synd.
-        anti_coms=list(it.compress(self.group_generators,synd))
-        coms=list(it.compress(self.group_generators,[1-bit for bit in synd]))
+        # We produce commutation and anti_commutation constraints from synd.
+        anti_coms = list(it.compress(self.group_generators,synd))
+        coms = list(it.compress(self.group_generators,[1-bit for bit in synd]))
         for op_weight in range(self.nq+1):
             #We loop over all possible weights. As soon as we find an operator
             #that satisfies the commutation and anti-commutation constraints,
