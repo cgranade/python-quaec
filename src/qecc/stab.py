@@ -473,11 +473,11 @@ class StabilizerCode(object):
             # operator = (self.group_generators[gen_idx].op)[qubit_idx]
             if operator == 'I':
                 pass
-            elif operator == 'X':
+            elif operator == 'Z':
                 circ += circuit.Circuit(('CNOT',qubit_idx,self.nq))
             elif operator == 'Y':
-                circ += circuit.Circuit(circuit.Location('P',qubit_idx),circuit.Location('CNOT',qubit_idx,self.nq),circuit.Location('P',qubit_idx))
-            elif operator == 'Z':
+                circ += circuit.Circuit(circuit.Location('P',qubit_idx),circuit.Location('Z',qubit_idx),circuit.Location('H',qubit_idx),circuit.Location('CNOT',qubit_idx,self.nq),circuit.Location('H',qubit_idx),circuit.Location('P',qubit_idx))
+            elif operator == 'X':
                 circ += circuit.Circuit(circuit.Location('H',qubit_idx),circuit.Location('CNOT',qubit_idx,self.nq),circuit.Location('H',qubit_idx))
             else:
                 raise ValueError("Pauli operator not I, X, Y, or Z")
