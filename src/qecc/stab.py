@@ -217,7 +217,8 @@ class StabilizerCode(object):
         0 or 1. This parameter will be certified before use. 
         """
         if isinstance(synd,int):
-            synd=bin(synd).lstrip('0b')
+            fmt = "{{0:0>{n}b}}".format(n=self.n_constraints)   
+            synd = fmt.format(synd)
         
         synd=map(int, synd) #Ensures synd is a list of integers
         acceptable_syndrome = all([bit == 0 or bit == 1 for bit in synd])
