@@ -282,6 +282,17 @@ is supported.</td>
 </dd></dl>
 
 <dl class="method">
+<dt id="qecc.Pauli.reg_wt">
+<tt class="descname">reg_wt</tt><big>(</big><em>region</em><big>)</big><a class="headerlink" href="#qecc.Pauli.reg_wt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces the number of qubits within a subset of the register on which
+the Pauli in question acts non-trivially.
+:param tuple region: a tuple containing the indices on which the weight
+is to be evaluated. 
+:returns: the number of qubits in the sub-register on which the Pauli 
+<tt class="docutils literal"><span class="pre">self</span></tt> does not act as the identity.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="qecc.Pauli.cust_wt">
 <tt class="descname">cust_wt</tt><big>(</big><em>char</em><big>)</big><a class="headerlink" href="#qecc.Pauli.cust_wt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces the number of qubits on which an input Pauli acts as a 
