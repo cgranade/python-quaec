@@ -198,6 +198,17 @@ class Pauli(object):
         Returns the number of qubits upon which this Pauli operator acts.
         """
         return len(self)
+        
+    @property
+    def wt(self):
+        """
+        Measures the weight of a given Pauli.
+        
+        :rtype: int (between 0 and the number of qubits on which the Pauli is defined)
+        :returns: The number of qubits on which the represented Pauli operator
+            is supported.
+        """
+        return len([op for op in self.op if op != 'I'])
     
     ## PRINTING ##
             
@@ -301,6 +312,41 @@ class Pauli(object):
                 
         return Pauli(new_operator, phase=self.ph)
     
+    ## EQUALITY METHODS ##
+    
+    
+    def __eq__(self,other):
+        """
+        Tests if two input Paulis, :obj:`self` and :obj:`other`, are equal.
+
+        :rtype: bool
+        """
+        if self.op==other.op and self.ph==other.ph:
+            return True
+        else:
+            return False
+
+    def __ne__(self,other):
+        """
+        Tests if two input Paulis, :obj:`self` and :obj:`other`, are not equal.
+
+        :rtype: bool
+        """
+        if self.op==other.op and self.ph==other.ph:
+            return False
+        else:
+            return True
+            
+    ## OTHER MAGIC METHODS ##
+
+    def __len__(self):
+        """
+        Yields the number of qubits on which the Pauli ``self`` acts.
+
+        :rtype: int
+        """
+        return len(self.op)
+    
     ## CONVERSION METHODS ##
 
     def as_gens(self):
@@ -361,64 +407,7 @@ class Pauli(object):
             if letter != "I":
                 gatelist.append((letter,idx))
         return Circuit(*gatelist)
-        
-    def __eq__(self,other):
-        """
-        Tests if two input Paulis, :obj:`self` and :obj:`other`, are equal.
-
-        :rtype: bool
-        """
-        if self.op==other.op and self.ph==other.ph:
-            return True
-        else:
-            return False
-
-    def __ne__(self,other):
-        """
-        Tests if two input Paulis, :obj:`self` and :obj:`other`, are not equal.
-
-        :rtype: bool
-        """
-        if self.op==other.op and self.ph==other.ph:
-            return False
-        else:
-            return True
-
-    def __len__(self):
-        """
-        Yields the number of qubits on which the Pauli ``self`` acts.
-
-        :rtype: int
-        """
-        return len(self.op)
-
-    @staticmethod
-    def from_string(bitstring,p_1):
-        """
-        Creates a multi-qubit Pauli using a bitstring and a one-qubit Pauli, by
-        replacing all instances of 1 in the bitstring with the appropriate 
-        Pauli, and replacing all instances of 0 with the identity.
-        :param list bitstring: a list of integers, each of which is either 0 or
-        1. `bitstring` can also be a string, type conversion is automatic.
-        :param str p_1: a single-qubit Pauli. 
-        :returns: a phaseless Pauli from a bitstring. The intended use of
-        this function is as a quick means of specifying binary Paulis.
-        p_1 is the one_qubit Pauli that a '1' represents.
-        :rtype: :class:`qecc.Pauli`
-        Example:
-        >>>import qecc as q
-        >>>bitstring = '101110111100'
-        >>>p_1=q.Pauli('X')
-        >>>q.Pauli.from_string(bitstring,p_1)
-        i^0 XIXXXIXXXXII
-                
-        """
-        p_1 = ensure_pauli(p_1)
-        if isinstance(bitstring, str):
-            bitstring = map(int, bitstring)
-        
-        return reduce(and_,[(p_1.set_phase())**j for j in bitstring])
-        
+       
     def as_unitary(self):
         """
         Returns a :class:`numpy.ndarray` containing a unitary matrix
@@ -441,7 +430,7 @@ class Pauli(object):
             if com(self, P) == 1:
                 P.mul_phase(2)
                 
-        return cc.Clifford(Xs, Zs)
+        return cc.Clifford(Xs, Zs)        
 
     @staticmethod
     def from_clifford(cliff_in):
@@ -449,21 +438,25 @@ class Pauli(object):
         Tests an input Clifford ``cliff_in`` to determine if it is, in
         fact, a Pauli. If so, it outputs the Pauli. If not, it
         raises an error. 
+        
         :arg cliff_in: Representation of Clifford operator to be converted, 
-        if possible.
+            if possible.
         :rtype: :class:`qecc.Pauli`
+        
         Example:
-        >>>import qecc as q
-        >>>cliff=q.Clifford([q.Pauli('XI',2),q.Pauli('IX')],map(q.Pauli,['ZI','IZ']))
-        >>>q.Pauli.from_clifford(cliff)
+        
+        >>> import qecc as q
+        >>> cliff = q.Clifford([q.Pauli('XI',2),q.Pauli('IX')], map(q.Pauli,['ZI','IZ']))
+        >>> q.Pauli.from_clifford(cliff)
         i^0 ZI
         
         Converting a Pauli into a Clifford and back again will erase
         the phase:
-        >>>import qecc as q
-        >>>paul=q.Pauli('YZ',3)
-        >>>cliff=paul.as_clifford()
-        >>>q.Pauli.from_clifford(cliff)
+        
+        >>> import qecc as q
+        >>> paul = q.Pauli('YZ',3)
+        >>> cliff = paul.as_clifford()
+        >>> q.Pauli.from_clifford(cliff)
         i^0 YZ
         
         """
@@ -486,39 +479,63 @@ class Pauli(object):
                     zedact.op = cc.replace_one_character(zedact.op, idx_z, 'X')
             return Pauli((exact*zedact).op)
 
-    @property
-    def wt(self):
+    @staticmethod
+    def from_string(bitstring, p_1):
         """
-        Measures the weight of a given Pauli.
+        Creates a multi-qubit Pauli using a bitstring and a one-qubit Pauli, by
+        replacing all instances of 1 in the bitstring with the appropriate 
+        Pauli, and replacing all instances of 0 with the identity.
         
-        :rtype: int (between 0 and the number of qubits on which the Pauli is defined)
-        :returns: The number of qubits on which the represented Pauli operator
-            is supported.
+        :param list bitstring: a list of integers, each of which is either 0 or
+            1. `bitstring` can also be a string, type conversion is automatic.
+        :param str p_1: a single-qubit Pauli. 
+        :returns: a phaseless Pauli from a bitstring. The intended use of
+            this function is as a quick means of specifying binary Paulis.
+            p_1 is the one_qubit Pauli that a '1' represents.
+        :rtype: :class:`qecc.Pauli`
+        
+        Example:
+        
+        >>> import qecc as q
+        >>> bitstring = '101110111100'
+        >>> p_1 = q.Pauli('X')
+        >>> q.Pauli.from_string(bitstring, p_1)
+        i^0 XIXXXIXXXXII
+                
         """
-        return len([op for op in self.op if op != 'I'])
-
-    def reg_wt(self,region):
+        p_1 = ensure_pauli(p_1)
+        if isinstance(bitstring, str):
+            bitstring = map(int, bitstring)
+        
+        return reduce(and_,[(p_1.set_phase())**j for j in bitstring])
+    
+    ## OTHER METHODS ##
+    
+    @u.deprecated("Use slice indexing and the wt property. Ex: P[0:2].wt")
+    def reg_wt(self, region):
         """
         Produces the number of qubits within a subset of the register on which
         the Pauli in question acts non-trivially.
+        
         :param tuple region: a tuple containing the indices on which the weight
-        is to be evaluated. 
+            is to be evaluated. 
         :returns: the number of qubits in the sub-register on which the Pauli 
-        ``self`` does not act as the identity.
+            ``self`` does not act as the identity.
         """
         wt=0
-        for idx in range(len(self.op)):
+        for idx in range(len(self)):
             if idx in region and self.op[idx]!='I':
-                wt+=1
+                wt += 1
         return wt
 
     def cust_wt(self,char):
         """
         Produces the number of qubits on which an input Pauli acts as a 
-        specified single-qubit Pauli. 
+        specified single-qubit Pauli.
+        
         :param str char: a single-letter string containing an I, X, Y or Z. 
         :returns: the number of qubits in the Pauli ``self`` which are acted upon
-        by the single-qubit operator ``char``.
+            by the single-qubit operator ``char``.
         """
         if char not in VALID_OPS:
             raise ValueError('Generators cannot be selected outside I, X, Y, Z.')
@@ -579,6 +596,10 @@ class Pauli(object):
     ## COMPARISON METHODS ##
     
     def hamming_dist(self, other):
+        r"""
+        Returns the Hamming distance between this and another Pauli operator,
+        defined as :math:`d(P, Q) = \mathrm{wt}(PQ)`.
+        """
         return (self * other).wt
 
 ## MORE CONSTANTS ##

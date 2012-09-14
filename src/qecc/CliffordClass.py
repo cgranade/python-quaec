@@ -473,7 +473,7 @@ def replace_one_character(string,location,new_character):
 def cnot(nq,ctrl,targ):
     """
     Yields the ``nq``-qubit CNOT Clifford controlled on ``ctrl``,
-     acting a Pauli :math:`X` on ``targ``.
+    acting a Pauli :math:`X` on ``targ``.
 
     :rtype: :class:`qecc.Clifford`
     """
@@ -488,7 +488,7 @@ def cnot(nq,ctrl,targ):
 def cz(nq, q1, q2):
     """
     Yields the ``nq``-qubit C-Z Clifford, acting on qubits ``q1`` and
-     ``q2``.
+    ``q2``.
 
     :rtype: :class:`qecc.Clifford`
     """
@@ -502,7 +502,7 @@ def cz(nq, q1, q2):
 def hadamard(nq,q):
     """
     Yields the ``nq``-qubit Clifford, switching :math:`X` and :math:`Z`
-     on qubit ``q``, yielding a minus sign on :math:`Y`.
+    on qubit ``q``, yielding a minus sign on :math:`Y`.
 
     :rtype: :class:`qecc.Clifford`
     """

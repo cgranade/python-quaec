@@ -80,6 +80,13 @@ class PauliList(list):
     def __add__(self, other):
         return PauliList(*(super(PauliList, self).__add__(other)))
         
+    ## REPRESENTATION AND STRING COVNERSIONS ##
+    
+    def __repr__(self):
+        # For now, he repr and str for a list can be the same. We can improve
+        # this in the future.
+        return str(self)
+    
     def __str__(self):
         return "PauliList({})".format(", ".join(map(repr, self)))
         
@@ -114,9 +121,9 @@ class PauliList(list):
         Example:
         
         >>> import qecc as q
-        >>> pauli_list = q.PauliList(['XXX', 'YIY', 'ZZI'])
-        >>> pauli_list.pad(extra_bits=2, lower_right=q.PauliList(['IX','ZI']))
-        [i^0 XXXII, i^0 YIYII, i^0, ZZIII, i^0 IIIIX, i^0 IIIZI]
+        >>> pauli_list = q.PauliList('XXX', 'YIY', 'ZZI')
+        >>> pauli_list.pad(extra_bits=2, lower_right=q.PauliList('IX','ZI'))
+        PauliList(i^0 XXXII, i^0 YIYII, i^0 ZZIII, i^0 IIIIX, i^0 IIIZI)
 
         """
         
