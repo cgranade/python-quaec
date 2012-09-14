@@ -52,6 +52,71 @@
 <h1>Pauli and Clifford Groups<a class="headerlink" href="#pauli-and-clifford-groups" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="qecc-pauli-class-representing-pauli-group-elements">
 <h2><a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> - Class representing Pauli group elements<a class="headerlink" href="#qecc-pauli-class-representing-pauli-group-elements" title="Permalink to this headline">¶</a></h2>
+<p>The class <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> is used to represent elements of the Pauli group
+<img class="math" src="_images/math/653f07268b36bc014788d5ac245519cad5ed5bc0.png" alt="\mathcal{P}_n"/> on <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> qubits. Instances can be constructed by
+specifying strings of <tt class="docutils literal"><span class="pre">I</span></tt>, <tt class="docutils literal"><span class="pre">X</span></tt>, <tt class="docutils literal"><span class="pre">Y</span></tt> and <tt class="docutils literal"><span class="pre">Z</span></tt>, corresponding to the
+specification of an operator in the Pauli group.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;X&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">P</span>
+<span class="go">i^0 X</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Q</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;XZZXI&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Q</span>
+<span class="go">i^0 XZZXI</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">R</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;XYZ&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">R</span>
+<span class="go">i^0 XYZ</span>
+</pre></div>
+</div>
+<p>Additionaly, a phase can be provided. Since only integer powers of <img class="math" src="_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/> are
+allowed as phases, the phase of a <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> instance is represented
+by an integer in <tt class="docutils literal"><span class="pre">range(4)</span></tt>. Any other integer is converted to an integer
+in that range that is equivalent mod 4.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;X&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">i^2 X</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> class supports multiplication, tensor products and
+negation by the <tt class="docutils literal"><span class="pre">*</span></tt>, <tt class="docutils literal"><span class="pre">&amp;</span></tt> and <tt class="docutils literal"><span class="pre">-</span></tt> operators, respectively.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">=</span> <span class="n">qecc</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;X&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Q</span> <span class="o">=</span> <span class="n">qecc</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;Y&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">*</span> <span class="n">Q</span>
+<span class="go">i^1 Z</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">&amp;</span> <span class="n">Q</span>
+<span class="go">i^0 XY</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">P</span> <span class="o">*</span> <span class="n">Q</span>
+<span class="go">i^3 Z</span>
+</pre></div>
+</div>
+<p>Using these operators, it is straightforward to construct instances of
+<a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> from existing instances. To make this easier, QuaEC provides
+single-qubit operators <tt class="docutils literal"><span class="pre">I</span></tt>, <tt class="docutils literal"><span class="pre">X</span></tt>, <tt class="docutils literal"><span class="pre">Y</span></tt> and <tt class="docutils literal"><span class="pre">Z</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">qecc</span> <span class="kn">import</span> <span class="n">I</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;XZZXI&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">I</span>
+<span class="go">i^0 XZZXII</span>
+</pre></div>
+</div>
+<p>Additionally, instances of <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> can be tested for equality.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">P</span> <span class="o">*</span> <span class="n">Q</span> <span class="o">==</span> <span class="n">P</span> <span class="o">*</span> <span class="o">-</span><span class="n">Q</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">*</span> <span class="n">Q</span> <span class="o">!=</span> <span class="n">Q</span> <span class="o">*</span> <span class="n">P</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>The length of a <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> is defined as the number of qubits it acts
+upon.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">qecc</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;XYZI&#39;</span><span class="p">))</span>
+<span class="go">4</span>
+</pre></div>
+</div>
+<p>This information is also exposed as the property <tt class="docutils literal"><span class="pre">nq</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">qecc</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;XYZI&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">nq</span>
+<span class="go">4</span>
+</pre></div>
+</div>
+<div class="section" id="class-reference">
+<h3>Class Reference<a class="headerlink" href="#class-reference" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="qecc.Pauli">
 <em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">Pauli</tt><big>(</big><em>operator</em>, <em>phase=0</em><big>)</big><a class="headerlink" href="#qecc.Pauli" title="Permalink to this definition">¶</a></dt>
@@ -69,6 +134,29 @@
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="qecc.Pauli.nq">
+<tt class="descname">nq</tt><a class="headerlink" href="#qecc.Pauli.nq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of qubits upon which this Pauli operator acts.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qecc.Pauli.wt">
+<tt class="descname">wt</tt><a class="headerlink" href="#qecc.Pauli.wt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measures the weight of a given Pauli.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">int (between 0 and the number of qubits on which the Pauli is defined)</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">The number of qubits on which the represented Pauli operator
+is supported.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="qecc.Pauli.str_sparse">
 <tt class="descname">str_sparse</tt><big>(</big><em>incl_ph=True</em><big>)</big><a class="headerlink" href="#qecc.Pauli.str_sparse" title="Permalink to this definition">¶</a></dt>
@@ -202,27 +290,6 @@ n qubits. Neglects global phases.</p>
 </table>
 </dd></dl>
 
-<dl class="staticmethod">
-<dt id="qecc.Pauli.from_string">
-<em class="property">static </em><tt class="descname">from_string</tt><big>(</big><em>bitstring</em>, <em>p_1</em><big>)</big><a class="headerlink" href="#qecc.Pauli.from_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a multi-qubit Pauli using a bitstring and a one-qubit Pauli, by
-replacing all instances of 1 in the bitstring with the appropriate 
-Pauli, and replacing all instances of 0 with the identity.
-:param list bitstring: a list of integers, each of which is either 0 or
-1. <cite>bitstring</cite> can also be a string, type conversion is automatic.
-:param str p_1: a single-qubit Pauli. 
-:returns: a phaseless Pauli from a bitstring. The intended use of
-this function is as a quick means of specifying binary Paulis.
-p_1 is the one_qubit Pauli that a &#8216;1&#8217; represents.
-:rtype: <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a>
-Example:
-&gt;&gt;&gt;import qecc as q
-&gt;&gt;&gt;bitstring = &#8216;101110111100&#8217;
-&gt;&gt;&gt;p_1=q.Pauli(&#8216;X&#8217;)
-&gt;&gt;&gt;q.Pauli.from_string(bitstring,p_1)
-i^0 XIXXXIXXXXII</p>
-</dd></dl>
-
 <dl class="method">
 <dt id="qecc.Pauli.as_unitary">
 <tt class="descname">as_unitary</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Pauli.as_unitary" title="Permalink to this definition">¶</a></dt>
@@ -241,65 +308,113 @@ operator.
 :rtype: <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a></p>
 </dd></dl>
 
-<dl class="method">
+<dl class="staticmethod">
 <dt id="qecc.Pauli.from_clifford">
-<tt class="descname">from_clifford</tt><big>(</big><em>cliff_in</em><big>)</big><a class="headerlink" href="#qecc.Pauli.from_clifford" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descname">from_clifford</tt><big>(</big><em>cliff_in</em><big>)</big><a class="headerlink" href="#qecc.Pauli.from_clifford" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests an input Clifford <tt class="docutils literal"><span class="pre">cliff_in</span></tt> to determine if it is, in
 fact, a Pauli. If so, it outputs the Pauli. If not, it
-raises an error. 
-:arg cliff_in: Representation of Clifford operator to be converted, 
-if possible.
-:rtype: <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a>
-Example:
-&gt;&gt;&gt;import qecc as q
-&gt;&gt;&gt;cliff=q.Clifford([q.Pauli(&#8216;XI&#8217;,2),q.Pauli(&#8216;IX&#8217;)],map(q.Pauli,[&#8216;ZI&#8217;,&#8217;IZ&#8217;]))
-&gt;&gt;&gt;q.Pauli.from_clifford(cliff)
-i^0 ZI</p>
-<p>Converting a Pauli into a Clifford and back again will erase
-the phase:
-&gt;&gt;&gt;import qecc as q
-&gt;&gt;&gt;paul=q.Pauli(&#8216;YZ&#8217;,3)
-&gt;&gt;&gt;cliff=paul.as_clifford()
-&gt;&gt;&gt;q.Pauli.from_clifford(cliff)
-i^0 YZ</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="qecc.Pauli.wt">
-<tt class="descname">wt</tt><a class="headerlink" href="#qecc.Pauli.wt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Measures the weight of a given Pauli.</p>
+raises an error.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">int (between 0 and the number of qubits on which the Pauli is defined)</td>
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cliff_in</strong> &#8211; Representation of Clifford operator to be converted, 
+if possible.</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">The number of qubits on which the represented Pauli operator
-is supported.</td>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cliff</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Clifford</span><span class="p">([</span><span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;XI&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;IX&#39;</span><span class="p">)],</span> <span class="nb">map</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">,[</span><span class="s">&#39;ZI&#39;</span><span class="p">,</span><span class="s">&#39;IZ&#39;</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="o">.</span><span class="n">from_clifford</span><span class="p">(</span><span class="n">cliff</span><span class="p">)</span>
+<span class="go">i^0 ZI</span>
+</pre></div>
+</div>
+<p>Converting a Pauli into a Clifford and back again will erase
+the phase:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">paul</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;YZ&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cliff</span> <span class="o">=</span> <span class="n">paul</span><span class="o">.</span><span class="n">as_clifford</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="o">.</span><span class="n">from_clifford</span><span class="p">(</span><span class="n">cliff</span><span class="p">)</span>
+<span class="go">i^0 YZ</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qecc.Pauli.from_string">
+<em class="property">static </em><tt class="descname">from_string</tt><big>(</big><em>bitstring</em>, <em>p_1</em><big>)</big><a class="headerlink" href="#qecc.Pauli.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a multi-qubit Pauli using a bitstring and a one-qubit Pauli, by
+replacing all instances of 1 in the bitstring with the appropriate 
+Pauli, and replacing all instances of 0 with the identity.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>bitstring</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; a list of integers, each of which is either 0 or
+1. <cite>bitstring</cite> can also be a string, type conversion is automatic.</li>
+<li><strong>p_1</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; a single-qubit Pauli.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a phaseless Pauli from a bitstring. The intended use of
+this function is as a quick means of specifying binary Paulis.
+p_1 is the one_qubit Pauli that a &#8216;1&#8217; represents.</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bitstring</span> <span class="o">=</span> <span class="s">&#39;101110111100&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p_1</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;X&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">bitstring</span><span class="p">,</span> <span class="n">p_1</span><span class="p">)</span>
+<span class="go">i^0 XIXXXIXXXXII</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="qecc.Pauli.reg_wt">
+<tt class="descname">reg_wt</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#qecc.Pauli.reg_wt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces the number of qubits within a subset of the register on which
+the Pauli in question acts non-trivially.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>region</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; a tuple containing the indices on which the weight
+is to be evaluated.</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">the number of qubits in the sub-register on which the Pauli 
+<tt class="docutils literal"><span class="pre">self</span></tt> does not act as the identity.</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="qecc.Pauli.reg_wt">
-<tt class="descname">reg_wt</tt><big>(</big><em>region</em><big>)</big><a class="headerlink" href="#qecc.Pauli.reg_wt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Produces the number of qubits within a subset of the register on which
-the Pauli in question acts non-trivially.
-:param tuple region: a tuple containing the indices on which the weight
-is to be evaluated. 
-:returns: the number of qubits in the sub-register on which the Pauli 
-<tt class="docutils literal"><span class="pre">self</span></tt> does not act as the identity.</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="qecc.Pauli.cust_wt">
 <tt class="descname">cust_wt</tt><big>(</big><em>char</em><big>)</big><a class="headerlink" href="#qecc.Pauli.cust_wt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces the number of qubits on which an input Pauli acts as a 
-specified single-qubit Pauli. 
-:param str char: a single-letter string containing an I, X, Y or Z. 
-:returns: the number of qubits in the Pauli <tt class="docutils literal"><span class="pre">self</span></tt> which are acted upon
-by the single-qubit operator <tt class="docutils literal"><span class="pre">char</span></tt>.</p>
+specified single-qubit Pauli.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>char</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; a single-letter string containing an I, X, Y or Z.</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">the number of qubits in the Pauli <tt class="docutils literal"><span class="pre">self</span></tt> which are acted upon
+by the single-qubit operator <tt class="docutils literal"><span class="pre">char</span></tt>.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -344,35 +459,12 @@ a subgroup of the group <img class="math" src="_images/math/2e41a1ecdd222c1580b8
 <dl class="method">
 <dt id="qecc.Pauli.hamming_dist">
 <tt class="descname">hamming_dist</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#qecc.Pauli.hamming_dist" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the Hamming distance between this and another Pauli operator,
+defined as <img class="math" src="_images/math/7bfa306366d587254ec32504477913bb160ec5f0.png" alt="d(P, Q) = \mathrm{wt}(PQ)"/>.</p>
+</dd></dl>
 
 </dd></dl>
 
-<p>The <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> class supports multiplication, tensor products and
-negation by the <tt class="docutils literal"><span class="pre">*</span></tt>, <tt class="docutils literal"><span class="pre">&amp;</span></tt> and <tt class="docutils literal"><span class="pre">-</span></tt> operators, respectively.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">=</span> <span class="n">qecc</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;X&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Q</span> <span class="o">=</span> <span class="n">qecc</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;Y&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">*</span> <span class="n">Q</span>
-<span class="go">i^1 Z</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">&amp;</span> <span class="n">Q</span>
-<span class="go">i^0 XY</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">P</span> <span class="o">*</span> <span class="n">Q</span>
-<span class="go">i^3 Z</span>
-</pre></div>
-</div>
-<p>Additionally, instances of <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> can be tested for equality.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">P</span> <span class="o">*</span> <span class="n">Q</span> <span class="o">==</span> <span class="n">P</span> <span class="o">*</span> <span class="o">-</span><span class="n">Q</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">*</span> <span class="n">Q</span> <span class="o">!=</span> <span class="n">Q</span> <span class="o">*</span> <span class="n">P</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<p>The length of a <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> is defined as the number of qubits it acts
-upon.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">qecc</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;XYZI&#39;</span><span class="p">))</span>
-<span class="go">4</span>
-</pre></div>
 </div>
 <div class="section" id="iterating-over-groups-and-subgroups">
 <h3>Iterating Over Groups and Subgroups<a class="headerlink" href="#iterating-over-groups-and-subgroups" title="Permalink to this headline">¶</a></h3>
@@ -474,23 +566,6 @@ generators, respectively.</td>
 </table>
 </dd></dl>
 
-<dl class="function">
-<dt id="qecc.pad">
-<tt class="descclassname">qecc.</tt><tt class="descname">pad</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#qecc.pad" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes a set of <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> objects, and returns a new set, 
-appending <tt class="docutils literal"><span class="pre">n_eb</span></tt> qubits, with stabilizer operators specified by
-<tt class="docutils literal"><span class="pre">lower_right</span></tt>.
-:arg setP: list of Pauli operators to be padded. 
-:param int n_eb: Number of extra bits to be appended to the system.
-:param lower_right: list of <cite>qecc.Pauli</cite> operators, acting on <cite>n_eb</cite> qubits.
-:rtype: list of <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> objects.
-Example:
-&gt;&gt;&gt;import qecc as q
-&gt;&gt;&gt;pauli_set=map(q.Pauli,[&#8216;XXX&#8217;,&#8217;YIY&#8217;,&#8217;ZZI&#8217;])
-&gt;&gt;&gt;q.pad(pauli_set,n_eb=2,lower_right=map(q.Pauli,[&#8216;IX&#8217;,&#8217;ZI&#8217;]))
-[i^0 XXXII, i^0 YIYII, i^0, ZZIII, i^0 IIIIX, i^0 IIIZI]</p>
-</dd></dl>
-
 </div>
 <div class="section" id="searching-over-pauli-group-elements">
 <h3>Searching Over Pauli Group Elements<a class="headerlink" href="#searching-over-pauli-group-elements" title="Permalink to this headline">¶</a></h3>
@@ -588,6 +663,68 @@ used in conjunction with other filters, however.</p>
 </div>
 <div class="section" id="qecc-clifford-class-representing-clifford-group-elements">
 <h2><a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> - Class representing Clifford group elements<a class="headerlink" href="#qecc-clifford-class-representing-clifford-group-elements" title="Permalink to this headline">¶</a></h2>
+<p>Elements of the automorphism group of the Pauli group (known as the Clifford
+group) are represented by the class <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a>. Instances of
+<tt class="docutils literal"><span class="pre">Clifford</span></tt> are constructed by specifying the mappings of the generators of
+the Pauli group, such that the action of a <tt class="docutils literal"><span class="pre">Clifford</span></tt> instance is defined
+for all input Pauli group elements.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Clifford</span><span class="p">([</span><span class="s">&#39;XX&#39;</span><span class="p">,</span> <span class="s">&#39;IX&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;ZI&#39;</span><span class="p">,</span> <span class="s">&#39;ZZ&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">C</span>
+<span class="go">XI |-&gt;  +XX</span>
+<span class="go">IX |-&gt;  +IX</span>
+<span class="go">ZI |-&gt;  +ZI</span>
+<span class="go">IZ |-&gt;  +ZZ</span>
+</pre></div>
+</div>
+<p>Once an instance of <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> has been constructed in this way,
+its action on elements of the Pauli group can be calculated by calling the
+<tt class="docutils literal"><span class="pre">Clifford</span></tt> instance as a function.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">qecc</span> <span class="kn">import</span> <span class="n">I</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="p">(</span><span class="n">X</span> <span class="o">&amp;</span> <span class="n">Y</span><span class="p">)</span>
+<span class="go">i^0 YZ</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">map</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;XI&#39;</span><span class="p">,</span> <span class="s">&#39;IX&#39;</span><span class="p">,</span> <span class="s">&#39;YI&#39;</span><span class="p">,</span> <span class="s">&#39;IY&#39;</span><span class="p">,</span> <span class="s">&#39;ZI&#39;</span><span class="p">,</span> <span class="s">&#39;IZ&#39;</span><span class="p">])</span>
+<span class="go">[i^0 XX, i^0 IX, i^0 YX, i^0 ZY, i^0 ZI, i^0 ZZ]</span>
+</pre></div>
+</div>
+<p>Note that in this example, <tt class="docutils literal"><span class="pre">C</span></tt> has converted strings to <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a>
+instances. This is done automatically by <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a>.</p>
+<p>Instances of <tt class="docutils literal"><span class="pre">Clifford</span></tt> can be combined by multiplication (<tt class="docutils literal"><span class="pre">*</span></tt>) and by
+tensor products (<tt class="docutils literal"><span class="pre">&amp;</span></tt>). Multiplication of two <tt class="docutils literal"><span class="pre">Clifford</span></tt> instances returns
+a new instance representing their composition, while the tensor product returns
+a new instance that acts on each register independently.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Clifford</span><span class="p">([</span><span class="s">&#39;XX&#39;</span><span class="p">,</span> <span class="s">&#39;IX&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;ZI&#39;</span><span class="p">,</span> <span class="s">&#39;ZZ&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">D</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Clifford</span><span class="p">([</span><span class="s">&#39;XI&#39;</span><span class="p">,</span> <span class="s">&#39;IZ&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;ZI&#39;</span><span class="p">,</span> <span class="s">&#39;IX&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">C</span> <span class="o">*</span> <span class="n">D</span>
+<span class="go">XI |-&gt;  +XX</span>
+<span class="go">IX |-&gt;  +ZZ</span>
+<span class="go">ZI |-&gt;  +ZI</span>
+<span class="go">IZ |-&gt;  +IX</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">C</span> <span class="o">&amp;</span> <span class="n">D</span>
+<span class="go">X[0] |-&gt;  +X[0] X[1]</span>
+<span class="go">X[3] |-&gt;  +Z[3]</span>
+<span class="go">Z[1] |-&gt;  +Z[0] Z[1]</span>
+<span class="go">Z[3] |-&gt;  +X[3]</span>
+</pre></div>
+</div>
+<p>Note that in the second example, the printing of the Clifford operator has
+switched to a sparse format that suppresses printing lines for qubits that are
+not acted upon by the operator (in this case, qubits <tt class="docutils literal"><span class="pre">1</span></tt> and <tt class="docutils literal"><span class="pre">2</span></tt> are
+trivially acted upon by <tt class="docutils literal"><span class="pre">C</span> <span class="pre">&amp;</span> <span class="pre">D</span></tt>).</p>
+<p>As with <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a>, the length of a <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> instance
+is defined as the number of qubits on which that instance acts. This information
+is also exposed as the property <tt class="docutils literal"><span class="pre">nq</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Clifford</span><span class="p">([</span><span class="s">&#39;XX&#39;</span><span class="p">,</span> <span class="s">&#39;IX&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;ZI&#39;</span><span class="p">,</span> <span class="s">&#39;ZZ&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">C</span><span class="o">.</span><span class="n">nq</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h3>Class Reference<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="qecc.Clifford">
 <em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">Clifford</tt><big>(</big><em>xbars</em>, <em>zbars</em><big>)</big><a class="headerlink" href="#qecc.Clifford" title="Permalink to this definition">¶</a></dt>
@@ -734,6 +871,7 @@ representation of this Clifford operator.</p>
 
 </dd></dl>
 
+</div>
 <div class="section" id="alternate-constructors">
 <h3>Alternate Constructors<a class="headerlink" href="#alternate-constructors" title="Permalink to this headline">¶</a></h3>
 <p>In addition to specifying the outputs of a Clifford operator acting on the
@@ -827,10 +965,8 @@ Pauli group to itself.</p>
 <dl class="function">
 <dt id="qecc.cnot">
 <tt class="descclassname">qecc.</tt><tt class="descname">cnot</tt><big>(</big><em>nq</em>, <em>ctrl</em>, <em>targ</em><big>)</big><a class="headerlink" href="#qecc.cnot" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Yields the <tt class="docutils literal"><span class="pre">nq</span></tt>-qubit CNOT Clifford controlled on <tt class="docutils literal"><span class="pre">ctrl</span></tt>,</dt>
-<dd>acting a Pauli <img class="math" src="_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/> on <tt class="docutils literal"><span class="pre">targ</span></tt>.</dd>
-</dl>
+<dd><p>Yields the <tt class="docutils literal"><span class="pre">nq</span></tt>-qubit CNOT Clifford controlled on <tt class="docutils literal"><span class="pre">ctrl</span></tt>,
+acting a Pauli <img class="math" src="_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/> on <tt class="docutils literal"><span class="pre">targ</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -844,10 +980,8 @@ Pauli group to itself.</p>
 <dl class="function">
 <dt id="qecc.hadamard">
 <tt class="descclassname">qecc.</tt><tt class="descname">hadamard</tt><big>(</big><em>nq</em>, <em>q</em><big>)</big><a class="headerlink" href="#qecc.hadamard" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Yields the <tt class="docutils literal"><span class="pre">nq</span></tt>-qubit Clifford, switching <img class="math" src="_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/> and <img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/></dt>
-<dd>on qubit <tt class="docutils literal"><span class="pre">q</span></tt>, yielding a minus sign on <img class="math" src="_images/math/ce58e4af225c93d08606c26554caaa5ae32edeba.png" alt="Y"/>.</dd>
-</dl>
+<dd><p>Yields the <tt class="docutils literal"><span class="pre">nq</span></tt>-qubit Clifford, switching <img class="math" src="_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/> and <img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/>
+on qubit <tt class="docutils literal"><span class="pre">q</span></tt>, yielding a minus sign on <img class="math" src="_images/math/ce58e4af225c93d08606c26554caaa5ae32edeba.png" alt="Y"/>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -889,10 +1023,8 @@ Pauli group to itself.</p>
 <dl class="function">
 <dt id="qecc.cz">
 <tt class="descclassname">qecc.</tt><tt class="descname">cz</tt><big>(</big><em>nq</em>, <em>q1</em>, <em>q2</em><big>)</big><a class="headerlink" href="#qecc.cz" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Yields the <tt class="docutils literal"><span class="pre">nq</span></tt>-qubit C-Z Clifford, acting on qubits <tt class="docutils literal"><span class="pre">q1</span></tt> and</dt>
-<dd><tt class="docutils literal"><span class="pre">q2</span></tt>.</dd>
-</dl>
+<dd><p>Yields the <tt class="docutils literal"><span class="pre">nq</span></tt>-qubit C-Z Clifford, acting on qubits <tt class="docutils literal"><span class="pre">q1</span></tt> and
+<tt class="docutils literal"><span class="pre">q2</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -918,32 +1050,6 @@ Pauli group to itself.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="id1">
-<h3>Utility Functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
-<dl class="function">
-<dt id="qecc.paulify">
-<tt class="descclassname">qecc.</tt><tt class="descname">paulify</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#qecc.paulify" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tests an input Clifford <tt class="docutils literal"><span class="pre">cliff_in</span></tt> to determine if it is, in
-fact, a Pauli. If so, it outputs the Pauli. If not, it
-returns the Clifford. 
-:arg cliff_in: Representation of Clifford operator to be converted, 
-if possible.
-:rtype: <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a>
-Example:
-&gt;&gt;&gt;import qecc as q
-&gt;&gt;&gt;cliff=q.Clifford([q.Pauli(&#8216;XI&#8217;,2),q.Pauli(&#8216;IX&#8217;)],map(q.Pauli,[&#8216;ZI&#8217;,&#8217;IZ&#8217;]))
-&gt;&gt;&gt;q.paulify(cliff)
-i^0 ZI</p>
-<p>Converting a Pauli into a Clifford and back again will erase
-the phase:
-&gt;&gt;&gt;import qecc as q
-&gt;&gt;&gt;paul=q.Pauli(&#8216;YZ&#8217;,3)
-&gt;&gt;&gt;cliff=q.pauli_gate(paul)
-&gt;&gt;&gt;q.paulify(cliff)
-i^0 YZ</p>
-</dd></dl>
-
-</div>
 </div>
 </div>
 
@@ -957,16 +1063,17 @@ i^0 YZ</p>
   <ul>
 <li><a class="reference internal" href="#">Pauli and Clifford Groups</a><ul>
 <li><a class="reference internal" href="#qecc-pauli-class-representing-pauli-group-elements"><tt class="docutils literal"><span class="pre">qecc.Pauli</span></tt> - Class representing Pauli group elements</a><ul>
+<li><a class="reference internal" href="#class-reference">Class Reference</a></li>
 <li><a class="reference internal" href="#iterating-over-groups-and-subgroups">Iterating Over Groups and Subgroups</a></li>
 <li><a class="reference internal" href="#utility-functions">Utility Functions</a></li>
 <li><a class="reference internal" href="#searching-over-pauli-group-elements">Searching Over Pauli Group Elements</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#qecc-clifford-class-representing-clifford-group-elements"><tt class="docutils literal"><span class="pre">qecc.Clifford</span></tt> - Class representing Clifford group elements</a><ul>
+<li><a class="reference internal" href="#id1">Class Reference</a></li>
 <li><a class="reference internal" href="#alternate-constructors">Alternate Constructors</a></li>
 <li><a class="reference internal" href="#iterators-onto-the-clifford-group">Iterators onto the Clifford Group</a></li>
 <li><a class="reference internal" href="#common-clifford-gates">Common Clifford Gates</a></li>
-<li><a class="reference internal" href="#id1">Utility Functions</a></li>
 </ul>
 </li>
 </ul>
