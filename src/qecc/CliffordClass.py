@@ -264,13 +264,19 @@ class Clifford(object):
     def __call__(self, other):
         if isinstance(other, Pauli):
             return self.conjugate_pauli(other)
-        if isinstance(other, PauliList):
+            
+        elif isinstance(other, str):
+            return self.conjugate_pauli(Pauli(other))
+            
+        elif isinstance(other, PauliList):
             return PauliList(*map(self, other))
+            
         elif isinstance(other, stab.StabilizerCode):
             return stab.StabilizerCode(
                 self(other.group_generators),
                 self(other.logical_xs),
                 self(other.logical_zs))
+                
         else:
             return NotImplemented
 
