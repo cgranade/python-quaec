@@ -428,6 +428,7 @@ class Pauli(object):
                 
         return cc.Clifford(Xs, Zs)
 
+    @staticmethod
     def from_clifford(cliff_in):
         """
         Tests an input Clifford ``cliff_in`` to determine if it is, in
