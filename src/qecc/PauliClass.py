@@ -190,10 +190,23 @@ class Pauli(object):
         """
         return Pauli(self.op[idxs], phase=self.ph)
             
+    ## PROPERTIES ##
+    
+    @property
+    def nq(self):
+        """
+        Returns the number of qubits upon which this Pauli operator acts.
+        """
+        return len(self)
+    
+    ## PRINTING ##
+            
     def str_sparse(self, incl_ph=True):
         return ("i^{} ".format(self.ph) if incl_ph else "") + (" ".join(
             "{}[{}]".format(P, idx) for idx, P in enumerate(self.op) if P != "I"
         ) if self.wt > 0 else "I")
+
+    ## ALGEBRAIC OPERATORS ##
 
     def __neg__(self):
         """
@@ -221,6 +234,8 @@ class Pauli(object):
         if not isinstance(other, Pauli):
             return NotImplemented
         return self.tens(other)
+        
+    ## MUTATOR METHODS ##
         
     def set_phase(self, ph=0):
         self.ph = ph
