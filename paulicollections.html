@@ -53,7 +53,38 @@
 <div class="section" id="qecc-paulilist-sequence-type-for-pauli-operators">
 <h2><a class="reference internal" href="#qecc.PauliList" title="qecc.PauliList"><tt class="xref py py-class docutils literal"><span class="pre">qecc.PauliList</span></tt></a>: Sequence type for Pauli operators<a class="headerlink" href="#qecc-paulilist-sequence-type-for-pauli-operators" title="Permalink to this headline">¶</a></h2>
 <p>For convinenence, the <tt class="xref py py-mod docutils literal"><span class="pre">qecc</span></tt> package provides a subclass of <a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a>
-intended for use with Pauli operators.</p>
+intended for use with Pauli operators. <tt class="docutils literal"><span class="pre">PauliList</span></tt> instances can be created
+either by converting an existing instance of a sequence type, or by providing
+the elements of the new <tt class="docutils literal"><span class="pre">PauliList</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">L</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;I&#39;</span><span class="p">,</span> <span class="s">&#39;X&#39;</span><span class="p">,</span> <span class="s">&#39;Y&#39;</span><span class="p">,</span> <span class="s">&#39;Z&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+<span class="go">PauliList(i^0 I, i^0 X, i^0 Y, i^0 Z)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="s">&#39;XYZ&#39;</span><span class="p">,</span> <span class="s">&#39;YZX&#39;</span><span class="p">,</span> <span class="s">&#39;ZXY&#39;</span><span class="p">)</span>
+<span class="go">PauliList(i^0 XYZ, i^0 YZX, i^0 ZXY)</span>
+</pre></div>
+</div>
+<p>Tensor products of a <tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli`</span></tt> with a <tt class="docutils literal"><span class="pre">PauliList</span></tt> result in
+tensoring the given Pauli group element onto each element of the list.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">qecc</span> <span class="kn">import</span> <span class="n">X</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="n">L</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">X</span>
+<span class="go">PauliList(i^0 IX, i^0 XX, i^0 YX, i^0 ZX)</span>
+</pre></div>
+</div>
+<p>In general, a <a class="reference internal" href="#qecc.PauliList" title="qecc.PauliList"><tt class="xref py py-class docutils literal"><span class="pre">qecc.PauliList</span></tt></a> can be used anywhere that a list of
+<a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> instances is appropriate. For example, the constructor of
+<a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> accepts <a class="reference internal" href="#qecc.PauliList" title="qecc.PauliList"><tt class="xref py py-class docutils literal"><span class="pre">qecc.PauliList</span></tt></a> instances:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Clifford</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="s">&#39;XX&#39;</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">Unspecified</span><span class="p">),</span> <span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">Unspecified</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;ZZ&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">2</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">C</span>
+<span class="go">XI |-&gt;  +XX</span>
+<span class="go">IX |-&gt; Unspecified</span>
+<span class="go">ZI |-&gt; Unspecified</span>
+<span class="go">IZ |-&gt;  -ZZ</span>
+</pre></div>
+</div>
+<div class="section" id="class-reference">
+<h3>Class Reference<a class="headerlink" href="#class-reference" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="qecc.PauliList">
 <em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">PauliList</tt><big>(</big><em>*paulis</em><big>)</big><a class="headerlink" href="#qecc.PauliList" title="Permalink to this definition">¶</a></dt>
@@ -72,19 +103,33 @@ convinenence.</td>
 </table>
 <dl class="method">
 <dt id="qecc.PauliList.pad">
-<tt class="descname">pad</tt><big>(</big><em>pauli_list_in</em>, <em>extra_bits=0</em>, <em>lower_right=None</em><big>)</big><a class="headerlink" href="#qecc.PauliList.pad" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes a PauliList, and returns a new set, 
+<tt class="descname">pad</tt><big>(</big><em>extra_bits=0</em>, <em>lower_right=None</em><big>)</big><a class="headerlink" href="#qecc.PauliList.pad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a PauliList, and returns a new PauliList, 
 appending <tt class="docutils literal"><span class="pre">extra_bits</span></tt> qubits, with stabilizer operators specified by
-<tt class="docutils literal"><span class="pre">lower_right</span></tt>.
-:arg pauli_list_in: list of Pauli operators to be padded. 
-:param int extra_bits: Number of extra bits to be appended to the system.
-:param lower_right: list of <cite>qecc.Pauli</cite> operators, acting on <cite>extra_bits</cite> qubits.
-:rtype: list of <a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> objects.
-Example:
-&gt;&gt;&gt;import qecc as q
-&gt;&gt;&gt;pauli_set=map(q.Pauli,[&#8216;XXX&#8217;,&#8217;YIY&#8217;,&#8217;ZZI&#8217;])
-&gt;&gt;&gt;q.pad(pauli_set,extra_bits=2,lower_right=map(q.Pauli,[&#8216;IX&#8217;,&#8217;ZI&#8217;]))
-[i^0 XXXII, i^0 YIYII, i^0, ZZIII, i^0 IIIIX, i^0 IIIZI]</p>
+<tt class="docutils literal"><span class="pre">lower_right</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pauli_list_in</strong> &#8211; list of Pauli operators to be padded.</li>
+<li><strong>extra_bits</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of extra bits to be appended to the system.</li>
+<li><strong>lower_right</strong> &#8211; list of <cite>qecc.Pauli</cite> operators, acting on <cite>extra_bits</cite> qubits.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of <a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> objects.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pauli_list</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="s">&#39;XXX&#39;</span><span class="p">,</span> <span class="s">&#39;YIY&#39;</span><span class="p">,</span> <span class="s">&#39;ZZI&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pauli_list</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">extra_bits</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">lower_right</span><span class="o">=</span><span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="s">&#39;IX&#39;</span><span class="p">,</span><span class="s">&#39;ZI&#39;</span><span class="p">))</span>
+<span class="go">PauliList(i^0 XXXII, i^0 YIYII, i^0 ZZIII, i^0 IIIIX, i^0 IIIZI)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -134,17 +179,6 @@ more information.</p>
 
 </dd></dl>
 
-<p>In general, a <a class="reference internal" href="#qecc.PauliList" title="qecc.PauliList"><tt class="xref py py-class docutils literal"><span class="pre">qecc.PauliList</span></tt></a> can be used anywhere that a list of
-<a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> instances is appropriate. For example, the constructor of
-<a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> accepts <a class="reference internal" href="#qecc.PauliList" title="qecc.PauliList"><tt class="xref py py-class docutils literal"><span class="pre">qecc.PauliList</span></tt></a> instances:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Clifford</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="s">&#39;XX&#39;</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">Unspecified</span><span class="p">),</span> <span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">Unspecified</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;ZZ&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">2</span><span class="p">)))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">C</span>
-<span class="go">XI |-&gt;  +XX</span>
-<span class="go">IX |-&gt; Unspecified</span>
-<span class="go">ZI |-&gt; Unspecified</span>
-<span class="go">IZ |-&gt;  -ZZ</span>
-</pre></div>
 </div>
 </div>
 </div>
@@ -158,7 +192,10 @@ more information.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Collections of Pauli Operators</a><ul>
-<li><a class="reference internal" href="#qecc-paulilist-sequence-type-for-pauli-operators"><tt class="docutils literal"><span class="pre">qecc.PauliList</span></tt>: Sequence type for Pauli operators</a></li>
+<li><a class="reference internal" href="#qecc-paulilist-sequence-type-for-pauli-operators"><tt class="docutils literal"><span class="pre">qecc.PauliList</span></tt>: Sequence type for Pauli operators</a><ul>
+<li><a class="reference internal" href="#class-reference">Class Reference</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

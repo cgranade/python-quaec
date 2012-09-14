@@ -5,6 +5,10 @@
     letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View,
     California, 94041, USA.
 
+.. todo::
+    Add documentation on Pauli indexing.
+    Mention how Clifford can use Unspecified.
+
 Pauli and Clifford Groups
 =========================
 
