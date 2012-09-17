@@ -569,6 +569,9 @@ class Pauli(object):
         if group_gens is None:
             Xs, Zs = elem_gens(len(self))
             group_gens = Xs + Zs
+            
+        if not group_gens: # If group_gens is empty, it's false-y.
+            return PauliList()
         
         if com(self, group_gens[0]) == 0:
             # That generator commutes, and so we pass it along
