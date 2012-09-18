@@ -80,6 +80,13 @@ class PauliList(list):
     def __add__(self, other):
         return PauliList(*(super(PauliList, self).__add__(other)))
         
+    ## REPRESENTATION AND STRING COVNERSIONS ##
+    
+    def __repr__(self):
+        # For now, he repr and str for a list can be the same. We can improve
+        # this in the future.
+        return str(self)
+    
     def __str__(self):
         return "PauliList({})".format(", ".join(map(repr, self)))
         
@@ -100,43 +107,41 @@ class PauliList(list):
             return PauliList(*[other & P for P in self])
     
     ## OTHER METHODS ##
-    def pad(pauli_list_in, extra_bits=0, lower_right=None):
+    def pad(self, extra_bits=0, lower_right=None):
         r"""
-        Takes a PauliList, and returns a new set, 
+        Takes a PauliList, and returns a new PauliList, 
         appending ``extra_bits`` qubits, with stabilizer operators specified by
         ``lower_right``.
+        
         :arg pauli_list_in: list of Pauli operators to be padded. 
         :param int extra_bits: Number of extra bits to be appended to the system.
         :param lower_right: list of `qecc.Pauli` operators, acting on `extra_bits` qubits.
         :rtype: list of :class:`qecc.Pauli` objects.
+        
         Example:
-        >>>import qecc as q
-        >>>pauli_set=map(q.Pauli,['XXX','YIY','ZZI'])
-        >>>q.pad(pauli_set,extra_bits=2,lower_right=map(q.Pauli,['IX','ZI']))
-        [i^0 XXXII, i^0 YIYII, i^0, ZZIII, i^0 IIIIX, i^0 IIIZI]
+        
+        >>> import qecc as q
+        >>> pauli_list = q.PauliList('XXX', 'YIY', 'ZZI')
+        >>> pauli_list.pad(extra_bits=2, lower_right=q.PauliList('IX','ZI'))
+        PauliList(i^0 XXXII, i^0 YIYII, i^0 ZZIII, i^0 IIIIX, i^0 IIIZI)
 
         """
         
-        # Ensure that we have lists, and make a copy.
-        pauli_list_in= list(pauli_list_in)
-        
-        len_P=len(pauli_list_in)
-        n_P=len(pauli_list_in[0])
+        len_P = len(self)
+        nq_P  = len(self[0]) if len_P > 0 else 0
 
-        if extra_bits == 0 and lower_right is None or len(lower_right)==0:
-            return pauli_list_in
+        if extra_bits == 0 and lower_right is None or len(lower_right) == 0:
+            return PauliList(self)
         elif len(lower_right) != 0:
             extra_bits=len(lower_right[0])
                 
-        setout=[]
-        for pauli in pauli_list_in:
-            setout.append(Pauli(pauli.op+'I'*extra_bits))
+        setout = PauliList([pc.Pauli(pauli.op + 'I'*extra_bits) for pauli in self])
+            
         if lower_right is None:
-            for jj in extra_bits:
-                setout.append(eye_p(n_P+extra_bits))
+            setout += [pc.eye_p(nq_P + extra_bits)] * extra_bits
         else:
-            for opmo in lower_right:
-                setout.append(eye_p(n_P)&opmo)
+            setout += [pc.eye_p(nq_P) & P for P in lower_right]
+                
         return setout    
     
     def generated_group(self, coset_rep=None):
