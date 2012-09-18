@@ -433,6 +433,32 @@ class Pauli(object):
         return cc.Clifford(Xs, Zs)        
 
     @staticmethod
+    def from_sparse(sparse_pauli, nq=None):
+        """
+        Given a dictionary from non-negative integers to single-qubit Pauli
+        operators or strings representing single-qubit Pauli operators, creates
+        a new instance of :class:`qecc.Pauli` representing the input.
+        
+        >>> from qecc import Pauli, X, Y, Z
+        >>> print Pauli.from_sparse({3: X, 5: X, 7: Z}, nq=12)
+        i^0 X[3] X[5] Z[7]
+        
+        :param dict sparse_pauli: Dictionary from qubit indices (non-negative
+            integers) to single-qubit Pauli operators or to strings.
+        :param int nq: If not ``None``, specifies the number of qubits on which
+            the newly created Pauli operator is to act.
+        """
+        
+        if nq is None:
+            nq = max(sparse_pauli.keys())
+        
+        return reduce(and_, (
+            ensure_pauli(sparse_pauli[idx]) if idx in sparse_pauli else I
+            for idx in xrange(nq)
+            ))
+        
+
+    @staticmethod
     def from_clifford(cliff_in):
         """
         Tests an input Clifford ``cliff_in`` to determine if it is, in
