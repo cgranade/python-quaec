@@ -5,8 +5,12 @@
     letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View,
     California, 94041, USA.
 
+======================
 Binary Symplectic Form
 ======================
+
+Introduction
+============
 
 The :mod:`qecc` package provides support for elements of the Pauli and Clifford groups in 
 binary symplectic form, including support for algorithms acting on these representations.
