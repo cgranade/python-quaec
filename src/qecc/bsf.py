@@ -620,7 +620,19 @@ class BinarySymplecticMatrix(object):
         return Clifford(map(array_to_pauli,self.xc.T),map(array_to_pauli,self.zc.T))
 
     def is_valid(self):
-        return is_bsm_valid(self)
+        xrows = map(BinarySymplecticVector, self.xc.T)
+        zrows = map(BinarySymplecticVector, self.zc.T)
+        
+        for idx_j in range(len(xrows)):
+            for idx_k in range(len(zrows)):
+                if xrows[idx_j].bsip(zrows[idx_k]) != (idx_j == idx_k):
+                    return False
+                elif xrows[idx_j].bsip(xrows[idx_k]) != 0:
+                    return False
+                elif zrows[idx_j].bsip(zrows[idx_k]) != 0:
+                    return False
+                    
+        return True
         
     def copy(self):
         """
@@ -647,18 +659,9 @@ class BinarySymplecticMatrix(object):
         
 ## BSM FUNCTIONS ##
 
+@u.deprecated("Please use the is_valid() method of BinarySymplecticMatrix instead.")
 def is_bsm_valid(input_bsm):
-    xrows = map(BinarySymplecticVector,input_bsm.xc.T)
-    zrows = map(BinarySymplecticVector,input_bsm.zc.T)
-    for idx_j in range(len(xrows)):
-        for idx_k in range(len(zrows)):
-            if xrows[idx_j].bsip(zrows[idx_k]) != (idx_j == idx_k):
-                return False
-            elif xrows[idx_j].bsip(xrows[idx_k]) != 0:
-                return False
-            elif zrows[idx_j].bsip(zrows[idx_k]) != 0:
-                return False
-    return True
+    return input_bsm.is_valid()
 
 def bsmzeros(nq):
     """
@@ -675,7 +678,7 @@ def bsmzeros(nq):
 def array_to_pauli(bsv_array):
     """
     Function wrapper for type conversion from binary symplectic vector 
-    to :class:`qecc.Pauli`. See `as_pauli`. 
+    to :class:`qecc.Pauli`. See :meth:`qecc.BinarySymplecticVector.as_pauli`. 
     """
     return BinarySymplecticVector(bsv_array).as_pauli()    
 

@@ -13,18 +13,18 @@ binary symplectic form, including support for algorithms acting on these represe
 Note that all classes and functions documented here depend on the :mod:`numpy` package. For
 more information on the binary symplectic representation, read [CRSS96]_, Section 2.
 
-Class Reference
-===============
-
 :class:`qecc.BinarySymplecticVector` - Binary symplectic representation of Pauli group elements
 -----------------------------------------------------------------------------------------------
+
+.. todo::
+    Write an introduction here.
+
+Class Reference
+~~~~~~~~~~~~~~~
 
 .. autoclass:: qecc.BinarySymplecticVector
     :members:
     :undoc-members:
-
-.. todo::
-    Need to fill out more documentation and examples here.
 
 Utility Functions
 ~~~~~~~~~~~~~~~~~
@@ -37,15 +37,21 @@ Utility Functions
 
 .. autofunction:: qecc.xz_switch
 
-Class Reference
-===============
-
 :class:`qecc.BinarySymplecticMatrix` - Binary symplectic representation of Clifford group elements
 --------------------------------------------------------------------------------------------------
+
+.. todo::
+    Write an introduction here.
+
+Class Reference
+~~~~~~~~~~~~~~~
 
 .. autoclass:: qecc.BinarySymplecticMatrix
     :members:
     :undoc-members:
+
+Utility Functions
+~~~~~~~~~~~~~~~~~
 
 .. autofunction:: qecc.is_bsm_valid
 
