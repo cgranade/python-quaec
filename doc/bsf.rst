@@ -26,20 +26,6 @@ Class Reference
 .. todo::
     Need to fill out more documentation and examples here.
 
-Vectors in binary symplectic form can be initialized from a single list of integers of
-length :math:`2n`, or from a pair of integer lists of length :math:`n`:
-
->>> import qecc as q
->>> pauli_from_2n = q.BinarySymplecticVector([1, 0, 0, 0, 1 ,0])
->>> pauli_from_2n
-( 1 0 0 | 0 1 0 )
-
->>> import qecc as q
->>> pauli_from_2_lists = q.BinarySymplecticVector([1, 0, 0],[0, 1 ,0])
->>> pauli_from_2_lists
-( 1 0 0 | 0 1 0 )
-
-
 Utility Functions
 ~~~~~~~~~~~~~~~~~
 

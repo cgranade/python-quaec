@@ -258,7 +258,9 @@ def constrained_set(pauli_array_input,logical_array_input):
     # return output_array
 
 def commute(bsv1,bsv2):
-    """returns True if bsv1 and bsv2 commute by evaluating the symplectic inner 
+    """
+
+    Returns True if bsv1 and bsv2 commute by evaluating the symplectic inner 
     product.
     
     :rtype: bool
@@ -275,7 +277,23 @@ def xz_switch(bsv):
 ## BINARY SYMPLECTIC MATRIX CLASS ##
 
 class BinarySymplecticMatrix(object):
+    """
+
+    Encapsulates a binary symplectic matrix representing an element of the Clifford
+    group on :math:`n` qubits.
     
+    A new :class:`BinarySymplecticMatrix` can be constructed using either a
+    single NumPy 2-D array containing the :math:`XX`, :math:`XZ`, :math:`ZX`, and :math:`ZZ`
+    parts of the binary symplectic matrix. Alternatively, a new matrix can be instantiated
+    using four NumPy arrays. For example, the following two invocations are
+    equivalent:
+    
+    >>> import qecc
+    >>> import numpy as np
+    >>> bsm = qecc.BinarySymplecticVector(np.array([1, 0, 0, 0],[1, 1, 0, 0],[0, 0, 1, 1],[0, 0, 0, 1]))
+    >>> bsm = qecc.BinarySymplecticVector(np.array([[1, 0],[1, 1]]), np.array([[0, 0],[0, 0]]), np.array([[0, 0],[0, 0]]), np.array([[1, 1],[0, 1]]))
+    
+    """
     def __init__(self,*args):
         if len(args)==4:
             self._arr=vstack((hstack((args[0],args[1])),hstack((args[2],args[3]))))
@@ -295,24 +313,39 @@ class BinarySymplecticMatrix(object):
         return len(self._arr)/2
             
     @property
-    def xx(self): 
+    def xx(self):
+        """
+        Returns the upper-left quadrant of a binary symplectic matrix.
+        """ 
         nq = self.nq
         return self._arr[0:nq,0:nq]
     @property
     def xz(self):
+        """
+        Returns the upper-right quadrant of a binary symplectic matrix.
+        """ 
         nq = self.nq
         return self._arr[0:nq,nq:2*nq]
     @property
     def zx(self):
+        """
+        Returns the lower-left quadrant of a binary symplectic matrix.
+        """ 
         nq = self.nq
         return self._arr[nq:2*nq,0:nq]
     @property
     def zz(self):
+        """
+        Returns the lower-right quadrant of a binary symplectic matrix.
+        """ 
         nq = self.nq
         return self._arr[nq:2*nq,nq:2*nq]
 
     @property
     def xc(self):
+        """
+        Returns the left half of a binary symplectic matrix.
+        """ 
         nq = self.nq
         return self._arr[:, 0:nq]
     @xc.setter
@@ -320,6 +353,9 @@ class BinarySymplecticMatrix(object):
         self._arr[:, 0:self.nq] = newval
     @property
     def zc(self):
+        """
+        Returns the right half of a binary symplectic matrix.
+        """ 
         nq = self.nq
         return self._arr[:, nq:2*nq]
     @zc.setter
@@ -328,6 +364,9 @@ class BinarySymplecticMatrix(object):
 
     @property
     def xr(self):
+        """
+        Returns the top half of a binary symplectic matrix.
+        """ 
         nq = self.nq
         return self._arr[0:nq, :]
     @xr.setter
@@ -335,6 +374,9 @@ class BinarySymplecticMatrix(object):
         self._arr[0:self.nq, :] = newval
     @property
     def zr(self):
+        """
+        Returns the bottom half of a binary symplectic matrix.
+        """ 
         nq = self.nq
         return self._arr[nq:2*nq, :]
     @zr.setter
