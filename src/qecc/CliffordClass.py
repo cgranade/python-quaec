@@ -665,7 +665,7 @@ def transcoding_cliffords(stab_in,xs_in,zs_in,stab_out,xs_out,zs_out):
     cliff_left=Clifford(cliff_xouts_left,cliff_zouts_left).constraint_completions().next()
     list_left=cliff_left.xout+cliff_left.zout
 
-    for mcset in mutually_commuting_sets(n_gens=len(stab_left)-len(stab_right),n_bits=nq_anc):
+    for mcset in mutually_commuting_sets(n_elems=len(stab_left)-len(stab_right),n_bits=nq_anc):
         temp_xouts_right=pad(stab_right,lower_right=mcset)+map(lambda p: p&eye_p(nq_anc),xs_right)
         temp_zouts_right=[Unspecified]*len(stab_left)+map(lambda p: p&eye_p(nq_anc),zs_right)
     for completion in Clifford(temp_xouts_right,temp_zouts_right).constraint_completions():

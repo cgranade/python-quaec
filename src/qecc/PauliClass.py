@@ -27,7 +27,7 @@ from __future__ import division
 from itertools import product, chain, permutations, combinations, ifilter, ifilterfalse, imap, starmap, izip
 from copy import copy
 import bsf
-from operator import mul, and_
+from operator import mul, and_, add
 
 import pred
 from circuit import Circuit, Location

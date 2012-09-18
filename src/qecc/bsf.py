@@ -106,6 +106,11 @@ class BinarySymplecticVector(object):
         Array containing the :math:`X` part of the binary symplectic vector.
         
         :rtype: :class:`numpy.ndarray`, shape ``(2 * nq, )``.
+
+        >>> import qecc as q
+        >>> q.BinarySymplecticVector([1,0,0,0,1,0]).x
+        array([1, 0, 0])
+        
         """
         return self._x
     
@@ -115,6 +120,11 @@ class BinarySymplecticVector(object):
         Array containing the :math:`Z` part of the binary symplectic vector.
         
         :rtype: :class:`numpy.ndarray`, shape ``(nq, )``.
+
+        >>> import qecc as q
+        >>> q.BinarySymplecticVector([1,0,0,0,1,0]).x
+        array([0, 1, 0])
+        
         """
         return self._z
 
@@ -134,6 +144,12 @@ class BinarySymplecticVector(object):
         operator as this vector. Note that phase information is not preserved
         by the binary symplectic representation of the Pauli group, and so
         ``P.as_bsv().as_pauli()`` need not equal ``P``.
+
+        >>> import qecc as q
+        >>> pauli_with_phase=q.Pauli('IXXYZ',2)
+        >>> pauli_with_phase.as_bsv().as_pauli()
+        i^0 IXXYZ
+        
         """
         exes=bitstring_to_letterstring(self._x,'X')
         zeds=bitstring_to_letterstring(self._z,'Z')
@@ -148,6 +164,13 @@ class BinarySymplecticVector(object):
         Returns the binary symplectic inner product :math:`u \odot v` of this
         vector with another vector. Letting :math:`u = (a | b)` and
         :math:`v = (c | d)`, :math:`u\odot v = a \cdot c + b \cdot d`.
+
+        >>> import qecc as q
+        >>> vector_a = q.BinarySymplecticVector([1,0,1],[0,1,1])
+        >>> vector_b = q.Pauli('YYZ').as_bsv()
+        >>> vector_a.bsip(vector_b)
+        1
+        
         """
         return int(not(commute(self,other)))
         
@@ -159,6 +182,9 @@ def bitstring_to_letterstring(bitstring,letter):
     :param list bitstring: a list or tuple, whose entries are 0 or 1. 
     :param letter: a string with a single entry
     :rtype: str
+
+    >>> 
+    
     """
     outstring=''
     for idx in range(len(bitstring)):
@@ -188,9 +214,14 @@ def all_pauli_bsvs(nq):
     r"""
     Lists all the Paulis on ``nq`` qubits according to their binary symplectic
     representations. 
+    
     :param int nq: Number of qubits. 
-    :returns: an iterator that yields the binary symplectic representations of 
-    each element of the Pauli group :math:`\mathcal{P}_n`.
+
+    :returns: an iterator that yields the binary symplectic representations of each element of the Pauli group :math:`\mathcal{P}_n`.
+
+    >>> list(q.all_pauli_bsvs(1))
+    [( 0 | 0 ), ( 0 | 1 ), ( 1 | 0 ), ( 1 | 1 )]
+    
     """
     for idx_x in itertools.product([0,1],repeat=nq):
         for idx_z in itertools.product([0,1],repeat=nq):
@@ -208,6 +239,12 @@ def constrained_set(pauli_array_input,logical_array_input):
     :type logical_array_input: :class:`numpy.ndarray` of `dtype=int` and shape
         ``(len(pauli_array_input), )``.
     :param logical_array_input: Constraint values :math:`b_i`.
+
+    >>> import qecc as q
+    >>> import numpy as np
+    >>> list(q.cosntrained_set(map(lambda s: q.Pauli(s).as_bsv(), ['XY','ZZ'],[1,0])))
+    [( 0 0 | 0 1 ), ( 0 0 | 1 0 ), ( 1 1 | 0 0 ), ( 1 1 | 1 1 )]
+    
     """
     
     nq=len(pauli_array_input[0].x)
@@ -223,7 +260,8 @@ def constrained_set(pauli_array_input,logical_array_input):
 def commute(bsv1,bsv2):
     """returns True if bsv1 and bsv2 commute by evaluating the symplectic inner 
     product.
-    :rtype:bool
+    
+    :rtype: bool
     """
     return logical_not(logical_xor(bitwise_inner_product(bsv1.x,bsv2.z),bitwise_inner_product(bsv1.z,bsv2.x)))
 
