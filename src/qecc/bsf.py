@@ -97,6 +97,9 @@ class BinarySymplecticVector(object):
 
     def __repr__(self):
         return "( {ex} | {zed} )".format(ex=" ".join(map(str, self._x)), zed=" ".join(map(str, self._z)))
+
+    def __eq__(self,other):
+        return all([a[0] == a[1] for a in zip(self._x+self._z, other._x + other._z)])
         
     ## PROPERTIES ##
 

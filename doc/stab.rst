@@ -9,8 +9,11 @@
 Stabilizer Codes
 ================
 
+:class:`qecc.StabilizerCode`
+============================
+
 Introduction
-============
+------------
 
 QuaEC includes a class, :class:`qecc.StabilizerCode`, that represents
 error-correcting codes specified using the stabilizer formalism [Got97]_. To construct
@@ -86,10 +89,7 @@ Zbars = PauliList(i^0 ZZZZZZZZZ)
     This introduction needs to be finished.
 
 Class Reference
-===============
-
-:class:`qecc.StabilizerCode`
-----------------------------
+---------------
 
 .. autoclass:: qecc.StabilizerCode
     :members:
