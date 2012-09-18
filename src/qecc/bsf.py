@@ -122,7 +122,7 @@ class BinarySymplecticVector(object):
         :rtype: :class:`numpy.ndarray`, shape ``(nq, )``.
 
         >>> import qecc as q
-        >>> q.BinarySymplecticVector([1,0,0,0,1,0]).x
+        >>> q.BinarySymplecticVector([1,0,0,0,1,0]).z
         array([0, 1, 0])
         
         """
@@ -241,8 +241,7 @@ def constrained_set(pauli_array_input,logical_array_input):
     :param logical_array_input: Constraint values :math:`b_i`.
 
     >>> import qecc as q
-    >>> import numpy as np
-    >>> list(q.cosntrained_set(map(lambda s: q.Pauli(s).as_bsv(), ['XY','ZZ'],[1,0])))
+    >>> list(q.constrained_set(map(lambda s: q.Pauli(s).as_bsv(), ['XY','ZZ']),[1,0]))
     [( 0 0 | 0 1 ), ( 0 0 | 1 0 ), ( 1 1 | 0 0 ), ( 1 1 | 1 1 )]
     
     """
@@ -290,8 +289,8 @@ class BinarySymplecticMatrix(object):
     
     >>> import qecc
     >>> import numpy as np
-    >>> bsm = qecc.BinarySymplecticVector(np.array([1, 0, 0, 0],[1, 1, 0, 0],[0, 0, 1, 1],[0, 0, 0, 1]))
-    >>> bsm = qecc.BinarySymplecticVector(np.array([[1, 0],[1, 1]]), np.array([[0, 0],[0, 0]]), np.array([[0, 0],[0, 0]]), np.array([[1, 1],[0, 1]]))
+    >>> bsm = qecc.BinarySymplecticMatrix(np.array([[1, 0, 0, 0],[1, 1, 0, 0],[0, 0, 1, 1],[0, 0, 0, 1]]))
+    >>> bsm = qecc.BinarySymplecticMatrix(np.array([[1, 0],[1, 1]]), np.array([[0, 0],[0, 0]]), np.array([[0, 0],[0, 0]]), np.array([[1, 1],[0, 1]]))
     
     """
     def __init__(self,*args):
