@@ -309,6 +309,33 @@ operator.
 </dd></dl>
 
 <dl class="staticmethod">
+<dt id="qecc.Pauli.from_sparse">
+<em class="property">static </em><tt class="descname">from_sparse</tt><big>(</big><em>sparse_pauli</em>, <em>nq=None</em><big>)</big><a class="headerlink" href="#qecc.Pauli.from_sparse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a dictionary from non-negative integers to single-qubit Pauli
+operators or strings representing single-qubit Pauli operators, creates
+a new instance of <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> representing the input.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">qecc</span> <span class="kn">import</span> <span class="n">Pauli</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Pauli</span><span class="o">.</span><span class="n">from_sparse</span><span class="p">({</span><span class="mi">3</span><span class="p">:</span> <span class="n">X</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="n">X</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span> <span class="n">Z</span><span class="p">},</span> <span class="n">nq</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="go">i^0 X[3] X[5] Z[7]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sparse_pauli</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Dictionary from qubit indices (non-negative
+integers) to single-qubit Pauli operators or to strings.</li>
+<li><strong>nq</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; If not <tt class="xref docutils literal"><span class="pre">None</span></tt>, specifies the number of qubits on which
+the newly created Pauli operator is to act.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
 <dt id="qecc.Pauli.from_clifford">
 <em class="property">static </em><tt class="descname">from_clifford</tt><big>(</big><em>cliff_in</em><big>)</big><a class="headerlink" href="#qecc.Pauli.from_clifford" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests an input Clifford <tt class="docutils literal"><span class="pre">cliff_in</span></tt> to determine if it is, in
