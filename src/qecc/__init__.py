@@ -22,6 +22,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
+__version__ = (1, 0, 0)
+
 # All of the modules must be completely imported before we can start importing
 # specific names, due to circular dependencies between the various modules.
 import singletons as _sing
@@ -60,5 +62,5 @@ from circuit import *
 from constraint_solvers import *
 from stab import *
 
-__all__ = reduce(lambda a, b: a+b, map(lambda mod: mod.__all__, __modules))
+__all__ = reduce(lambda a, b: a+b, map(lambda mod: mod.__all__, __modules)) + ['__version__']
 
