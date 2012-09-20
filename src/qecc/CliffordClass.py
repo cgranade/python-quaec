@@ -129,10 +129,16 @@ class Clifford(object):
                 
     @property
     def nq(self):
+        """
+        Returns the number of qubits on which a :class:`qecc.Clifford` object acts.
+        """
         return len(self)
         
     @property
     def n_unspecified(self):
+        """
+        Returns the number of unspecifed outputs of a :class:`qec.Clifford` object.
+        """
         return len([P for P in chain(self.xout, self.zout) if P is Unspecified])
         
     ## PRINTING ##
@@ -165,6 +171,10 @@ class Clifford(object):
             )
             
     def str_sparse(self):
+        """
+        Provides a compact representation for :class:`qecc.Clifford` objects in the case
+        where many of the outputs have small support. 
+        """
         out = zip(KINDS, map(enumerate, [self.xout, self.zout]))
         nq = len(self)
         outstr = "\n".join(
@@ -447,6 +457,11 @@ class Clifford(object):
         return clifford_as_unitary(self)
         
     def circuit_decomposition(self):
+        """
+        Returns a :class:`qecc>Circuit` object consisting of the circuit decomposition of 
+        `self.as_bsm()` and a :class:`qecc.Pauli` object which ensures the output phases
+        of the :class:`qecc.Clifford` object are preserved.
+        """
         pauli_correct = paulify((self.as_bsm().circuit_decomposition().as_clifford())*self.inv()).as_circuit()
         return (self.as_bsm().circuit_decomposition())+pauli_correct
       

@@ -132,6 +132,16 @@ IX |->  +IX
 ZI |->  +ZI
 IZ |->  +ZZ
 
+Also, the results of an element of the Clifford group can be left partially
+unspecified, using the :class:`qecc.Singleton` `Unspecified`:
+
+>>> import qecc as q
+>>> print q.Clifford(['IZ','XZ'],['XI',q.Unspecified])
+XI |->  +IZ
+IX |->  +XZ
+ZI |->  +XI
+IZ |-> Unspecified
+
 Once an instance of :class:`qecc.Clifford` has been constructed in this way,
 its action on elements of the Pauli group can be calculated by calling the
 ``Clifford`` instance as a function.

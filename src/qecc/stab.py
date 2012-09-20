@@ -68,6 +68,8 @@ class StabilizerCode(object):
     
     def __init__(self, group_generators, logical_xs, logical_zs, label=None):
         self.group_generators = pc.PauliList(*group_generators)
+        if (Unspecified in logical_xs) or (Unspecified in logical_zs):
+            raise ValueError("Logical operators must be specified.")
         self.logical_xs = pc.PauliList(*logical_xs)
         self.logical_zs = pc.PauliList(*logical_zs)
         self.label = label
@@ -656,6 +658,10 @@ class StabilizerCode(object):
                 yield gen_cliff(list_left,completion.xout+completion.zout)
 
     def min_len_transcoding_clifford(self,other):
+        """
+        Searches the iterator provided by `transcoding_cliffords` for the shortest
+        circuit decomposition.
+        """
         circuit_iter=map(lambda p: p.as_bsm().circuit_decomposition(), self.transcoding_cliffords(other))
         return min(*circuit_iter)
 

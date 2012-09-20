@@ -97,6 +97,9 @@ class BinarySymplecticVector(object):
 
     def __repr__(self):
         return "( {ex} | {zed} )".format(ex=" ".join(map(str, self._x)), zed=" ".join(map(str, self._z)))
+
+    def __eq__(self,other):
+        return all([a[0] == a[1] for a in zip(self._x+self._z, other._x + other._z)])
         
     ## PROPERTIES ##
 
@@ -620,6 +623,10 @@ class BinarySymplecticMatrix(object):
         return Clifford(map(array_to_pauli,self.xc.T),map(array_to_pauli,self.zc.T))
 
     def is_valid(self):
+        """
+        Checks the satisfaction of the symplectic condition on a 
+        :class:`qecc.BinarySymplecticMatrix` object.
+        """
         xrows = map(BinarySymplecticVector, self.xc.T)
         zrows = map(BinarySymplecticVector, self.zc.T)
         
