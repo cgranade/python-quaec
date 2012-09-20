@@ -200,7 +200,10 @@ latex_documents = [
 #latex_show_urls = False
 
 # Additional stuff for the LaTeX preamble.
-#latex_preamble = ''
+latex_preamble = '''
+\usepackage{amsmath}
+\usepackage{amsfonts}
+'''
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []

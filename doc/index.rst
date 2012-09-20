@@ -27,6 +27,7 @@ Contents
    solvers
    predicates
    utils
+   exceptions
    bibliography
 
 Introduction
