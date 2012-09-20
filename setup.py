@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='QuaEC',
-    version='0.1a1',
+    version='1.0',
     url='http://cgranade.github.com/python-quaec/',
     author='Chris Granade and Ben Criger',
     author_email='cgranade@cgranade.com',
