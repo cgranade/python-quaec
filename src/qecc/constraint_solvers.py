@@ -45,7 +45,7 @@ def solve_commutation_constraints(
         search_in_set=None
     ):
     r"""
-    Given commutation constraints on a pc.Pauli operator, yields an iterator onto
+    Given commutation constraints on a Pauli operator, yields an iterator onto
     all solutions of those constraints.
     
     :param commutation_constraints: A list of operators :math:`\{A_i\}` such

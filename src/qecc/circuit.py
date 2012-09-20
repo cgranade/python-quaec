@@ -37,7 +37,7 @@ import itertools as it
 
 __all__ = [
     'Location', 'Circuit',
-    'ensure_loc', 'possible_output_faults', 'possible_faults'
+    'ensure_loc', 'propagate_fault', 'possible_output_faults', 'possible_faults'
 ]
 
 ## INTERNAL FUNCTIONS ##
@@ -65,7 +65,7 @@ class Location(object):
     :type qubits: tuple of ints.
     """
 
-    ## CLASS CONSTANTS ##
+    ## PRIVATE CLASS CONSTANTS ##
     _CLIFFORD_GATE_KINDS = [
         'I', 'X', 'Y', 'Z', 'H', 'R_pi4', 'CNOT', 'CZ', 'SWAP'
     ]
@@ -81,11 +81,6 @@ class Location(object):
         'CZ': cc.cz,
         'SWAP': cc.swap
     }
-
-    #: Identifiers for the gateset employed by QuaEC.
-    KIND_NAMES = sum([
-        _CLIFFORD_GATE_KINDS
-    ], [])
     
     _QCVIEWER_NAMES = {
         'I': 'I',           # This one is implemented by a gate definition
@@ -97,6 +92,15 @@ class Location(object):
         'CZ': 'Z',
         'SWAP': 'swap'
     }
+    
+    ## PUBLIC CLASS CONSTANTS ##
+    
+    #: Names of the kinds of locations used by QuaEC.
+    KIND_NAMES = sum([
+        _CLIFFORD_GATE_KINDS
+    ], [])
+    
+    ## INITIALIZER ##
 
     def __init__(self, kind, *qubits):
         if isinstance(kind, int):
@@ -111,6 +115,8 @@ class Location(object):
         
         self._qubits = tuple(qubits)
         self._is_clifford = bool(self.kind in self._CLIFFORD_GATE_KINDS)
+       
+    ## REPRESENTATION METHODS ##
         
     def __str__(self):
         return "    {:<4}    {}".format(self.kind, ' '.join(map(str, self.qubits)))
@@ -127,7 +133,8 @@ class Location(object):
         Returns a :class:`qecc.Location` initialized from a QuASM-formatted line.
         
         :type str source: A line of QuASM code specifying a location.
-        :returns qecc.Location: The location represented by the given QuASM source.
+        :rtype: :class:`qecc.Location`
+        :returns: The location represented by the given QuASM source.
         """
         parts = source.split()
         return Location(parts[0], *map(int, parts[1:]))
@@ -240,7 +247,8 @@ class Location(object):
             
         :param dict relabel_dict: If `i` is a key of `relabel_dict`, then qubit
             `i` will be replaced by `relabel_dict[i]` in the returned location.
-        :returns qecc.Location: A new location with the qubits relabeled as 
+        :rtype: :class:`qecc.Location`
+        :returns: A new location with the qubits relabeled as 
             specified by `relabel_dict`.
         """
         return Location(self.kind, *tuple(relabel_dict[i] if i in relabel_dict else i for i in self.qubits))
@@ -387,6 +395,9 @@ class Circuit(list):
         
         :param float C: Width (in ems) of each column.
         :param float R: Height (in ems) of each column.
+        :rtype: :obj:`str`
+        :returns: A string containing :math:`\text{\LaTeX}` source code for use
+            with `Qcircuit`_.
         
         .. _Qcircuit: http://www.cquic.org/Qcircuit/
         """
@@ -555,43 +566,74 @@ class Circuit(list):
             
         :param dict relabel_dict: If `i` is a key of `relabel_dict`, then qubit
             `i` will be replaced by `relabel_dict[i]` in the returned circuit.
-        :returns qecc.Location: A new circuit with the qubits relabeled as 
+        :rtype: :class:`qecc.Circuit`
+        :returns: A new circuit with the qubits relabeled as 
             specified by `relabel_dict`.
         """
         return Circuit(*[
             loc.relabel_qubits(relabel_dict) for loc in self
         ])
 
-    ## FUNCTIONS ##
-def propagate_fault(circuitlist,fault,timestep):
+
+## FUNCTIONS ##
+
+def propagate_fault(circuitlist, fault, timestep):
     """
-    The purpose of this method is to take a Pauli and propagate it through 
-    part of a circuit which has been grouped by timestep, with waits. 
+    Given a list of circuits representing a list of timesteps (see
+    :meth:`qecc.Circuit.group_by_time`) and a Pauli fault,  propagates that
+    fault through the remainder of the time-sliced circuit.
+    
+    :param list circuitlist: A list of :class:`qecc.Circuit` instances
+        representing the timesteps of a larger circuit.
+    :param qecc.Pauli fault: A Pauli fault to occur immediately before timestep
+        ``timestep``.
+    :param int timestep: The timestep immediately following when the fault
+        to be propagated occured.
+        
+    :rtype: :class:`qecc.Pauli`
+    :returns: The effective fault after propagating ``fault`` through the
+        remainder of ``circuitlist``.
     """
-    fault_out=fault
+    fault_out = fault
     for step in circuitlist[timestep:]:
-        fault_out=step.as_clifford().conjugate_pauli(fault_out)
+        fault_out = step.as_clifford().conjugate_pauli(fault_out)
     return fault_out
 
-def possible_faults(loc):
+def possible_faults(circuit):
     """
     Takes a sub-circuit which has been padded with waits, and returns an
-    iterator onto Paulis which may occur as faults after this sub-circuit. 
+    iterator onto Paulis which may occur as faults after this sub-circuit.
+    
+    :param qecc.Circuit circuit: Subcircuit to in which faults are to be
+        considered.
+        
     """
-    faults=iter([])
-    for gate in loc:
-        faults=it.chain(faults,pc.restricted_pauli_group(gate.qubits,loc.nq))
-    return faults
+    return it.chain.from_iter(
+        pc.restricted_pauli_group(loc.qubits, circuit.nq)
+        for loc in circuit
+    )
+#    faults=iter([])
+#    for gate in loc:
+#        faults=it.chain(faults,pc.restricted_pauli_group(gate.qubits,loc.nq))
+#    return faults
 
 def possible_output_faults(circuitlist):
     """
-    Gives an iterator onto all possible outputs for possible faults occuring
-    within circuitlist, assuming it has been padded with waits.
+    Gives an iterator onto all possible effective faults due to 1-fault paths
+    occuring within ``circuitlist``, assuming it has been padded with waits.
+    
+    :param list circuitlist: A list of :class:`qecc.Circuit` instances
+        representing timesteps in a larger circuit. See
+        :meth:`qecc.Circuit.group_by_time`.
+    :yields: :class:`qecc.Pauli` instances representing possible effective
+        faults due to 1-fault paths within the circuit represented by
+        ``circuitlist``.
     """
-    outputs=iter([])
+    outputs = iter([])
     for timestep_idx in range(len(circuitlist)):
         outputs = it.chain(outputs,
                           it.imap(lambda fault: propagate_fault(circuitlist,
                           fault,timestep_idx+1),
                           possible_faults(circuitlist[timestep_idx]))) #CHECK +1
     return outputs
+

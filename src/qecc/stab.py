@@ -215,8 +215,9 @@ class StabilizerCode(object):
         ``self``, given the syndrome ``synd``, a bitstring indicating which 
         generators the implied error commutes with and anti-commutes with. 
 
-        :param synd: a string, list, or tuple with entries consisting only of
-        0 or 1. This parameter will be certified before use. 
+        :param synd: a string, list, tuple or other sequence type with entries
+            consisting only of 0 or 1. This parameter will be certified before
+            use.
         """
         
         # If the syndrome is an integer, change it to a bitstring by
