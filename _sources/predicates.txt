@@ -8,8 +8,8 @@
 Predicates and Filters
 ======================
 
-:class:`qecc.Predicate`
------------------------
+:class:`qecc.Predicate`: Class representing predicate functions
+---------------------------------------------------------------
 
 The :mod:`qecc` package provides a class :class:`Predicate` to represent a
 predicate function; that is, a function which returns a :obj:`bool`.
@@ -18,8 +18,8 @@ predicate function; that is, a function which returns a :obj:`bool`.
     :members:
     :undoc-members:
     
-Specific Predicate Functions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Specific Predicates
+~~~~~~~~~~~~~~~~~~~
     
 Several useful predefined predicates are provided by :mod:`qecc`.
 
@@ -50,4 +50,6 @@ Predicate functions can be used to quickly generate collections of
 ...     )
 [i^0 YY, i^0 ZZ]
 
-
+Since searching in this way requires examining every element of a given
+iterator, it can be significantly faster to instead use constraint solvers such
+as those documented in :doc:`solvers`.

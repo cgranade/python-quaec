@@ -10,8 +10,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to QuaEC's documentation!
-=================================
+QuaEC: Quantum Error Correction Analysis in Python
+==================================================
 
 Contents
 --------
@@ -24,6 +24,7 @@ Contents
    bsf
    stab
    circuits
+   solvers
    predicates
    utils
    bibliography
@@ -35,6 +36,48 @@ QuaEC is a library for working with quantum error correction and
 fault-tolerance. In particular, QuaEC provides support for maniuplating Pauli
 and Clifford operators, as well as binary symplectic representations of each.
 
+QuaEC is intended to provide easy, automated analysis of error-correcting protocols
+based on stabilizer codes. for example, one can define a stabilizer code from a 
+pre-existing library, and produce an object representing a circuit to encode data
+into that code: 
+
+>>> import qecc as q
+>>> perfect_code=q.StabilizerCode.perfect_5q_code()
+>>> print perfect_code.encoding_cliffords().next().circuit_decomposition()
+    CNOT    1 0
+    CNOT    3 0
+    CNOT    4 0
+    CNOT    2 1
+    CNOT    3 2
+    CNOT    4 2
+    CNOT    4 3
+    H       0
+    H       1
+    H       2
+    H       3
+    H       4
+    CZ      0 1
+    CZ      0 2
+    CZ      1 2
+    CZ      0 3
+    CZ      1 4
+    CZ      3 4
+    H       0
+    H       1
+    H       2
+    H       3
+    H       4
+    H       4
+    SWAP    3 4
+    H       4
+    CNOT    0 4
+    CNOT    0 3
+    CNOT    0 2
+    CNOT    0 1
+    X       1
+    X       2
+    Z       3
+    Y       4
 
 Getting Started with QuaEC
 ==========================
@@ -49,8 +92,8 @@ as a ZIP there. Stable releases can be found on the
 `downloads page`_, including installation packages for Windows and common Linux
 distributions.
 
-In the future, QuaEC will be made available via `PyPI`_ as well. At that point,
-QuaEC will be obtainable using ``easy_install``.
+QuaEC is available via `PyPI`_ as well. To obtain it, run ``easy_install QuaEC``
+at the terminal or in the Windows command line.
 
 .. _downloads page: https://github.com/cgranade/python-quaec/downloads
 .. _PyPI: http://pypi.python.org/pypi
@@ -81,12 +124,6 @@ Once QuaEC has been installed, it is made available as the :mod:`qecc` package:
 >>> import qecc as q
 >>> print q.Pauli('XYZ', phase=2)
 i^2 XYZ
-
-Next Steps
-----------
-
-Until we have a proper introduction written, a good start would be to look at
-the :class:`qecc.Pauli` class.
 
 Indices and tables
 ==================

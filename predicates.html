@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="QuaEC v0.1alpha1 documentation" href="index.html" />
     <link rel="next" title="Misc. Utility Functions and Classes" href="utils.html" />
-    <link rel="prev" title="Circuit Manipulation and Simulation" href="circuits.html" /> 
+    <link rel="prev" title="Constraint Solvers" href="solvers.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,7 +37,7 @@
           <a href="utils.html" title="Misc. Utility Functions and Classes"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="circuits.html" title="Circuit Manipulation and Simulation"
+          <a href="solvers.html" title="Constraint Solvers"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">QuaEC v0.1alpha1 documentation</a> &raquo;</li> 
       </ul>
@@ -50,8 +50,8 @@
             
   <div class="section" id="predicates-and-filters">
 <h1>Predicates and Filters<a class="headerlink" href="#predicates-and-filters" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="qecc-predicate">
-<h2><a class="reference internal" href="#qecc.Predicate" title="qecc.Predicate"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Predicate</span></tt></a><a class="headerlink" href="#qecc-predicate" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qecc-predicate-class-representing-predicate-functions">
+<h2><a class="reference internal" href="#qecc.Predicate" title="qecc.Predicate"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Predicate</span></tt></a>: Class representing predicate functions<a class="headerlink" href="#qecc-predicate-class-representing-predicate-functions" title="Permalink to this headline">¶</a></h2>
 <p>The <tt class="xref py py-mod docutils literal"><span class="pre">qecc</span></tt> package provides a class <tt class="xref py py-class docutils literal"><span class="pre">Predicate</span></tt> to represent a
 predicate function; that is, a function which returns a <a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">bool</span></tt></a>.</p>
 <dl class="class">
@@ -94,8 +94,8 @@ another predicate using a given function to combine the results.</p>
 
 </dd></dl>
 
-<div class="section" id="specific-predicate-functions">
-<h3>Specific Predicate Functions<a class="headerlink" href="#specific-predicate-functions" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="specific-predicates">
+<h3>Specific Predicates<a class="headerlink" href="#specific-predicates" title="Permalink to this headline">¶</a></h3>
 <p>Several useful predefined predicates are provided by <tt class="xref py py-mod docutils literal"><span class="pre">qecc</span></tt>.</p>
 <dl class="class">
 <dt id="qecc.SetMembershipPredicate">
@@ -150,6 +150,9 @@ a given list of generators.</p>
 <span class="go">[i^0 YY, i^0 ZZ]</span>
 </pre></div>
 </div>
+<p>Since searching in this way requires examining every element of a given
+iterator, it can be significantly faster to instead use constraint solvers such
+as those documented in <a class="reference internal" href="solvers.html"><em>Constraint Solvers</em></a>.</p>
 </div>
 </div>
 </div>
@@ -163,8 +166,8 @@ a given list of generators.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Predicates and Filters</a><ul>
-<li><a class="reference internal" href="#qecc-predicate"><tt class="docutils literal"><span class="pre">qecc.Predicate</span></tt></a><ul>
-<li><a class="reference internal" href="#specific-predicate-functions">Specific Predicate Functions</a></li>
+<li><a class="reference internal" href="#qecc-predicate-class-representing-predicate-functions"><tt class="docutils literal"><span class="pre">qecc.Predicate</span></tt>: Class representing predicate functions</a><ul>
+<li><a class="reference internal" href="#specific-predicates">Specific Predicates</a></li>
 <li><a class="reference internal" href="#usage-examples">Usage Examples</a></li>
 </ul>
 </li>
@@ -173,8 +176,8 @@ a given list of generators.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="circuits.html"
-                        title="previous chapter">Circuit Manipulation and Simulation</a></p>
+  <p class="topless"><a href="solvers.html"
+                        title="previous chapter">Constraint Solvers</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="utils.html"
                         title="next chapter">Misc. Utility Functions and Classes</a></p>
@@ -210,7 +213,7 @@ a given list of generators.</p>
           <a href="utils.html" title="Misc. Utility Functions and Classes"
              >next</a> |</li>
         <li class="right" >
-          <a href="circuits.html" title="Circuit Manipulation and Simulation"
+          <a href="solvers.html" title="Constraint Solvers"
              >previous</a> |</li>
         <li><a href="index.html">QuaEC v0.1alpha1 documentation</a> &raquo;</li> 
       </ul>

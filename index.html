@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to QuaEC’s documentation! &mdash; QuaEC v0.1alpha1 documentation</title>
+    <title>QuaEC: Quantum Error Correction Analysis in Python &mdash; QuaEC v0.1alpha1 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -44,15 +44,15 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="welcome-to-quaec-s-documentation">
-<h1>Welcome to QuaEC&#8217;s documentation!<a class="headerlink" href="#welcome-to-quaec-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="quaec-quantum-error-correction-analysis-in-python">
+<h1>QuaEC: Quantum Error Correction Analysis in Python<a class="headerlink" href="#quaec-quantum-error-correction-analysis-in-python" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="groups.html">Pauli and Clifford Groups</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="groups.html#qecc-pauli-class-representing-pauli-group-elements"><tt class="docutils literal"><span class="pre">qecc.Pauli</span></tt> - Class representing Pauli group elements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="groups.html#qecc-clifford-class-representing-clifford-group-elements"><tt class="docutils literal"><span class="pre">qecc.Clifford</span></tt> - Class representing Clifford group elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="groups.html#qecc-pauli-class-representing-pauli-group-elements"><tt class="docutils literal"><span class="pre">qecc.Pauli</span></tt>: Class representing Pauli group elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="groups.html#qecc-clifford-class-representing-clifford-group-elements"><tt class="docutils literal"><span class="pre">qecc.Clifford</span></tt>: Class representing Clifford group elements</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="paulicollections.html">Collections of Pauli Operators</a><ul>
@@ -61,20 +61,26 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="bsf.html">Binary Symplectic Form</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="bsf.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bsf.html#qecc-binarysymplecticvector-binary-symplectic-representation-of-pauli-group-elements"><tt class="docutils literal"><span class="pre">qecc.BinarySymplecticVector</span></tt>: Binary symplectic representation of Pauli group elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bsf.html#qecc-binarysymplecticmatrix-binary-symplectic-representation-of-clifford-group-elements"><tt class="docutils literal"><span class="pre">qecc.BinarySymplecticMatrix</span></tt> - Binary symplectic representation of Clifford group elements</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="stab.html">Stabilizer Codes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="stab.html#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stab.html#class-reference">Class Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stab.html#qecc-stabilizercode"><tt class="docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="circuits.html">Circuit Manipulation and Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="circuits.html#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="circuits.html#class-reference">Class Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="circuits.html#qecc-location-class-representing-locations-in-a-circuit"><tt class="docutils literal"><span class="pre">qecc.Location</span></tt>: Class representing locations in a circuit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="circuits.html#qecc-circuit-class-modeling-arrangements-of-locations"><tt class="docutils literal"><span class="pre">qecc.Circuit</span></tt>: Class modeling arrangements of locations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="solvers.html">Constraint Solvers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html#commutation-constraints">Commutation Constraints</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="predicates.html">Predicates and Filters</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="predicates.html#qecc-predicate"><tt class="docutils literal"><span class="pre">qecc.Predicate</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="predicates.html#qecc-predicate-class-representing-predicate-functions"><tt class="docutils literal"><span class="pre">qecc.Predicate</span></tt>: Class representing predicate functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Misc. Utility Functions and Classes</a><ul>
@@ -91,6 +97,49 @@
 <p>QuaEC is a library for working with quantum error correction and
 fault-tolerance. In particular, QuaEC provides support for maniuplating Pauli
 and Clifford operators, as well as binary symplectic representations of each.</p>
+<p>QuaEC is intended to provide easy, automated analysis of error-correcting protocols
+based on stabilizer codes. for example, one can define a stabilizer code from a
+pre-existing library, and produce an object representing a circuit to encode data
+into that code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">perfect_code</span><span class="o">=</span><span class="n">q</span><span class="o">.</span><span class="n">StabilizerCode</span><span class="o">.</span><span class="n">perfect_5q_code</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">perfect_code</span><span class="o">.</span><span class="n">encoding_cliffords</span><span class="p">()</span><span class="o">.</span><span class="n">next</span><span class="p">()</span><span class="o">.</span><span class="n">circuit_decomposition</span><span class="p">()</span>
+<span class="go">    CNOT    1 0</span>
+<span class="go">    CNOT    3 0</span>
+<span class="go">    CNOT    4 0</span>
+<span class="go">    CNOT    2 1</span>
+<span class="go">    CNOT    3 2</span>
+<span class="go">    CNOT    4 2</span>
+<span class="go">    CNOT    4 3</span>
+<span class="go">    H       0</span>
+<span class="go">    H       1</span>
+<span class="go">    H       2</span>
+<span class="go">    H       3</span>
+<span class="go">    H       4</span>
+<span class="go">    CZ      0 1</span>
+<span class="go">    CZ      0 2</span>
+<span class="go">    CZ      1 2</span>
+<span class="go">    CZ      0 3</span>
+<span class="go">    CZ      1 4</span>
+<span class="go">    CZ      3 4</span>
+<span class="go">    H       0</span>
+<span class="go">    H       1</span>
+<span class="go">    H       2</span>
+<span class="go">    H       3</span>
+<span class="go">    H       4</span>
+<span class="go">    H       4</span>
+<span class="go">    SWAP    3 4</span>
+<span class="go">    H       4</span>
+<span class="go">    CNOT    0 4</span>
+<span class="go">    CNOT    0 3</span>
+<span class="go">    CNOT    0 2</span>
+<span class="go">    CNOT    0 1</span>
+<span class="go">    X       1</span>
+<span class="go">    X       2</span>
+<span class="go">    Z       3</span>
+<span class="go">    Y       4</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="getting-started-with-quaec">
 <h1>Getting Started with QuaEC<a class="headerlink" href="#getting-started-with-quaec" title="Permalink to this headline">¶</a></h1>
@@ -102,8 +151,8 @@ The latest unstable version of QuaEC is available for
 as a ZIP there. Stable releases can be found on the
 <a class="reference external" href="https://github.com/cgranade/python-quaec/downloads">downloads page</a>, including installation packages for Windows and common Linux
 distributions.</p>
-<p>In the future, QuaEC will be made available via <a class="reference external" href="http://pypi.python.org/pypi">PyPI</a> as well. At that point,
-QuaEC will be obtainable using <tt class="docutils literal"><span class="pre">easy_install</span></tt>.</p>
+<p>QuaEC is available via <a class="reference external" href="http://pypi.python.org/pypi">PyPI</a> as well. To obtain it, run <tt class="docutils literal"><span class="pre">easy_install</span> <span class="pre">QuaEC</span></tt>
+at the terminal or in the Windows command line.</p>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
@@ -128,11 +177,6 @@ attempts to install QuaEC into the system-wide packages directory.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="next-steps">
-<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
-<p>Until we have a proper introduction written, a good start would be to look at
-the <a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> class.</p>
-</div>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
@@ -151,7 +195,7 @@ the <a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Paul
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to QuaEC&#8217;s documentation!</a><ul>
+<li><a class="reference internal" href="#">QuaEC: Quantum Error Correction Analysis in Python</a><ul>
 <li><a class="reference internal" href="#contents">Contents</a><ul>
 </ul>
 </li>
@@ -161,7 +205,6 @@ the <a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Paul
 <li><a class="reference internal" href="#getting-started-with-quaec">Getting Started with QuaEC</a><ul>
 <li><a class="reference internal" href="#obtaining-quaec">Obtaining QuaEC</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>

@@ -12,8 +12,8 @@
 Pauli and Clifford Groups
 =========================
 
-:class:`qecc.Pauli` - Class representing Pauli group elements
--------------------------------------------------------------
+:class:`qecc.Pauli`: Class representing Pauli group elements
+------------------------------------------------------------
 
 The class :class:`qecc.Pauli` is used to represent elements of the Pauli group
 :math:`\mathcal{P}_n` on :math:`n` qubits. Instances can be constructed by
@@ -112,11 +112,9 @@ efficiently built using the predicates described in :doc:`predicates`.
 
 .. autofunction:: qecc.mutually_commuting_sets
 
-.. autofunction:: qecc.solve_commutation_constraints
 
-
-:class:`qecc.Clifford` - Class representing Clifford group elements
--------------------------------------------------------------------
+:class:`qecc.Clifford`: Class representing Clifford group elements
+------------------------------------------------------------------
 
 Elements of the automorphism group of the Pauli group (known as the Clifford
 group) are represented by the class :class:`qecc.Clifford`. Instances of
@@ -131,6 +129,16 @@ XI |->  +XX
 IX |->  +IX
 ZI |->  +ZI
 IZ |->  +ZZ
+
+Also, the results of an element of the Clifford group can be left partially
+unspecified, using the :class:`qecc.Singleton` `Unspecified`:
+
+>>> import qecc as q
+>>> print q.Clifford(['IZ','XZ'],['XI',q.Unspecified])
+XI |->  +IZ
+IX |->  +XZ
+ZI |->  +XI
+IZ |-> Unspecified
 
 Once an instance of :class:`qecc.Clifford` has been constructed in this way,
 its action on elements of the Pauli group can be calculated by calling the

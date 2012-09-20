@@ -50,8 +50,10 @@
             
   <div class="section" id="stabilizer-codes">
 <h1>Stabilizer Codes<a class="headerlink" href="#stabilizer-codes" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="qecc-stabilizercode">
+<h2><a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a><a class="headerlink" href="#qecc-stabilizercode" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<h3>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h3>
 <p>QuaEC includes a class, <a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a>, that represents
 error-correcting codes specified using the stabilizer formalism <a class="reference internal" href="bibliography.html#got97">[Got97]</a>. To construct
 a stabilizer code in QuaEC, the generators of a stabilizer group must be
@@ -124,9 +126,7 @@ manner using <a class="reference internal" href="#qecc.StabilizerCode" title="qe
 </div>
 </div>
 <div class="section" id="class-reference">
-<h2>Class Reference<a class="headerlink" href="#class-reference" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="qecc-stabilizercode">
-<h3><a class="reference internal" href="#qecc.StabilizerCode" title="qecc.StabilizerCode"><tt class="xref py py-class docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a><a class="headerlink" href="#qecc-stabilizercode" title="Permalink to this headline">¶</a></h3>
+<h3>Class Reference<a class="headerlink" href="#class-reference" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="qecc.StabilizerCode">
 <em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">StabilizerCode</tt><big>(</big><em>group_generators</em>, <em>logical_xs</em>, <em>logical_zs</em>, <em>label=None</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode" title="Permalink to this definition">¶</a></dt>
@@ -278,11 +278,12 @@ generators the implied error commutes with and anti-commutes with.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>synd</strong> &#8211; a string, list, or tuple with entries consisting only of</td>
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>synd</strong> &#8211; a string, list, tuple or other sequence type with entries
+consisting only of 0 or 1. This parameter will be certified before
+use.</td>
 </tr>
 </tbody>
 </table>
-<p>0 or 1. This parameter will be certified before use.</p>
 </dd></dl>
 
 <dl class="method">
@@ -442,7 +443,9 @@ return states specified by <tt class="docutils literal"><span class="pre">other<
 <dl class="method">
 <dt id="qecc.StabilizerCode.min_len_transcoding_clifford">
 <tt class="descname">min_len_transcoding_clifford</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#qecc.StabilizerCode.min_len_transcoding_clifford" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Searches the iterator provided by <cite>transcoding_cliffords</cite> for the shortest
+circuit decomposition.</p>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="qecc.StabilizerCode.ancilla_register">
@@ -619,9 +622,9 @@ can be corrected by this code.</td>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Stabilizer Codes</a><ul>
+<li><a class="reference internal" href="#qecc-stabilizercode"><tt class="docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
-<li><a class="reference internal" href="#class-reference">Class Reference</a><ul>
-<li><a class="reference internal" href="#qecc-stabilizercode"><tt class="docutils literal"><span class="pre">qecc.StabilizerCode</span></tt></a></li>
+<li><a class="reference internal" href="#class-reference">Class Reference</a></li>
 </ul>
 </li>
 </ul>

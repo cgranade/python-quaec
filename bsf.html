@@ -56,10 +56,33 @@
 binary symplectic form, including support for algorithms acting on these representations.
 Note that all classes and functions documented here depend on the <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/index.html#numpy" title="(in NumPy v1.8.dev-d8988ab)"><tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt></a> package. For
 more information on the binary symplectic representation, read <a class="reference internal" href="bibliography.html#crss96">[CRSS96]</a>, Section 2.</p>
+</div>
 <div class="section" id="qecc-binarysymplecticvector-binary-symplectic-representation-of-pauli-group-elements">
-<h3><a class="reference internal" href="#qecc.BinarySymplecticVector" title="qecc.BinarySymplecticVector"><tt class="xref py py-class docutils literal"><span class="pre">qecc.BinarySymplecticVector</span></tt></a> - Binary symplectic representation of Pauli group elements<a class="headerlink" href="#qecc-binarysymplecticvector-binary-symplectic-representation-of-pauli-group-elements" title="Permalink to this headline">¶</a></h3>
+<h2><a class="reference internal" href="#qecc.BinarySymplecticVector" title="qecc.BinarySymplecticVector"><tt class="xref py py-class docutils literal"><span class="pre">qecc.BinarySymplecticVector</span></tt></a>: Binary symplectic representation of Pauli group elements<a class="headerlink" href="#qecc-binarysymplecticvector-binary-symplectic-representation-of-pauli-group-elements" title="Permalink to this headline">¶</a></h2>
+<p>The class <a class="reference internal" href="#qecc.BinarySymplecticVector" title="qecc.BinarySymplecticVector"><tt class="xref py py-class docutils literal"><span class="pre">qecc.BinarySymplecticVector</span></tt></a> provides a means of representing elements of the
+Pauli group (neglecting global phases) using binary vectors <img class="math" src="_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> and <img class="math" src="_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> such that an
+element <img class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> of the Pauli group acting on <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> qubits is <img class="math" src="_images/math/c2cea65b9f1e9ee6062ad28200a078269e55edcd.png" alt="X^{a}Z^{b} = X^{a_1}Z^{b_1}
+\otimes \ldots \otimes X^{a_n}Z^{b_n}"/>. Binary symplectic vectors can be obtained from a single binary
+list, two binary lists, or converted from another Pauli instance (removing the phase):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">];</span> <span class="n">b</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">BinarySymplecticVector</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span><span class="o">==</span><span class="n">q</span><span class="o">.</span><span class="n">BinarySymplecticVector</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">];</span> <span class="n">b</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">BinarySymplecticVector</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+<span class="go">( 1 0 1 | 0 1 1 )</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;XYIYIIZ&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">as_bsv</span><span class="p">()</span>
+<span class="go">( 1 1 0 1 0 0 0 | 0 1 0 1 0 0 1 )</span>
+</pre></div>
+</div>
 <div class="section" id="class-reference">
-<h4>Class Reference<a class="headerlink" href="#class-reference" title="Permalink to this headline">¶</a></h4>
+<h3>Class Reference<a class="headerlink" href="#class-reference" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="qecc.BinarySymplecticVector">
 <em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">BinarySymplecticVector</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticVector" title="Permalink to this definition">¶</a></dt>
@@ -159,7 +182,7 @@ vector with another vector. Letting <img class="math" src="_images/math/4a66e037
 
 </div>
 <div class="section" id="utility-functions">
-<h4>Utility Functions<a class="headerlink" href="#utility-functions" title="Permalink to this headline">¶</a></h4>
+<h3>Utility Functions<a class="headerlink" href="#utility-functions" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="qecc.all_pauli_bsvs">
 <tt class="descclassname">qecc.</tt><tt class="descname">all_pauli_bsvs</tt><big>(</big><em>nq</em><big>)</big><a class="headerlink" href="#qecc.all_pauli_bsvs" title="Permalink to this definition">¶</a></dt>
@@ -233,9 +256,9 @@ product.</p>
 </div>
 </div>
 <div class="section" id="qecc-binarysymplecticmatrix-binary-symplectic-representation-of-clifford-group-elements">
-<h3><a class="reference internal" href="#qecc.BinarySymplecticMatrix" title="qecc.BinarySymplecticMatrix"><tt class="xref py py-class docutils literal"><span class="pre">qecc.BinarySymplecticMatrix</span></tt></a> - Binary symplectic representation of Clifford group elements<a class="headerlink" href="#qecc-binarysymplecticmatrix-binary-symplectic-representation-of-clifford-group-elements" title="Permalink to this headline">¶</a></h3>
+<h2><a class="reference internal" href="#qecc.BinarySymplecticMatrix" title="qecc.BinarySymplecticMatrix"><tt class="xref py py-class docutils literal"><span class="pre">qecc.BinarySymplecticMatrix</span></tt></a> - Binary symplectic representation of Clifford group elements<a class="headerlink" href="#qecc-binarysymplecticmatrix-binary-symplectic-representation-of-clifford-group-elements" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id2">
-<h4>Class Reference<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<h3>Class Reference<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="qecc.BinarySymplecticMatrix">
 <em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">BinarySymplecticMatrix</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix" title="Permalink to this definition">¶</a></dt>
@@ -461,7 +484,9 @@ as an instance of <a class="reference internal" href="groups.html#qecc.Clifford"
 <dl class="method">
 <dt id="qecc.BinarySymplecticMatrix.is_valid">
 <tt class="descname">is_valid</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.is_valid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Checks the satisfaction of the symplectic condition on a 
+<a class="reference internal" href="#qecc.BinarySymplecticMatrix" title="qecc.BinarySymplecticMatrix"><tt class="xref py py-class docutils literal"><span class="pre">qecc.BinarySymplecticMatrix</span></tt></a> object.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="qecc.BinarySymplecticMatrix.copy">
@@ -480,7 +505,7 @@ location in memory.</p>
 
 </div>
 <div class="section" id="id4">
-<h4>Utility Functions<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<h3>Utility Functions<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="qecc.is_bsm_valid">
 <tt class="descclassname">qecc.</tt><tt class="descname">is_bsm_valid</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#qecc.is_bsm_valid" title="Permalink to this definition">¶</a></dt>
@@ -515,7 +540,6 @@ to <a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli
 </div>
 </div>
 </div>
-</div>
 
 
           </div>
@@ -526,8 +550,8 @@ to <a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Binary Symplectic Form</a><ul>
-<li><a class="reference internal" href="#introduction">Introduction</a><ul>
-<li><a class="reference internal" href="#qecc-binarysymplecticvector-binary-symplectic-representation-of-pauli-group-elements"><tt class="docutils literal"><span class="pre">qecc.BinarySymplecticVector</span></tt> - Binary symplectic representation of Pauli group elements</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#qecc-binarysymplecticvector-binary-symplectic-representation-of-pauli-group-elements"><tt class="docutils literal"><span class="pre">qecc.BinarySymplecticVector</span></tt>: Binary symplectic representation of Pauli group elements</a><ul>
 <li><a class="reference internal" href="#class-reference">Class Reference</a></li>
 <li><a class="reference internal" href="#utility-functions">Utility Functions</a></li>
 </ul>
@@ -535,8 +559,6 @@ to <a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli
 <li><a class="reference internal" href="#qecc-binarysymplecticmatrix-binary-symplectic-representation-of-clifford-group-elements"><tt class="docutils literal"><span class="pre">qecc.BinarySymplecticMatrix</span></tt> - Binary symplectic representation of Clifford group elements</a><ul>
 <li><a class="reference internal" href="#id2">Class Reference</a></li>
 <li><a class="reference internal" href="#id4">Utility Functions</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
