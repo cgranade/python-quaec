@@ -623,6 +623,10 @@ class BinarySymplecticMatrix(object):
         return Clifford(map(array_to_pauli,self.xc.T),map(array_to_pauli,self.zc.T))
 
     def is_valid(self):
+        """
+        Checks the satisfaction of the symplectic condition on a 
+        :class:`qecc.BinarySymplecticMatrix` object.
+        """
         return is_bsm_valid(self)
         
     def copy(self):
@@ -651,6 +655,10 @@ class BinarySymplecticMatrix(object):
 ## BSM FUNCTIONS ##
 
 def is_bsm_valid(input_bsm):
+    """
+    Checks the satisfaction of the symplectic condition on a 
+    :class:`qecc.BinarySymplecticMatrix` object.
+    """
     xrows = map(BinarySymplecticVector,input_bsm.xc.T)
     zrows = map(BinarySymplecticVector,input_bsm.zc.T)
     for idx_j in range(len(xrows)):

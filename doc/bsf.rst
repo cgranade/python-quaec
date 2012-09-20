@@ -18,7 +18,7 @@ Note that all classes and functions documented here depend on the :mod:`numpy` p
 more information on the binary symplectic representation, read [CRSS96]_, Section 2.
 
 :class:`qecc.BinarySymplecticVector` - Binary symplectic representation of Pauli group elements
------------------------------------------------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The class :class:`qecc.BinarySymplecticVector` provides a means of representing elements of the
 Pauli group (neglecting global phases) using binary vectors :math:`a` and :math:`b` such that an
@@ -42,7 +42,7 @@ True
 
 
 Class Reference
-~~~~~~~~~~~~~~~
+---------------
 
 .. autoclass:: qecc.BinarySymplecticVector
     :members:
@@ -52,7 +52,7 @@ Class Reference
     Need to fill out more documentation and examples here.
 
 Utility Functions
-~~~~~~~~~~~~~~~~~
+-----------------
 
 .. autofunction:: qecc.all_pauli_bsvs
 
@@ -63,10 +63,10 @@ Utility Functions
 .. autofunction:: qecc.xz_switch
 
 :class:`qecc.BinarySymplecticMatrix` - Binary symplectic representation of Clifford group elements
---------------------------------------------------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Class Reference
-~~~~~~~~~~~~~~~
+---------------
 
 .. autoclass:: qecc.BinarySymplecticMatrix
     :members:

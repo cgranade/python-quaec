@@ -66,11 +66,11 @@ class Location(object):
     """
 
     ## CLASS CONSTANTS ##
-    CLIFFORD_GATE_KINDS = [
+    _CLIFFORD_GATE_KINDS = [
         'I', 'X', 'Y', 'Z', 'H', 'R_pi4', 'CNOT', 'CZ', 'SWAP'
     ]
     
-    CLIFFORD_GATE_FUNCS = {
+    _CLIFFORD_GATE_FUNCS = {
         'I': lambda nq, idx: cc.eye_c(nq),
         'X': lambda nq, idx: pc.elem_gen(nq, idx, 'X').as_clifford(),
         'Y': lambda nq, idx: pc.elem_gen(nq, idx, 'Y').as_clifford(),
@@ -81,12 +81,13 @@ class Location(object):
         'CZ': cc.cz,
         'SWAP': cc.swap
     }
-    
+
+    #: Identifiers for the gateset employed by QuaEC.
     KIND_NAMES = sum([
-        CLIFFORD_GATE_KINDS
+        _CLIFFORD_GATE_KINDS
     ], [])
     
-    QCVIEWER_NAMES = {
+    _QCVIEWER_NAMES = {
         'I': 'I',           # This one is implemented by a gate definition
                             # included by Circuit.as_qcviewer().
         'X': 'X', 'Y': 'Y', 'Z': 'Z',
@@ -109,7 +110,7 @@ class Location(object):
             raise TypeError('Qubit indices must be integers.')
         
         self._qubits = tuple(qubits)
-        self._is_clifford = bool(self.kind in self.CLIFFORD_GATE_KINDS)
+        self._is_clifford = bool(self.kind in self._CLIFFORD_GATE_KINDS)
         
     def __str__(self):
         return "    {:<4}    {}".format(self.kind, ' '.join(map(str, self.qubits)))
@@ -183,7 +184,7 @@ class Location(object):
         :param int nq: Specifies how many qubits to represent this location as
             acting upon. If not specified, defaults to the value of the ``nq``
             property.
-        :rtype: qecc.Clifford
+        :rtype: :class:`qecc.Clifford`
         """
         if not self.is_clifford:
             raise RuntimeError("Location must be a Clifford gate.")
@@ -193,7 +194,7 @@ class Location(object):
             elif nq < self.nq:
                 raise ValueError('nq must be greater than or equal to the nq property.')
                 
-            return self.CLIFFORD_GATE_FUNCS[self.kind](nq, *self.qubits)
+            return self._CLIFFORD_GATE_FUNCS[self.kind](nq, *self.qubits)
                        
     ## EXPORT METHODS ##
         
@@ -218,7 +219,7 @@ class Location(object):
         """
         # FIXME: link to QCViewer in the docstring here.
         return '    {gatename}    {gatespec}\n'.format(
-            gatename=self.QCVIEWER_NAMES[self.kind],
+            gatename=self._QCVIEWER_NAMES[self.kind],
             gatespec=qubits_str(self.qubits, qubit_names),
             )
         

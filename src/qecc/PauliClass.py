@@ -213,6 +213,10 @@ class Pauli(object):
     ## PRINTING ##
             
     def str_sparse(self, incl_ph=True):
+        """
+        Returns a compact representation for :class:`qecc.Pauli` objects, for
+        those having support on a small number of qubits of a large register.
+        """
         return ("i^{} ".format(self.ph) if incl_ph else "") + (" ".join(
             "{}[{}]".format(P, idx) for idx, P in enumerate(self.op) if P != "I"
         ) if self.wt > 0 else "I")
@@ -249,6 +253,10 @@ class Pauli(object):
     ## MUTATOR METHODS ##
         
     def set_phase(self, ph=0):
+        """
+        Returns a :class:`qecc.Pauli` object having the same operator as
+        the input, with a specified phase (usually used to erase phases).
+        """
         self.ph = ph
         return self
         
@@ -321,19 +329,27 @@ class Pauli(object):
 
         :rtype: bool
         """
-        if self.op==other.op and self.ph==other.ph:
-            return True
+        #First, make sure both objects are Paulis:
+        if isinstance(other, Pauli):
+            if self.op == other.op and self.ph == other.ph:
+                return True
+            else:
+                return False
         else:
             return False
 
-    def __ne__(self,other):
+    def __ne__(self, other):
         """
         Tests if two input Paulis, :obj:`self` and :obj:`other`, are not equal.
 
         :rtype: bool
         """
-        if self.op==other.op and self.ph==other.ph:
-            return False
+        #Check types
+        if isinstance(other, Pauli):
+            if self.op == other.op and self.ph == other.ph:
+                return False
+            else:
+                return True
         else:
             return True
             
