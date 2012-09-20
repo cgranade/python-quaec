@@ -24,6 +24,7 @@ Contents
    bsf
    stab
    circuits
+   solvers
    predicates
    utils
    bibliography
@@ -91,8 +92,8 @@ as a ZIP there. Stable releases can be found on the
 `downloads page`_, including installation packages for Windows and common Linux
 distributions.
 
-QuaEC is available via `PyPI`_ as well. To obtain it, type ``easy_install QuaEC``
-into the terminal.
+QuaEC is available via `PyPI`_ as well. To obtain it, run ``easy_install QuaEC``
+at the terminal or in the Windows command line.
 
 .. _downloads page: https://github.com/cgranade/python-quaec/downloads
 .. _PyPI: http://pypi.python.org/pypi
@@ -123,12 +124,6 @@ Once QuaEC has been installed, it is made available as the :mod:`qecc` package:
 >>> import qecc as q
 >>> print q.Pauli('XYZ', phase=2)
 i^2 XYZ
-
-Next Steps
-----------
-
-Until we have a proper introduction written, a good start would be to look at
-the :class:`qecc.Pauli` class.
 
 Indices and tables
 ==================

@@ -162,3 +162,12 @@ Class Reference
     :members:
     :undoc-members:
     
+    
+Functions Acting on :class:`qecc.Circuit`
+-----------------------------------------
+
+.. autofunction:: qecc.propagate_fault
+
+.. autofunction:: qecc.possible_faults
+
+.. autofunction:: qecc.possible_output_faults

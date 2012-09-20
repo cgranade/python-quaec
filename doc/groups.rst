@@ -112,8 +112,6 @@ efficiently built using the predicates described in :doc:`predicates`.
 
 .. autofunction:: qecc.mutually_commuting_sets
 
-.. autofunction:: qecc.solve_commutation_constraints
-
 
 :class:`qecc.Clifford` - Class representing Clifford group elements
 -------------------------------------------------------------------
