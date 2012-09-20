@@ -12,8 +12,8 @@
 Pauli and Clifford Groups
 =========================
 
-:class:`qecc.Pauli` - Class representing Pauli group elements
--------------------------------------------------------------
+:class:`qecc.Pauli`: Class representing Pauli group elements
+------------------------------------------------------------
 
 The class :class:`qecc.Pauli` is used to represent elements of the Pauli group
 :math:`\mathcal{P}_n` on :math:`n` qubits. Instances can be constructed by
@@ -113,8 +113,8 @@ efficiently built using the predicates described in :doc:`predicates`.
 .. autofunction:: qecc.mutually_commuting_sets
 
 
-:class:`qecc.Clifford` - Class representing Clifford group elements
--------------------------------------------------------------------
+:class:`qecc.Clifford`: Class representing Clifford group elements
+------------------------------------------------------------------
 
 Elements of the automorphism group of the Pauli group (known as the Clifford
 group) are represented by the class :class:`qecc.Clifford`. Instances of

@@ -142,8 +142,8 @@ END
 
 .. _QCViewer: http://qcirc.iqc.uwaterloo.ca/index.php?n=Projects.QCViewer
 
-:class:`qecc.Location` - Class representing locations in a circuit
-==================================================================
+:class:`qecc.Location`: Class representing locations in a circuit
+=================================================================
 
 Class Reference
 ---------------
@@ -152,8 +152,8 @@ Class Reference
     :members:
     :undoc-members:
     
-:class:`qecc.Circuit` - Class modeling arrangements of locations
-================================================================
+:class:`qecc.Circuit`: Class modeling arrangements of locations
+===============================================================
 
 Class Reference
 ---------------

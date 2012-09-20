@@ -10,15 +10,15 @@ Binary Symplectic Form
 ======================
 
 Introduction
-~~~~~~~~~~~~
+------------
 
 The :mod:`qecc` package provides support for elements of the Pauli and Clifford groups in 
 binary symplectic form, including support for algorithms acting on these representations.
 Note that all classes and functions documented here depend on the :mod:`numpy` package. For
 more information on the binary symplectic representation, read [CRSS96]_, Section 2.
 
-:class:`qecc.BinarySymplecticVector` - Binary symplectic representation of Pauli group elements
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+:class:`qecc.BinarySymplecticVector`: Binary symplectic representation of Pauli group elements
+-----------------------------------------------------------------------------------------------
 
 The class :class:`qecc.BinarySymplecticVector` provides a means of representing elements of the
 Pauli group (neglecting global phases) using binary vectors :math:`a` and :math:`b` such that an
@@ -40,13 +40,6 @@ True
 >>> q.Pauli('XYIYIIZ',2).as_bsv()
 ( 1 1 0 1 0 0 0 | 0 1 0 1 0 0 1 )
 
-
-Class Reference
----------------
-
-.. todo::
-    Write an introduction here.
-
 Class Reference
 ~~~~~~~~~~~~~~~
 
@@ -55,7 +48,7 @@ Class Reference
     :undoc-members:
 
 Utility Functions
------------------
+~~~~~~~~~~~~~~~~~
 
 .. autofunction:: qecc.all_pauli_bsvs
 
@@ -66,10 +59,7 @@ Utility Functions
 .. autofunction:: qecc.xz_switch
 
 :class:`qecc.BinarySymplecticMatrix` - Binary symplectic representation of Clifford group elements
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Class Reference
----------------
+--------------------------------------------------------------------------------------------------
 
 .. todo::
     Write an introduction here.
