@@ -68,6 +68,8 @@ class StabilizerCode(object):
     
     def __init__(self, group_generators, logical_xs, logical_zs, label=None):
         self.group_generators = pc.PauliList(*group_generators)
+        if Unspecified in logical_xs or Unspecified in logical_zs:
+            raise ValueError("Logical operators must be specified.")
         self.logical_xs = pc.PauliList(*logical_xs)
         self.logical_zs = pc.PauliList(*logical_zs)
         self.label = label
