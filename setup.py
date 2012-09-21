@@ -4,6 +4,7 @@ from distutils.core import setup
 import sys, os
 sys.path.insert(0, os.path.join(os.getcwd(), 'src/'))
 import qecc as q
+f=open('README.rst','r')
 
 setup(
     name='QuaEC',
@@ -12,5 +13,8 @@ setup(
     author='Chris Granade and Ben Criger',
     author_email='cgranade@cgranade.com',
     package_dir={'': 'src'},
-    packages=['qecc']
+    packages=['qecc'],
+    long_description=f.read()
 )
+
+f.close()
