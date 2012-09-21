@@ -29,6 +29,7 @@ import string
 from exceptions import *
 
 from numpy import s_, array, nonzero, logical_xor, bitwise_xor, bitwise_not, logical_and, bitwise_and, logical_not, all, matrix, hstack, vstack, zeros, eye, dot, empty
+from numpy.linalg import det
 
 from PauliClass import *
 from CliffordClass import *
@@ -638,7 +639,7 @@ class BinarySymplecticMatrix(object):
                     return False
                 elif zrows[idx_j].bsip(zrows[idx_k]) != 0:
                     return False
-                    
+
         return True
         
     def copy(self):
