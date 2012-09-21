@@ -475,7 +475,7 @@ where <img class="math" src="_images/math/1bd9a54ae5cfd7c94283454c6e8a05f9d77bbf
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_gens</strong> (<em>list of qecc.Pauli instances</em>) &#8211; Either <tt class="xref docutils literal"><span class="pre">None</span></tt> or a list of generators <img class="math" src="_images/math/1bd9a54ae5cfd7c94283454c6e8a05f9d77bbf9a.png" alt="G_i"/>.
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_gens</strong> (list of <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> instances) &#8211; Either <tt class="xref docutils literal"><span class="pre">None</span></tt> or a list of generators <img class="math" src="_images/math/1bd9a54ae5cfd7c94283454c6e8a05f9d77bbf9a.png" alt="G_i"/>.
 If not <tt class="xref docutils literal"><span class="pre">None</span></tt>, the returned centralizer <img class="math" src="_images/math/258100fc9201c2fb854c0b6c3fd4994b92350d2c.png" alt="\mathrm{C}(P)"/> is
 a subgroup of the group <img class="math" src="_images/math/2e41a1ecdd222c1580b874adc7c3cfb11972def0.png" alt="\langle G_i \rangle_{i=1}^k"/>.</td>
 </tr>
@@ -548,7 +548,7 @@ and returns 1 if <img class="math" src="_images/math/7ed6c5d0c626e033b6044bee55d
 <tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><img class="math" src="_images/math/b0b2828e2d66bffe6b574d4fd636b42f296031eb.png" alt="c(P, Q)"/>.</p>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">int</span></tt></a></p>
 </td>
 </tr>
 </tbody>
@@ -589,7 +589,7 @@ generators, respectively.</td>
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nq</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of qubits upon which the returned Pauli acts.</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">qecc.Pauli</td>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a></td>
 </tr>
 <tr class="field"><th class="field-name">Returns:</th><td class="field-body">A Pauli operator acting as the identity on each of <tt class="docutils literal"><span class="pre">nq</span></tt> qubits.</td>
 </tr>
@@ -738,20 +738,23 @@ either 0 or 2. A warning will result if this condition is not met.</li>
 <dl class="attribute">
 <dt id="qecc.Clifford.nq">
 <tt class="descname">nq</tt><a class="headerlink" href="#qecc.Clifford.nq" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of qubits on which a <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> object acts.</p>
+<dd><p>Returns the number of qubits on which this <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> object
+acts.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="qecc.Clifford.n_unspecified">
 <tt class="descname">n_unspecified</tt><a class="headerlink" href="#qecc.Clifford.n_unspecified" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of unspecifed outputs of a <tt class="xref py py-class docutils literal"><span class="pre">qec.Clifford</span></tt> object.</p>
+<dd><p>Returns the number of unspecifed outputs of this <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a>
+object.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="qecc.Clifford.str_sparse">
 <tt class="descname">str_sparse</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Clifford.str_sparse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provides a compact representation for <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> objects in the case
-where many of the outputs have small support.</p>
+<dd><p>Provides a compact representation for <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> objects,
+intended for use in the case where many of the outputs have small
+support.</p>
 </dd></dl>
 
 <dl class="method">
@@ -798,7 +801,7 @@ this instance.</p>
 <img class="math" src="_images/math/46731ce256671b71e6a49b66b36481dc54c7894d.png" alt="CPC^{\dagger}"/>, where <img class="math" src="_images/math/c3355896da590fc491a10150a50416687626d7cc.png" alt="C"/> is the Clifford operator
 represented by this instance.</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">qecc.Pauli</td>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a></td>
 </tr>
 </tbody>
 </table>
