@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Constraint Solvers &mdash; QuaEC v0.1alpha1 documentation</title>
+    <title>Constraint Solvers &mdash; QuaEC 0.1alpha1 documentation</title>
+    
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="QuaEC v0.1alpha1 documentation" href="index.html" />
+    <link rel="top" title="QuaEC 0.1alpha1 documentation" href="index.html" />
     <link rel="next" title="Predicates and Filters" href="predicates.html" />
     <link rel="prev" title="Circuit Manipulation and Simulation" href="circuits.html" /> 
   </head>
@@ -39,7 +42,7 @@
         <li class="right" >
           <a href="circuits.html" title="Circuit Manipulation and Simulation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">QuaEC v0.1alpha1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">QuaEC 0.1alpha1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -61,17 +64,105 @@ all solutions of those constraints.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>commutation_constraints</strong> &#8211; A list of operators <img class="math" src="_images/math/3a92cd6ddfb02cfc3b2fa189ae5a974d12ade315.png" alt="\{A_i\}"/> such
-that each solution <img class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> yielded by this function must satisfy
-<img class="math" src="_images/math/374487ce15fae5a91e0ea87ba8acbf4d1c446012.png" alt="[A_i, P] = 0"/> for all <img class="math" src="_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/>.</li>
-<li><strong>commutation_constraints</strong> &#8211; A list of operators <img class="math" src="_images/math/925d4262d3013a1ec64fc067348763f2e9abbadf.png" alt="\{B_i\}"/> such
-that each solution <img class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> yielded by this function must satisfy
-<img class="math" src="_images/math/ad117fbac85277c187d45387605a3720d526bc72.png" alt="\{B_i, P\} = 0"/> for all <img class="math" src="_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/>.</li>
-<li><strong>search_in_gens</strong> &#8211; A list of operators <img class="math" src="_images/math/18382342938f24780ede2ff88111782420382745.png" alt="\{N_i\}"/> that generate
-the group in which to search for solutions. If <tt class="xref docutils literal"><span class="pre">None</span></tt>, defaults to
-the elementary generators of the pc.Pauli group on <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> qubits, where
-<img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is given by the length of the commutation and anticommutation
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>commutation_constraints</strong> &#8211; A list of operators <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">\{A_i\}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ such
+that each solution <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">P</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ yielded by this function must satisfy
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">[A_i, P] = 0</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ for all <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">i</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+.</li>
+<li><strong>commutation_constraints</strong> &#8211; A list of operators <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">\{B_i\}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ such
+that each solution <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">P</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ yielded by this function must satisfy
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">\{B_i, P\} = 0</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ for all <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">i</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+.</li>
+<li><strong>search_in_gens</strong> &#8211; A list of operators <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">\{N_i\}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ that generate
+the group in which to search for solutions. If <tt class="docutils literal"><span class="pre">None</span></tt>, defaults to
+the elementary generators of the pc.Pauli group on <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">n</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ qubits, where
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">n</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ is given by the length of the commutation and anticommutation
 constraints.</li>
 <li><strong>search_in_set</strong> &#8211; An iterable of operators to which the search for 
 satisfying assignments is restricted. This differs from <tt class="docutils literal"><span class="pre">search_in_gens</span></tt>
@@ -82,8 +173,17 @@ set.</li>
 </ul>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An iterator <tt class="docutils literal"><span class="pre">it</span></tt> such that <tt class="docutils literal"><span class="pre">list(it)</span></tt> contains all operators
-within the group <img class="math" src="_images/math/aee8d6da57808bba0dbcf95f2ff77fe49e1465c2.png" alt="G = \langle N_1, \dots, N_k \rangle\rangle"/>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An iterator <tt class="docutils literal"><span class="pre">it</span></tt> such that <tt class="docutils literal"><span class="pre">list(it)</span></tt> contains all operators
+within the group <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">G = \langle N_1, \dots, N_k \rangle\rangle</tt>)</p>
+<p>latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</p>
+</div>
+
 given by <tt class="docutils literal"><span class="pre">search_in_gens</span></tt>, consistent with the commutation and
 anticommutation constraints.</p>
 </td>
@@ -161,12 +261,12 @@ used in conjunction with other filters, however.</p>
         <li class="right" >
           <a href="circuits.html" title="Circuit Manipulation and Simulation"
              >previous</a> |</li>
-        <li><a href="index.html">QuaEC v0.1alpha1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">QuaEC 0.1alpha1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Chris Granade and Ben Criger. Licensed under the Creative Commons NonCommercial-ShareAlike 3.0 Unported License.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

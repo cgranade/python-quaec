@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Binary Symplectic Form &mdash; QuaEC v0.1alpha1 documentation</title>
+    <title>Binary Symplectic Form &mdash; QuaEC 0.1alpha1 documentation</title>
+    
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="QuaEC v0.1alpha1 documentation" href="index.html" />
+    <link rel="top" title="QuaEC 0.1alpha1 documentation" href="index.html" />
     <link rel="next" title="Stabilizer Codes" href="stab.html" />
     <link rel="prev" title="Collections of Pauli Operators" href="paulicollections.html" /> 
   </head>
@@ -39,7 +42,7 @@
         <li class="right" >
           <a href="paulicollections.html" title="Collections of Pauli Operators"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">QuaEC v0.1alpha1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">QuaEC 0.1alpha1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -60,9 +63,49 @@ more information on the binary symplectic representation, read <a class="referen
 <div class="section" id="qecc-binarysymplecticvector-binary-symplectic-representation-of-pauli-group-elements">
 <h2><a class="reference internal" href="#qecc.BinarySymplecticVector" title="qecc.BinarySymplecticVector"><tt class="xref py py-class docutils literal"><span class="pre">qecc.BinarySymplecticVector</span></tt></a>: Binary symplectic representation of Pauli group elements<a class="headerlink" href="#qecc-binarysymplecticvector-binary-symplectic-representation-of-pauli-group-elements" title="Permalink to this headline">¶</a></h2>
 <p>The class <a class="reference internal" href="#qecc.BinarySymplecticVector" title="qecc.BinarySymplecticVector"><tt class="xref py py-class docutils literal"><span class="pre">qecc.BinarySymplecticVector</span></tt></a> provides a means of representing elements of the
-Pauli group (neglecting global phases) using binary vectors <img class="math" src="_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> and <img class="math" src="_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> such that an
-element <img class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> of the Pauli group acting on <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> qubits is <img class="math" src="_images/math/c2cea65b9f1e9ee6062ad28200a078269e55edcd.png" alt="X^{a}Z^{b} = X^{a_1}Z^{b_1}
-\otimes \ldots \otimes X^{a_n}Z^{b_n}"/>. Binary symplectic vectors can be obtained from a single binary
+Pauli group (neglecting global phases) using binary vectors <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">a</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ and <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">b</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ such that an
+element <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">P</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ of the Pauli group acting on <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">n</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ qubits is <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">X^{a}Z^{b} = X^{a_1}Z^{b_1}
+\otimes \ldots \otimes X^{a_n}Z^{b_n}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+. Binary symplectic vectors can be obtained from a single binary
 list, two binary lists, or converted from another Pauli instance (removing the phase):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">];</span> <span class="n">b</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
@@ -87,9 +130,33 @@ list, two binary lists, or converted from another Pauli instance (removing the p
 <dt id="qecc.BinarySymplecticVector">
 <em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">BinarySymplecticVector</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticVector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Encapsulates a binary symplectic vector representing an element of the Pauli
-group on <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> qubits.</p>
+group on <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">n</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ qubits.</p>
 <p>A new <tt class="xref py py-class docutils literal"><span class="pre">BinarySymplecticVector</span></tt> can be constructed using either a
-single NumPy array containing both the <img class="math" src="_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/> and <img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> parts of the
+single NumPy array containing both the <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">X</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ and <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">Z</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ parts of the
 binary symplectic vector. Alternatively, a new vector can be instantiated
 using two NumPy arrays. For example, the following two invocations are
 equivalent:</p>
@@ -105,12 +172,20 @@ of the length of a single array containing the same data.</p>
 <dl class="attribute">
 <dt id="qecc.BinarySymplecticVector.x">
 <tt class="descname">x</tt><a class="headerlink" href="#qecc.BinarySymplecticVector.x" title="Permalink to this definition">¶</a></dt>
-<dd><p>Array containing the <img class="math" src="_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/> part of the binary symplectic vector.</p>
+<dd><p>Array containing the <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">X</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ part of the binary symplectic vector.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8.dev-fd63e8f)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>, shape <tt class="docutils literal"><span class="pre">(2</span> <span class="pre">*</span> <span class="pre">nq,</span> <span class="pre">)</span></tt>.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8.dev-fd63e8f)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>, shape <tt class="docutils literal"><span class="pre">(2</span> <span class="pre">*</span> <span class="pre">nq,</span> <span class="pre">)</span></tt>.</td>
 </tr>
 </tbody>
 </table>
@@ -124,12 +199,20 @@ of the length of a single array containing the same data.</p>
 <dl class="attribute">
 <dt id="qecc.BinarySymplecticVector.z">
 <tt class="descname">z</tt><a class="headerlink" href="#qecc.BinarySymplecticVector.z" title="Permalink to this definition">¶</a></dt>
-<dd><p>Array containing the <img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> part of the binary symplectic vector.</p>
+<dd><p>Array containing the <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">Z</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ part of the binary symplectic vector.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8.dev-fd63e8f)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>, shape <tt class="docutils literal"><span class="pre">(nq,</span> <span class="pre">)</span></tt>.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8.dev-fd63e8f)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>, shape <tt class="docutils literal"><span class="pre">(nq,</span> <span class="pre">)</span></tt>.</td>
 </tr>
 </tbody>
 </table>
@@ -166,9 +249,41 @@ by the binary symplectic representation of the Pauli group, and so
 <dl class="method">
 <dt id="qecc.BinarySymplecticVector.bsip">
 <tt class="descname">bsip</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticVector.bsip" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the binary symplectic inner product <img class="math" src="_images/math/5f46340f18c53c6a37c5df9a8aa8bf68ebc81ba5.png" alt="u \odot v"/> of this
-vector with another vector. Letting <img class="math" src="_images/math/4a66e037f05cb089859124c2b156047e65c6589f.png" alt="u = (a | b)"/> and
-<img class="math" src="_images/math/545492508597d07a021dda4325069a3e17468b82.png" alt="v = (c | d)"/>, <img class="math" src="_images/math/24efab3eb42fdaddd38965b7d6809c7c95e6b8de.png" alt="u\odot v = a \cdot c + b \cdot d"/>.</p>
+<dd><p>Returns the binary symplectic inner product <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">u \odot v</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ of this
+vector with another vector. Letting <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">u = (a | b)</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ and
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">v = (c | d)</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+, <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">u\odot v = a \cdot c + b \cdot d</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vector_a</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">BinarySymplecticVector</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vector_b</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Pauli</span><span class="p">(</span><span class="s">&#39;YYZ&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">as_bsv</span><span class="p">()</span>
@@ -192,9 +307,17 @@ representations.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nq</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of qubits.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nq</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of qubits.</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">an iterator that yields the binary symplectic representations of each element of the Pauli group <img class="math" src="_images/math/653f07268b36bc014788d5ac245519cad5ed5bc0.png" alt="\mathcal{P}_n"/>.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">an iterator that yields the binary symplectic representations of each element of the Pauli group <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">\mathcal{P}_n</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+.</td>
 </tr>
 </tbody>
 </table>
@@ -207,18 +330,66 @@ representations.</p>
 <dl class="function">
 <dt id="qecc.constrained_set">
 <tt class="descclassname">qecc.</tt><tt class="descname">constrained_set</tt><big>(</big><em>pauli_array_input</em>, <em>logical_array_input</em><big>)</big><a class="headerlink" href="#qecc.constrained_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a set of constraints of the form <img class="math" src="_images/math/0912f6e7a13605eba4a1f023754eb4c705e11c31.png" alt="P_i \odot Q = b_i"/>, with
-each <img class="math" src="_images/math/e86919caff4a26af2c8867c56bcd9134bfd241ac.png" alt="P_i"/> a Pauli operator and each <img class="math" src="_images/math/94d9565abaadf04609a2e9941aa2d20b0a299b8a.png" alt="b_i"/> a bit, yields an
-iterator onto Pauli operators <img class="math" src="_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q"/> such that all constraints are
+<dd><p>Given a set of constraints of the form <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">P_i \odot Q = b_i</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+, with
+each <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">P_i</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ a Pauli operator and each <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">b_i</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ a bit, yields an
+iterator onto Pauli operators <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">Q</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ such that all constraints are
 satisfied.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>pauli_array_input</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a> of <a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> instances.) &#8211; Constraint operators <img class="math" src="_images/math/e86919caff4a26af2c8867c56bcd9134bfd241ac.png" alt="P_i"/>.</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pauli_array_input</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a> of <a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> instances.) &#8211; Constraint operators <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">P_i</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+.</li>
 <li><strong>logical_array_input</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8.dev-fd63e8f)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> of <cite>dtype=int</cite> and shape
-<tt class="docutils literal"><span class="pre">(len(pauli_array_input),</span> <span class="pre">)</span></tt>.) &#8211; Constraint values <img class="math" src="_images/math/94d9565abaadf04609a2e9941aa2d20b0a299b8a.png" alt="b_i"/>.</li>
+<tt class="docutils literal"><span class="pre">(len(pauli_array_input),</span> <span class="pre">)</span></tt>.) &#8211; Constraint values <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">b_i</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+.</li>
 </ul>
 </td>
 </tr>
@@ -240,7 +411,7 @@ product.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -250,7 +421,23 @@ product.</p>
 <dt id="qecc.xz_switch">
 <tt class="descclassname">qecc.</tt><tt class="descname">xz_switch</tt><big>(</big><em>bsv</em><big>)</big><a class="headerlink" href="#qecc.xz_switch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a <a class="reference internal" href="#qecc.BinarySymplecticVector" title="qecc.BinarySymplecticVector"><tt class="xref py py-class docutils literal"><span class="pre">qecc.BinarySymplecticVector</span></tt></a>, returns a new vector whose
-<img class="math" src="_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/> and <img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> parts have been swapped.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">X</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ and <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">Z</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ parts have been swapped.</p>
 </dd></dl>
 
 </div>
@@ -263,9 +450,49 @@ product.</p>
 <dt id="qecc.BinarySymplecticMatrix">
 <em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">BinarySymplecticMatrix</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Encapsulates a binary symplectic matrix representing an element of the Clifford
-group on <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> qubits.</p>
+group on <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">n</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ qubits.</p>
 <p>A new <tt class="xref py py-class docutils literal"><span class="pre">BinarySymplecticMatrix</span></tt> can be constructed using either a
-single NumPy 2-D array containing the <img class="math" src="_images/math/699a91e665e507afc8ec5c2a78d17d4415249dcb.png" alt="XX"/>, <img class="math" src="_images/math/3bb2419be49ff83cbed7db9a2f366858ccabf2e5.png" alt="XZ"/>, <img class="math" src="_images/math/06fa2ce7959aed29d1ff928321e7cebcd4d24596.png" alt="ZX"/>, and <img class="math" src="_images/math/569e7e99781b59e8f1e98db9e0f622e1adf32c2d.png" alt="ZZ"/>
+single NumPy 2-D array containing the <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">XX</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+, <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">XZ</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+, <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">ZX</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+, and <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">ZZ</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+
 parts of the binary symplectic matrix. Alternatively, a new matrix can be instantiated
 using four NumPy arrays. For example, the following two invocations are
 equivalent:</p>
@@ -333,7 +560,15 @@ upon.</p>
 <dl class="method">
 <dt id="qecc.BinarySymplecticMatrix.left_H">
 <tt class="descname">left_H</tt><big>(</big><em>j</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_H" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the left by a Hadamard gate on the <img class="math" src="_images/math/ec8eb9058cb3a532b3b4a1f33e169e8421c22a3d.png" alt="j^{\text{th}}"/>
+<dd><p>Multiplies on the left by a Hadamard gate on the <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">j^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+
 qubit. This method acts in-place, as opposed to acting on a copy of the
 binary symplectic matrix. In order to preserve the original matrix,
 use the <tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
@@ -345,7 +580,15 @@ use the <tt class="xref py py-meth docutils literal"><span class="pre">copy()</s
 <dl class="method">
 <dt id="qecc.BinarySymplecticMatrix.right_H">
 <tt class="descname">right_H</tt><big>(</big><em>j</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_H" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the right by a Hadamard gate on the <img class="math" src="_images/math/ec8eb9058cb3a532b3b4a1f33e169e8421c22a3d.png" alt="j^{\text{th}}"/>
+<dd><p>Multiplies on the right by a Hadamard gate on the <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">j^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+
 qubit. See <tt class="xref py py-meth docutils literal"><span class="pre">left_H()</span></tt> for more details.</p>
 </dd></dl>
 
@@ -359,8 +602,24 @@ qubit. See <tt class="xref py py-meth docutils literal"><span class="pre">left_H
 <dl class="method">
 <dt id="qecc.BinarySymplecticMatrix.left_SWAP">
 <tt class="descname">left_SWAP</tt><big>(</big><em>j</em>, <em>k</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_SWAP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the left by a SWAP gate between the <img class="math" src="_images/math/ec8eb9058cb3a532b3b4a1f33e169e8421c22a3d.png" alt="j^{\text{th}}"/>
-and <img class="math" src="_images/math/3cb9fb3b35f43cc27e4e63da0093b956154335a2.png" alt="k^{\text{th}}"/> qubits. This method acts in-place, as opposed
+<dd><p>Multiplies on the left by a SWAP gate between the <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">j^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+
+and <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">k^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ qubits. This method acts in-place, as opposed
 to acting on a copy of the binary symplectic matrix. In order to
 preserve the original matrix, use the <tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">new_bsm</span> <span class="o">=</span> <span class="n">bsm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">left_SWAP</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> 
@@ -371,8 +630,24 @@ preserve the original matrix, use the <tt class="xref py py-meth docutils litera
 <dl class="method">
 <dt id="qecc.BinarySymplecticMatrix.right_SWAP">
 <tt class="descname">right_SWAP</tt><big>(</big><em>j</em>, <em>k</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_SWAP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the right by a SWAP gate between the <img class="math" src="_images/math/ec8eb9058cb3a532b3b4a1f33e169e8421c22a3d.png" alt="j^{\text{th}}"/>
-and <img class="math" src="_images/math/3cb9fb3b35f43cc27e4e63da0093b956154335a2.png" alt="k^{\text{th}}"/> qubits. See <tt class="xref py py-meth docutils literal"><span class="pre">left_SWAP()</span></tt> for more
+<dd><p>Multiplies on the right by a SWAP gate between the <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">j^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+
+and <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">k^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ qubits. See <tt class="xref py py-meth docutils literal"><span class="pre">left_SWAP()</span></tt> for more
 details.</p>
 </dd></dl>
 
@@ -380,7 +655,23 @@ details.</p>
 <dt id="qecc.BinarySymplecticMatrix.left_CNOT">
 <tt class="descname">left_CNOT</tt><big>(</big><em>c</em>, <em>t</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_CNOT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multiplies on the left by a CNOT gate controlled by the
-<img class="math" src="_images/math/10d1973af16031f61997ed715a1fe902c596928e.png" alt="c^{\text{th}}"/> qubit and targeting the <img class="math" src="_images/math/3cb9fb3b35f43cc27e4e63da0093b956154335a2.png" alt="k^{\text{th}}"/>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">c^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ qubit and targeting the <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">k^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+
 qubit. This method acts in-place, as opposed to acting on a copy of the
 binary symplectic matrix. In order to preserve the original matrix, use
 the <tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
@@ -393,15 +684,47 @@ the <tt class="xref py py-meth docutils literal"><span class="pre">copy()</span>
 <dt id="qecc.BinarySymplecticMatrix.right_CNOT">
 <tt class="descname">right_CNOT</tt><big>(</big><em>c</em>, <em>t</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_CNOT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multiplies on the right by a CNOT gate controlled by the
-<img class="math" src="_images/math/10d1973af16031f61997ed715a1fe902c596928e.png" alt="c^{\text{th}}"/> qubit and targeting the <img class="math" src="_images/math/3cb9fb3b35f43cc27e4e63da0093b956154335a2.png" alt="k^{\text{th}}"/>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">c^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ qubit and targeting the <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">k^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+
 qubit. For more details, see <tt class="xref py py-meth docutils literal"><span class="pre">left_CNOT()</span></tt>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="qecc.BinarySymplecticMatrix.left_R_pi4">
 <tt class="descname">left_R_pi4</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_R_pi4" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the left by an <img class="math" src="_images/math/c8fdf81e128346db84c9ace86aeea617e3a0c027.png" alt="R_{\pi/4}"/> gate acting on the
-<img class="math" src="_images/math/6934c6c653b822d4b861f82307a28c4b4bb1df3d.png" alt="i^{\text{th}}"/> qubit. This method acts in-place, as opposed to
+<dd><p>Multiplies on the left by an <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">R_{\pi/4}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ gate acting on the
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">i^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ qubit. This method acts in-place, as opposed to
 acting on a copy of the binary symplectic matrix. In order to preserve
 the original matrix, use the <tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">new_bsm</span> <span class="o">=</span> <span class="n">bsm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">left_R_pi4</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> 
@@ -412,16 +735,56 @@ the original matrix, use the <tt class="xref py py-meth docutils literal"><span 
 <dl class="method">
 <dt id="qecc.BinarySymplecticMatrix.right_R_pi4">
 <tt class="descname">right_R_pi4</tt><big>(</big><em>i</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_R_pi4" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the right by an <img class="math" src="_images/math/c8fdf81e128346db84c9ace86aeea617e3a0c027.png" alt="R_{\pi/4}"/> gate acting on the
-<img class="math" src="_images/math/6934c6c653b822d4b861f82307a28c4b4bb1df3d.png" alt="i^{\text{th}}"/> qubit. For more details, see
+<dd><p>Multiplies on the right by an <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">R_{\pi/4}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ gate acting on the
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">i^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ qubit. For more details, see
 <tt class="xref py py-meth docutils literal"><span class="pre">left_R_pi4()</span></tt>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="qecc.BinarySymplecticMatrix.left_CZ">
 <tt class="descname">left_CZ</tt><big>(</big><em>c1</em>, <em>c2</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.left_CZ" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the left by an controlled-<img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> gate acting between
-the <img class="math" src="_images/math/2ad28d21c7db1ab290101c05d6a073458afbc7fb.png" alt="c_1^{\text{th}}"/> and <img class="math" src="_images/math/f7499b2d397f7e8f4a9869b7df8294d3e7ad00ce.png" alt="c_2^{\text{th}}"/> qubits. This
+<dd><p>Multiplies on the left by an controlled-<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">Z</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ gate acting between
+the <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">c_1^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ and <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">c_2^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ qubits. This
 method acts in-place, as opposed to acting on a copy of the binary
 symplectic matrix. In order to preserve the original matrix, use the
 <tt class="xref py py-meth docutils literal"><span class="pre">copy()</span></tt> method:</p>
@@ -433,8 +796,32 @@ symplectic matrix. In order to preserve the original matrix, use the
 <dl class="method">
 <dt id="qecc.BinarySymplecticMatrix.right_CZ">
 <tt class="descname">right_CZ</tt><big>(</big><em>c1</em>, <em>c2</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.right_CZ" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplies on the right by an controlled-<img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> gate acting between
-the <img class="math" src="_images/math/2ad28d21c7db1ab290101c05d6a073458afbc7fb.png" alt="c_1^{\text{th}}"/> and <img class="math" src="_images/math/f7499b2d397f7e8f4a9869b7df8294d3e7ad00ce.png" alt="c_2^{\text{th}}"/> qubits. For more
+<dd><p>Multiplies on the right by an controlled-<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">Z</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ gate acting between
+the <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">c_1^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ and <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">c_2^{\text{th}}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ qubits. For more
 details, see <tt class="xref py py-meth docutils literal"><span class="pre">left_CZ()</span></tt>.</p>
 </dd></dl>
 
@@ -443,17 +830,41 @@ details, see <tt class="xref py py-meth docutils literal"><span class="pre">left
 <tt class="descname">inv</tt><big>(</big><em>check_validity=True</em><big>)</big><a class="headerlink" href="#qecc.BinarySymplecticMatrix.inv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the inverse of this binary symplectic matrix, assuming
 that this matrix represents a valid Clifford gate.</p>
-<p>Note that if the matrix <img class="math" src="_images/math/b1902d279ba37d60bdce4e0e987b7cd19d48974e.png" alt="H"/> does not represent a valid Clifford,
-this method will return a matrix <img class="math" src="_images/math/6e28ce12d49d39f160d5a0ef54077fc98e4b9d2b.png" alt="G"/> such that <img class="math" src="_images/math/99663dbee09e764d9f58314693db114d6c02f5fd.png" alt="H G"/> is
+<p>Note that if the matrix <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">H</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ does not represent a valid Clifford,
+this method will return a matrix <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">G</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ such that <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">H G</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ is
 not the identity matrix.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>check_validity</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <tt class="xref docutils literal"><span class="pre">True</span></tt>, then the matrix is first
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>check_validity</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <tt class="docutils literal"><span class="pre">True</span></tt>, then the matrix is first
 checked to ensure that it is a valid Clifford.</td>
 </tr>
-<tr class="field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">qecc.InvalidCliffordError</span></tt> if <tt class="docutils literal"><span class="pre">check_validity</span></tt> is <tt class="xref docutils literal"><span class="pre">True</span></tt>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">qecc.InvalidCliffordError</span></tt> if <tt class="docutils literal"><span class="pre">check_validity</span></tt> is <tt class="docutils literal"><span class="pre">True</span></tt>
 and the binary symplectic matrix being inverted does not represent
 a valid Clifford group element.</td>
 </tr>
@@ -469,12 +880,12 @@ a valid Clifford group element.</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>check_validity</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <tt class="xref docutils literal"><span class="pre">True</span></tt>, then the matrix is first
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>check_validity</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <tt class="docutils literal"><span class="pre">True</span></tt>, then the matrix is first
 checked to ensure that it is a valid Clifford.</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a></td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">The same gate as this binary symplectic matrix, represented
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The same gate as this binary symplectic matrix, represented
 as an instance of <a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a>.</td>
 </tr>
 </tbody>
@@ -514,17 +925,25 @@ location in memory.</p>
 <dl class="function">
 <dt id="qecc.bsmzeros">
 <tt class="descclassname">qecc.</tt><tt class="descname">bsmzeros</tt><big>(</big><em>nq</em><big>)</big><a class="headerlink" href="#qecc.bsmzeros" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a binary symplectic matrix on <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> qubits, initialized to all
+<dd><p>Returns a binary symplectic matrix on <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">n</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ qubits, initialized to all
 zeros.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nq</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of qubits that the created matrix will act upon.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nq</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of qubits that the created matrix will act upon.</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">A binary symplectic matrix containing all zeros.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A binary symplectic matrix containing all zeros.</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">BinarySymplecticMatrix</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">BinarySymplecticMatrix</td>
 </tr>
 </tbody>
 </table>
@@ -605,12 +1024,12 @@ to <a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli
         <li class="right" >
           <a href="paulicollections.html" title="Collections of Pauli Operators"
              >previous</a> |</li>
-        <li><a href="index.html">QuaEC v0.1alpha1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">QuaEC 0.1alpha1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Chris Granade and Ben Criger. Licensed under the Creative Commons NonCommercial-ShareAlike 3.0 Unported License.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Circuit Manipulation and Simulation &mdash; QuaEC v0.1alpha1 documentation</title>
+    <title>Circuit Manipulation and Simulation &mdash; QuaEC 0.1alpha1 documentation</title>
+    
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="QuaEC v0.1alpha1 documentation" href="index.html" />
+    <link rel="top" title="QuaEC 0.1alpha1 documentation" href="index.html" />
     <link rel="next" title="Constraint Solvers" href="solvers.html" />
     <link rel="prev" title="Stabilizer Codes" href="stab.html" /> 
   </head>
@@ -39,7 +42,7 @@
         <li class="right" >
           <a href="stab.html" title="Stabilizer Codes"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">QuaEC v0.1alpha1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">QuaEC 0.1alpha1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -159,7 +162,6 @@ integration with QCViewer&#8217;s functionality.</p>
 <span class="go">    H    q2</span>
 <span class="go">    X    q1</span>
 <span class="go">END</span>
-<span class="go">&lt;BLANKLINE&gt;</span>
 </pre></div>
 </div>
 <p>Note that, by default, qubits in the QCViewer export are named &#8220;q1&#8221;, &#8220;q2&#8221; and so
@@ -176,7 +178,6 @@ arguments, respectively.</p>
 <span class="go">    H    anc1</span>
 <span class="go">    X    in1</span>
 <span class="go">END</span>
-<span class="go">&lt;BLANKLINE&gt;</span>
 </pre></div>
 </div>
 </div>
@@ -194,7 +195,7 @@ circuit.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>kind</strong> (<em>int or str</em>) &#8211; The kind of location to be created. Each kind is an
 abbreviation drawn from <tt class="docutils literal"><span class="pre">Location.KIND_NAMES</span></tt>, or is the index in
 <tt class="docutils literal"><span class="pre">Location.KIND_NAMES</span></tt> corresponding to the desired location kind.</li>
@@ -206,7 +207,7 @@ abbreviation drawn from <tt class="docutils literal"><span class="pre">Location.
 </table>
 <dl class="attribute">
 <dt id="qecc.Location.KIND_NAMES">
-<tt class="descname">KIND_NAMES</tt><a class="headerlink" href="#qecc.Location.KIND_NAMES" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">KIND_NAMES</tt><em class="property"> = ['I', 'X', 'Y', 'Z', 'H', 'R_pi4', 'CNOT', 'CZ', 'SWAP']</em><a class="headerlink" href="#qecc.Location.KIND_NAMES" title="Permalink to this definition">¶</a></dt>
 <dd><p>Names of the kinds of locations used by QuaEC.</p>
 </dd></dl>
 
@@ -218,9 +219,9 @@ abbreviation drawn from <tt class="docutils literal"><span class="pre">Location.
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#qecc.Location" title="qecc.Location"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Location</span></tt></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#qecc.Location" title="qecc.Location"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Location</span></tt></a></td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">The location represented by the given QuASM source.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The location represented by the given QuASM source.</td>
 </tr>
 </tbody>
 </table>
@@ -251,7 +252,7 @@ this location without relabeling qubits. For a <a class="reference internal" hre
 <dl class="attribute">
 <dt id="qecc.Location.is_clifford">
 <tt class="descname">is_clifford</tt><a class="headerlink" href="#qecc.Location.is_clifford" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns <tt class="xref docutils literal"><span class="pre">True</span></tt> if and only if this location represents a gate drawn
+<dd><p>Returns <tt class="docutils literal"><span class="pre">True</span></tt> if and only if this location represents a gate drawn
 from the Clifford group.</p>
 </dd></dl>
 
@@ -270,11 +271,11 @@ gate. Otherwise, a <tt class="xref py py-obj docutils literal"><span class="pre"
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nq</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Specifies how many qubits to represent this location as
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nq</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Specifies how many qubits to represent this location as
 acting upon. If not specified, defaults to the value of the <tt class="docutils literal"><span class="pre">nq</span></tt>
 property.</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="groups.html#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a></td>
 </tr>
 </tbody>
 </table>
@@ -289,11 +290,11 @@ inclusion in a QCViewer file.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qubit_names</strong> &#8211; If specified, the given aliases will be used for the
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qubit_names</strong> &#8211; If specified, the given aliases will be used for the
 qubits involved in this location when exporting to QCViewer.
 Defaults to &#8220;q1&#8221;, &#8220;q2&#8221;, etc.</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -325,12 +326,12 @@ specifies what each qubit index is to be mapped to.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>relabel_dict</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; If <cite>i</cite> is a key of <cite>relabel_dict</cite>, then qubit
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>relabel_dict</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; If <cite>i</cite> is a key of <cite>relabel_dict</cite>, then qubit
 <cite>i</cite> will be replaced by <cite>relabel_dict[i]</cite> in the returned location.</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#qecc.Location" title="qecc.Location"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Location</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#qecc.Location" title="qecc.Location"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Location</span></tt></a></td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">A new location with the qubits relabeled as 
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A new location with the qubits relabeled as 
 specified by <cite>relabel_dict</cite>.</td>
 </tr>
 </tbody>
@@ -415,7 +416,7 @@ indicate the qubits upon which the location acts.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>inputs</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Specifies which qubits should be marked as inputs
 in the exported QCViewer circuit.</li>
 <li><strong>outputs</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Specifies which qubits should be marked as outputs
@@ -433,21 +434,38 @@ QCViewer.</li>
 <dt id="qecc.Circuit.as_qcircuit">
 <tt class="descname">as_qcircuit</tt><big>(</big><em>C=None</em>, <em>R=None</em><big>)</big><a class="headerlink" href="#qecc.Circuit.as_qcircuit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Typesets this circuit using the <a class="reference external" href="http://www.cquic.org/Qcircuit/">Qcircuit</a> package for
-<img class="math" src="_images/math/27bb8d5acf15ea850c966cc6b82b448f35681a19.png" alt="\text{\LaTeX}"/>.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">\text{\LaTeX}</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>C</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Width (in ems) of each column.</li>
 <li><strong>R</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Height (in ems) of each column.</li>
 </ul>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">str</span></tt></a></p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">str</span></tt></a></p>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A string containing <img class="math" src="_images/math/27bb8d5acf15ea850c966cc6b82b448f35681a19.png" alt="\text{\LaTeX}"/> source code for use
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A string containing <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">\text{\LaTeX}</tt>)</p>
+<p>latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</p>
+</div>
+ source code for use
 with <a class="reference external" href="http://www.cquic.org/Qcircuit/">Qcircuit</a>.</p>
 </td>
 </tr>
@@ -474,7 +492,7 @@ supported by this method.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>start_at</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Specifies which location to consider first. Any
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>start_at</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Specifies which location to consider first. Any
 locations before <tt class="docutils literal"><span class="pre">start_at</span></tt> are not considered for cancelation by
 this method.</td>
 </tr>
@@ -485,7 +503,15 @@ this method.</td>
 <dl class="method">
 <dt id="qecc.Circuit.replace_cz_by_cnot">
 <tt class="descname">replace_cz_by_cnot</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Circuit.replace_cz_by_cnot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Changes all controlled-<img class="math" src="_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/> gates in this circuit to
+<dd><p>Changes all controlled-<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">Z</tt>)</p>
+latex exited with error:
+[stderr]
+latex: error while loading shared libraries: libpoppler.so.18: cannot open shared object file: No such file or directory
+
+[stdout]
+</div>
+ gates in this circuit to
 controlled-NOT gates, adding Hadamard locations as required.</p>
 </dd></dl>
 
@@ -497,11 +523,11 @@ controlled-NOT gates, adding Hadamard locations as required.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pad_with_waits</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <tt class="xref docutils literal"><span class="pre">True</span></tt>, each subcircuit will have
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pad_with_waits</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <tt class="docutils literal"><span class="pre">True</span></tt>, each subcircuit will have
 wait locations added such that every qubit is acted upon in every
 subcircuit.</td>
 </tr>
-<tr class="field"><th class="field-name">Yields :</th><td class="field-body">each depth-1 subcircuit, corresponding to time steps of the
+<tr class="field-even field"><th class="field-name">Yields :</th><td class="field-body">each depth-1 subcircuit, corresponding to time steps of the
 circuit</td>
 </tr>
 </tbody>
@@ -533,12 +559,12 @@ specifies what each qubit index is to be mapped to.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>relabel_dict</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; If <cite>i</cite> is a key of <cite>relabel_dict</cite>, then qubit
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>relabel_dict</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; If <cite>i</cite> is a key of <cite>relabel_dict</cite>, then qubit
 <cite>i</cite> will be replaced by <cite>relabel_dict[i]</cite> in the returned circuit.</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a></td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">A new circuit with the qubits relabeled as 
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A new circuit with the qubits relabeled as 
 specified by <cite>relabel_dict</cite>.</td>
 </tr>
 </tbody>
@@ -560,7 +586,7 @@ fault through the remainder of the time-sliced circuit.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>circuitlist</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; A list of <a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a> instances
 representing the timesteps of a larger circuit.</li>
 <li><strong>fault</strong> (<a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><em>qecc.Pauli</em></a>) &#8211; A Pauli fault to occur immediately before timestep
@@ -570,10 +596,10 @@ to be propagated occured.</li>
 </ul>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a></p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a></p>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The effective fault after propagating <tt class="docutils literal"><span class="pre">fault</span></tt> through the
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The effective fault after propagating <tt class="docutils literal"><span class="pre">fault</span></tt> through the
 remainder of <tt class="docutils literal"><span class="pre">circuitlist</span></tt>.</p>
 </td>
 </tr>
@@ -590,7 +616,7 @@ iterator onto Paulis which may occur as faults after this sub-circuit.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>circuit</strong> (<a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><em>qecc.Circuit</em></a>) &#8211; Subcircuit to in which faults are to be
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>circuit</strong> (<a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><em>qecc.Circuit</em></a>) &#8211; Subcircuit to in which faults are to be
 considered.</td>
 </tr>
 </tbody>
@@ -606,11 +632,11 @@ occuring within <tt class="docutils literal"><span class="pre">circuitlist</span
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>circuitlist</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; A list of <a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a> instances
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>circuitlist</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; A list of <a class="reference internal" href="#qecc.Circuit" title="qecc.Circuit"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Circuit</span></tt></a> instances
 representing timesteps in a larger circuit. See
 <a class="reference internal" href="#qecc.Circuit.group_by_time" title="qecc.Circuit.group_by_time"><tt class="xref py py-meth docutils literal"><span class="pre">qecc.Circuit.group_by_time()</span></tt></a>.</td>
 </tr>
-<tr class="field"><th class="field-name">Yields :</th><td class="field-body"><a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> instances representing possible effective
+<tr class="field-even field"><th class="field-name">Yields :</th><td class="field-body"><a class="reference internal" href="groups.html#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> instances representing possible effective
 faults due to 1-fault paths within the circuit represented by
 <tt class="docutils literal"><span class="pre">circuitlist</span></tt>.</td>
 </tr>
@@ -685,12 +711,12 @@ faults due to 1-fault paths within the circuit represented by
         <li class="right" >
           <a href="stab.html" title="Stabilizer Codes"
              >previous</a> |</li>
-        <li><a href="index.html">QuaEC v0.1alpha1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">QuaEC 0.1alpha1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Chris Granade and Ben Criger. Licensed under the Creative Commons NonCommercial-ShareAlike 3.0 Unported License.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>
