@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 ##
@@ -460,6 +461,7 @@ class Circuit(list):
 
     ## CIRCUIT SIMPLIFICATION METHODS ##
         
+
     def cancel_selfinv_gates(self, start_at=0):
         """
         Transforms the circuit, removing any self-inverse gates from the circuit
@@ -641,4 +643,3 @@ def possible_output_faults(circuitlist):
                           fault,timestep_idx+1),
                           possible_faults(circuitlist[timestep_idx]))) #CHECK +1
     return outputs
-
