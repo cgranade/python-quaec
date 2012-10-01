@@ -110,10 +110,15 @@ class Location(object):
         else:
             raise TypeError("Location kind must be an int or str.")
         
-        if not all(isinstance(q, int) for q in qubits):
-            raise TypeError('Qubit indices must be integers.')
-        
-        self._qubits = tuple(qubits)
+        #if not all(isinstance(q, int) for q in qubits):
+        #    raise TypeError('Qubit indices must be integers. Got {} instead, which is of type {}.'.format(
+        #        *(iter((q, type(q)) for q in qubits if not isinstance(q, int)).next())
+        #    ))
+
+        try:
+            self._qubits = tuple(map(int, qubits))
+        except TypeError as e:
+            raise TypeError('Qubit integers must be int-like.')
         self._is_clifford = bool(self.kind in self._CLIFFORD_GATE_KINDS)
        
     ## REPRESENTATION METHODS ##
@@ -608,7 +613,7 @@ def possible_faults(circuit):
         considered.
         
     """
-    return it.chain.from_iter(
+    return it.chain.from_iterable(
         pc.restricted_pauli_group(loc.qubits, circuit.nq)
         for loc in circuit
     )
