@@ -151,38 +151,14 @@ specified Pauli in this list. Here, <tt class="docutils literal"><span class="pr
 qubits and <tt class="docutils literal"><span class="pre">k</span></tt> is taken to be the number of independent Pauli
 operators in this list.</p>
 <p>Raises a <tt class="xref py py-obj docutils literal"><span class="pre">RuntimeError</span></tt> if NumPy cannot be imported.</p>
-<p>For example, to find the Bell basis vector <div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">\left|\beta_{00}\right\rangle</tt>)</p>
-latex exited with error:
-[stderr]
-
-kpathsea: Running mktexfmt latex.fmt
-
-[stdout]
-This is pdfTeX, Version 3.1415926-2.5-1.40.13 (TeX Live 2013/dev)
- restricted \write18 enabled.
-I can&#8217;t find the format file `latex.fmt&#8217;!
-</div>
-
+<p>For example, to find the Bell basis vector <img class="math" src="_images/math/399e6dc255bebed2d71b27322ee0463fced30a09.png" alt="\left|\beta_{00}\right\rangle"/>
 using the stabilizer formalism:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="s">&#39;XX&#39;</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">Unspecified</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">Unspecified</span><span class="p">,</span> <span class="s">&#39;ZZ&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">stabilizer_subspace</span><span class="p">()</span>
 <span class="go">array([[ 0.70710678+0.j,  0.00000000+0.j,  0.00000000+0.j,  0.70710678+0.j]])</span>
 </pre></div>
 </div>
-<p>Similarly, one can find the codewords of the phase-flip code <div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">S = \langle XXI, IXX \rangle</tt>)</p>
-latex exited with error:
-[stderr]
-
-kpathsea: Running mktexfmt latex.fmt
-
-[stdout]
-This is pdfTeX, Version 3.1415926-2.5-1.40.13 (TeX Live 2013/dev)
- restricted \write18 enabled.
-I can&#8217;t find the format file `latex.fmt&#8217;!
-</div>
-:</p>
+<p>Similarly, one can find the codewords of the phase-flip code <img class="math" src="_images/math/60917e664d3183ba1d3aebd5329839f35db3476e.png" alt="S = \langle XXI, IXX \rangle"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">PauliList</span><span class="p">(</span><span class="s">&#39;XXI&#39;</span><span class="p">,</span> <span class="s">&#39;IXX&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">stabilizer_subspace</span><span class="p">()</span>
 <span class="go">array([[ 0.50000000-0.j, -0.00000000-0.j, -0.00000000-0.j,  0.50000000-0.j,</span>
 <span class="go">        -0.00000000-0.j,  0.50000000+0.j,  0.50000000-0.j, -0.00000000-0.j],</span>
@@ -199,43 +175,7 @@ vectors are exact.</p>
 <dt id="qecc.PauliList.centralizer_gens">
 <tt class="descname">centralizer_gens</tt><big>(</big><em>group_gens=None</em><big>)</big><a class="headerlink" href="#qecc.PauliList.centralizer_gens" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the generators of the centralizer group
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">\mathrm{C}(P_1, \dots, P_k)</tt>)</p>
-latex exited with error:
-[stderr]
-
-kpathsea: Running mktexfmt latex.fmt
-
-[stdout]
-This is pdfTeX, Version 3.1415926-2.5-1.40.13 (TeX Live 2013/dev)
- restricted \write18 enabled.
-I can&#8217;t find the format file `latex.fmt&#8217;!
-</div>
-, where <div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">P_i</tt>)</p>
-latex exited with error:
-[stderr]
-
-kpathsea: Running mktexfmt latex.fmt
-
-[stdout]
-This is pdfTeX, Version 3.1415926-2.5-1.40.13 (TeX Live 2013/dev)
- restricted \write18 enabled.
-I can&#8217;t find the format file `latex.fmt&#8217;!
-</div>
- is the <div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">i^{\text{th}}</tt>)</p>
-latex exited with error:
-[stderr]
-
-kpathsea: Running mktexfmt latex.fmt
-
-[stdout]
-This is pdfTeX, Version 3.1415926-2.5-1.40.13 (TeX Live 2013/dev)
- restricted \write18 enabled.
-I can&#8217;t find the format file `latex.fmt&#8217;!
-</div>
-
+<img class="math" src="_images/math/35a28b46102463859aeb41309b1cc1dc3a0814d0.png" alt="\mathrm{C}(P_1, \dots, P_k)"/>, where <img class="math" src="_images/math/e86919caff4a26af2c8867c56bcd9134bfd241ac.png" alt="P_i"/> is the <img class="math" src="_images/math/6934c6c653b822d4b861f82307a28c4b4bb1df3d.png" alt="i^{\text{th}}"/>
 element of this list. See <a class="reference internal" href="groups.html#qecc.Pauli.centralizer_gens" title="qecc.Pauli.centralizer_gens"><tt class="xref py py-meth docutils literal"><span class="pre">qecc.Pauli.centralizer_gens()</span></tt></a> for
 more information.</p>
 </dd></dl>
