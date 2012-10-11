@@ -130,14 +130,16 @@ class Clifford(object):
     @property
     def nq(self):
         """
-        Returns the number of qubits on which a :class:`qecc.Clifford` object acts.
+        Returns the number of qubits on which this :class:`qecc.Clifford` object
+        acts.
         """
         return len(self)
         
     @property
     def n_unspecified(self):
         """
-        Returns the number of unspecifed outputs of a :class:`qec.Clifford` object.
+        Returns the number of unspecifed outputs of this :class:`qecc.Clifford`
+        object.
         """
         return len([P for P in chain(self.xout, self.zout) if P is Unspecified])
         
@@ -172,8 +174,9 @@ class Clifford(object):
             
     def str_sparse(self):
         """
-        Provides a compact representation for :class:`qecc.Clifford` objects in the case
-        where many of the outputs have small support. 
+        Provides a compact representation for :class:`qecc.Clifford` objects,
+        intended for use in the case where many of the outputs have small
+        support.
         """
         out = zip(KINDS, map(enumerate, [self.xout, self.zout]))
         nq = len(self)
@@ -244,7 +247,7 @@ class Clifford(object):
         :returns: Representation of the Pauli operator 
             :math:`CPC^{\dagger}`, where :math:`C` is the Clifford operator
             represented by this instance.
-        :rtype: qecc.Pauli
+        :rtype: :class:`qecc.Pauli`
         """
         
         if not isinstance(pauli,Pauli):

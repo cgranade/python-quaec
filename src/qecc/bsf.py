@@ -728,4 +728,3 @@ if __name__ == "__main__":
     
     print int(bsf_cnot.xx[0,1])
     #     1
-    
