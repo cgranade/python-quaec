@@ -22,7 +22,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-__version__ = (1, 0, 0)
+__version__ = (1, 0, 1)
 
 # All of the modules must be completely imported before we can start importing
 # specific names, due to circular dependencies between the various modules.

@@ -110,10 +110,15 @@ class Location(object):
         else:
             raise TypeError("Location kind must be an int or str.")
         
-        if not all(isinstance(q, int) for q in qubits):
-            raise TypeError('Qubit indices must be integers.')
-        
-        self._qubits = tuple(qubits)
+        #if not all(isinstance(q, int) for q in qubits):
+        #    raise TypeError('Qubit indices must be integers. Got {} instead, which is of type {}.'.format(
+        #        *(iter((q, type(q)) for q in qubits if not isinstance(q, int)).next())
+        #    ))
+
+        try:
+            self._qubits = tuple(map(int, qubits))
+        except TypeError as e:
+            raise TypeError('Qubit integers must be int-like.')
         self._is_clifford = bool(self.kind in self._CLIFFORD_GATE_KINDS)
        
     ## REPRESENTATION METHODS ##
@@ -455,6 +460,7 @@ class Circuit(list):
 
     ## CIRCUIT SIMPLIFICATION METHODS ##
         
+
     def cancel_selfinv_gates(self, start_at=0):
         """
         Transforms the circuit, removing any self-inverse gates from the circuit
@@ -577,7 +583,7 @@ class Circuit(list):
 
 ## FUNCTIONS ##
 
-def propagate_fault(circuitlist, fault, timestep):
+def propagate_fault(circuitlist, fault):
     """
     Given a list of circuits representing a list of timesteps (see
     :meth:`qecc.Circuit.group_by_time`) and a Pauli fault,  propagates that
@@ -595,7 +601,7 @@ def propagate_fault(circuitlist, fault, timestep):
         remainder of ``circuitlist``.
     """
     fault_out = fault
-    for step in circuitlist[timestep:]:
+    for step in circuitlist:
         fault_out = step.as_clifford().conjugate_pauli(fault_out)
     return fault_out
 
@@ -608,14 +614,10 @@ def possible_faults(circuit):
         considered.
         
     """
-    return it.chain.from_iter(
+    return it.chain.from_iterable(
         pc.restricted_pauli_group(loc.qubits, circuit.nq)
         for loc in circuit
     )
-#    faults=iter([])
-#    for gate in loc:
-#        faults=it.chain(faults,pc.restricted_pauli_group(gate.qubits,loc.nq))
-#    return faults
 
 def possible_output_faults(circuitlist):
     """
@@ -630,10 +632,12 @@ def possible_output_faults(circuitlist):
         ``circuitlist``.
     """
     outputs = iter([])
-    for timestep_idx in range(len(circuitlist)):
-        outputs = it.chain(outputs,
-                          it.imap(lambda fault: propagate_fault(circuitlist,
-                          fault,timestep_idx+1),
-                          possible_faults(circuitlist[timestep_idx]))) #CHECK +1
-    return outputs
-
+    for timestep_idx in xrange(len(circuitlist)):
+        outputs = it.imap(
+                      lambda fault: propagate_fault(
+                      circuitlist[timestep_idx+1:],fault),
+                      possible_faults(
+                      circuitlist[timestep_idx]
+                      ))
+        for output in outputs:
+            yield output

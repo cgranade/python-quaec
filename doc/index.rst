@@ -93,7 +93,7 @@ as a ZIP there. Stable releases can be found on the
 `downloads page`_, including installation packages for Windows and common Linux
 distributions.
 
-QuaEC is available via `PyPI`_ as well. To obtain it, run ``easy_install QuaEC``
+QuaEC is available via `PyPI`_ as well. To obtain it, run ``easy_install quaec``
 at the terminal or in the Windows command line.
 
 .. _downloads page: https://github.com/cgranade/python-quaec/downloads
