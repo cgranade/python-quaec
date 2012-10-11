@@ -167,7 +167,7 @@ class BinarySymplecticVector(object):
         r"""
         Returns the binary symplectic inner product :math:`u \odot v` of this
         vector with another vector. Letting :math:`u = (a | b)` and
-        :math:`v = (c | d)`, :math:`u\odot v = a \cdot c + b \cdot d`.
+        :math:`v = (c | d)`, :math:`u\odot v = a \cdot d + b \cdot c`.
 
         >>> import qecc as q
         >>> vector_a = q.BinarySymplecticVector([1,0,1],[0,1,1])
