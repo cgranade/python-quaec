@@ -131,7 +131,7 @@ ZI |->  +ZI
 IZ |->  +ZZ
 
 Also, the results of an element of the Clifford group can be left partially
-unspecified, using the :class:`qecc.Singleton` `Unspecified`:
+unspecified, using the singleton :obj:`qecc.Unspecified`:
 
 >>> import qecc as q
 >>> print q.Clifford(['IZ','XZ'],['XI',q.Unspecified])

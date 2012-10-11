@@ -5,12 +5,10 @@
     letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View,
     California, 94041, USA.
 
-Constraint Solvers
-==================
+Exceptions and Warnings
+=======================
 
-Commutation Constraints
------------------------
+:class:`qecc.InvalidCliffordError` Reference
+--------------------------------------------
 
-.. autofunction:: qecc.solve_commutation_constraints
-
-
+.. autoclass:: qecc.InvalidCliffordError

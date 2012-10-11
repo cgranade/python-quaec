@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Pauli and Clifford Groups &mdash; QuaEC 0.1alpha1 documentation</title>
+    <title>Pauli and Clifford Groups &mdash; QuaEC 1.0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.1alpha1',
+        VERSION:     '1.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="QuaEC 0.1alpha1 documentation" href="index.html" />
+    <link rel="top" title="QuaEC 1.0.1 documentation" href="index.html" />
     <link rel="next" title="Collections of Pauli Operators" href="paulicollections.html" />
     <link rel="prev" title="QuaEC: Quantum Error Correction Analysis in Python" href="index.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="index.html" title="QuaEC: Quantum Error Correction Analysis in Python"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">QuaEC 0.1alpha1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">QuaEC 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -478,7 +478,7 @@ where <img class="math" src="_images/math/1bd9a54ae5cfd7c94283454c6e8a05f9d77bbf
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_gens</strong> (list of <a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a> instances) &#8211; Either <tt class="docutils literal"><span class="pre">None</span></tt> or a list of generators <img class="math" src="_images/math/1bd9a54ae5cfd7c94283454c6e8a05f9d77bbf9a.png" alt="G_i"/>.
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_gens</strong> (<em>list of qecc.Pauli instances</em>) &#8211; Either <tt class="docutils literal"><span class="pre">None</span></tt> or a list of generators <img class="math" src="_images/math/1bd9a54ae5cfd7c94283454c6e8a05f9d77bbf9a.png" alt="G_i"/>.
 If not <tt class="docutils literal"><span class="pre">None</span></tt>, the returned centralizer <img class="math" src="_images/math/258100fc9201c2fb854c0b6c3fd4994b92350d2c.png" alt="\mathrm{C}(P)"/> is
 a subgroup of the group <img class="math" src="_images/math/2e41a1ecdd222c1580b874adc7c3cfb11972def0.png" alt="\langle G_i \rangle_{i=1}^k"/>.</td>
 </tr>
@@ -551,7 +551,7 @@ and returns 1 if <img class="math" src="_images/math/7ed6c5d0c626e033b6044bee55d
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><img class="math" src="_images/math/b0b2828e2d66bffe6b574d4fd636b42f296031eb.png" alt="c(P, Q)"/>.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">int</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
 </td>
 </tr>
 </tbody>
@@ -592,7 +592,7 @@ generators, respectively.</td>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nq</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of qubits upon which the returned Pauli acts.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">qecc.Pauli</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A Pauli operator acting as the identity on each of <tt class="docutils literal"><span class="pre">nq</span></tt> qubits.</td>
 </tr>
@@ -660,7 +660,7 @@ for all input Pauli group elements.</p>
 </pre></div>
 </div>
 <p>Also, the results of an element of the Clifford group can be left partially
-unspecified, using the <tt class="xref py py-class docutils literal"><span class="pre">qecc.Singleton</span></tt> <cite>Unspecified</cite>:</p>
+unspecified, using the singleton <tt class="xref py py-obj docutils literal"><span class="pre">qecc.Unspecified</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">qecc</span> <span class="kn">as</span> <span class="nn">q</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">q</span><span class="o">.</span><span class="n">Clifford</span><span class="p">([</span><span class="s">&#39;IZ&#39;</span><span class="p">,</span><span class="s">&#39;XZ&#39;</span><span class="p">],[</span><span class="s">&#39;XI&#39;</span><span class="p">,</span><span class="n">q</span><span class="o">.</span><span class="n">Unspecified</span><span class="p">])</span>
 <span class="go">XI |-&gt;  +IZ</span>
@@ -741,23 +741,20 @@ either 0 or 2. A warning will result if this condition is not met.</li>
 <dl class="attribute">
 <dt id="qecc.Clifford.nq">
 <tt class="descname">nq</tt><a class="headerlink" href="#qecc.Clifford.nq" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of qubits on which this <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> object
-acts.</p>
+<dd><p>Returns the number of qubits on which a <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> object acts.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="qecc.Clifford.n_unspecified">
 <tt class="descname">n_unspecified</tt><a class="headerlink" href="#qecc.Clifford.n_unspecified" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of unspecifed outputs of this <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a>
-object.</p>
+<dd><p>Returns the number of unspecifed outputs of a <tt class="xref py py-class docutils literal"><span class="pre">qec.Clifford</span></tt> object.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="qecc.Clifford.str_sparse">
 <tt class="descname">str_sparse</tt><big>(</big><big>)</big><a class="headerlink" href="#qecc.Clifford.str_sparse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provides a compact representation for <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> objects,
-intended for use in the case where many of the outputs have small
-support.</p>
+<dd><p>Provides a compact representation for <a class="reference internal" href="#qecc.Clifford" title="qecc.Clifford"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Clifford</span></tt></a> objects in the case
+where many of the outputs have small support.</p>
 </dd></dl>
 
 <dl class="method">
@@ -804,7 +801,7 @@ this instance.</p>
 <img class="math" src="_images/math/46731ce256671b71e6a49b66b36481dc54c7894d.png" alt="CPC^{\dagger}"/>, where <img class="math" src="_images/math/c3355896da590fc491a10150a50416687626d7cc.png" alt="C"/> is the Clifford operator
 represented by this instance.</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#qecc.Pauli" title="qecc.Pauli"><tt class="xref py py-class docutils literal"><span class="pre">qecc.Pauli</span></tt></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">qecc.Pauli</td>
 </tr>
 </tbody>
 </table>
@@ -837,7 +834,7 @@ one element, which will be equal to this operator.</p>
 </pre></div>
 </div>
 <p>If this operator is not a valid Clifford operator, then this method will
-raise an <tt class="xref py py-class docutils literal"><span class="pre">qecc.InvalidCliffordError</span></tt> upon iteraton.</p>
+raise an <a class="reference internal" href="exceptions.html#qecc.InvalidCliffordError" title="qecc.InvalidCliffordError"><tt class="xref py py-class docutils literal"><span class="pre">qecc.InvalidCliffordError</span></tt></a> upon iteraton.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1122,7 +1119,7 @@ on qubit <tt class="docutils literal"><span class="pre">q</span></tt>, yielding 
         <li class="right" >
           <a href="index.html" title="QuaEC: Quantum Error Correction Analysis in Python"
              >previous</a> |</li>
-        <li><a href="index.html">QuaEC 0.1alpha1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">QuaEC 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Bibliography &mdash; QuaEC 1.0.1 documentation</title>
+    <title>Exceptions and Warnings &mdash; QuaEC 1.0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,7 +26,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="QuaEC 1.0.1 documentation" href="index.html" />
-    <link rel="prev" title="Exceptions and Warnings" href="exceptions.html" /> 
+    <link rel="next" title="Bibliography" href="bibliography.html" />
+    <link rel="prev" title="Misc. Utility Functions and Classes" href="utils.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,7 +37,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="exceptions.html" title="Exceptions and Warnings"
+          <a href="bibliography.html" title="Bibliography"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="utils.html" title="Misc. Utility Functions and Classes"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">QuaEC 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -47,26 +51,20 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="bibliography">
-<h1>Bibliography<a class="headerlink" href="#bibliography" title="Permalink to this headline">¶</a></h1>
-<table class="docutils citation" frame="void" id="ag04" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[AG04]</td><td>Aaronson S. &amp; Gottesman D. Improved simulation of stabilizer circuits. Phys. Rev. A 70, 052328 (2004). <a class="reference external" href="http://dx.doi.org/abs/10.1103/PhysRevA.70.052328">doi:10.1103/PhysRevA.70.052328</a>.</td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="got97" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[Got97]</td><td>Gottesman, D. Stabilizer Codes and Quantum Error Correction. <a class="reference external" href="http://arxiv.org/abs/quant-ph/9705052">arXiv:quant-ph/9705052</a> (1997).</td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="crss96" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[CRSS96]</td><td>Calderbank A.R., Rains E.M., Shor P.W. &amp; Sloane N.J.A. Quantum Error Correction via Codes over GF(4). <a class="reference external" href="http://arxiv.org/abs/quant-ph/9608006">arXiv:quant-ph/9608006</a> (1996).</td></tr>
-</tbody>
-</table>
+  <div class="section" id="exceptions-and-warnings">
+<h1>Exceptions and Warnings<a class="headerlink" href="#exceptions-and-warnings" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="qecc-invalidclifforderror-reference">
+<h2><a class="reference internal" href="#qecc.InvalidCliffordError" title="qecc.InvalidCliffordError"><tt class="xref py py-class docutils literal"><span class="pre">qecc.InvalidCliffordError</span></tt></a> Reference<a class="headerlink" href="#qecc-invalidclifforderror-reference" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="qecc.InvalidCliffordError">
+<em class="property">class </em><tt class="descclassname">qecc.</tt><tt class="descname">InvalidCliffordError</tt><a class="headerlink" href="#qecc.InvalidCliffordError" title="Permalink to this definition">¶</a></dt>
+<dd><p>We raise this exception wherever an automated procedure
+has produced a list of output Pauli matrices that does not 
+commute as the result of an automorphism on the Paulis, or
+where some other idiocy has occurred.</p>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -75,12 +73,23 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Exceptions and Warnings</a><ul>
+<li><a class="reference internal" href="#qecc-invalidclifforderror-reference"><tt class="docutils literal"><span class="pre">qecc.InvalidCliffordError</span></tt> Reference</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="exceptions.html"
-                        title="previous chapter">Exceptions and Warnings</a></p>
+  <p class="topless"><a href="utils.html"
+                        title="previous chapter">Misc. Utility Functions and Classes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="bibliography.html"
+                        title="next chapter">Bibliography</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/bibliography.txt"
+    <li><a href="_sources/exceptions.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -107,7 +116,10 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="exceptions.html" title="Exceptions and Warnings"
+          <a href="bibliography.html" title="Bibliography"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="utils.html" title="Misc. Utility Functions and Classes"
              >previous</a> |</li>
         <li><a href="index.html">QuaEC 1.0.1 documentation</a> &raquo;</li> 
       </ul>
