@@ -66,7 +66,7 @@ def solve_commutation_constraints(
         when the search set is small, and cannot be expressed using its generating
         set. 
     :returns: An iterator ``it`` such that ``list(it)`` contains all operators
-        within the group :math:`G = \langle N_1, \dots, N_k \rangle\rangle`
+        within the group :math:`G = \langle N_1, \dots, N_k \rangle`
         given by ``search_in_gens``, consistent with the commutation and
         anticommutation constraints.
         
