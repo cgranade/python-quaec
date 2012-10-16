@@ -461,7 +461,7 @@ class Clifford(object):
         
     def circuit_decomposition(self):
         """
-        Returns a :class:`qecc>Circuit` object consisting of the circuit decomposition of 
+        Returns a :class:`qecc.Circuit` object consisting of the circuit decomposition of 
         `self.as_bsm()` and a :class:`qecc.Pauli` object which ensures the output phases
         of the :class:`qecc.Clifford` object are preserved.
         """
@@ -641,9 +641,8 @@ def generic_clifford(paulis_in, paulis_out):
     zouts=paulis_out[nq:2*nq]
     
     G    = Clifford(xouts,zouts)
-    H    = Clifford(xins,zins)    
-    Hinv = (H.as_bsm().inv().as_clifford())
-    return G*Hinv
+    H    = Clifford(xins,zins)
+    return G*H.inv()
     
 # For backwards compatibility, we define gen_cliff as an alias.
 gen_cliff = generic_clifford
