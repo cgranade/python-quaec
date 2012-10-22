@@ -53,6 +53,7 @@ __all__ = [
 VALID_OPS = ['I', 'X', 'Y', 'Z']
 __all__ += VALID_OPS
 VALID_PHS = range(4)
+VALID_BITS = range(2)
 
 MULT_TABLE = {
     ('I', 'I'): (0, 'I'), ('I', 'X'): (0, 'X'), ('I', 'Y'): (0, 'Y'), ('I', 'Z'): (0, 'Z'),
@@ -60,12 +61,14 @@ MULT_TABLE = {
     ('Y', 'I'): (0, 'Y'), ('Y', 'X'): (3, 'Z'), ('Y', 'Y'): (0, 'I'), ('Y', 'Z'): (1, 'X'),
     ('Z', 'I'): (0, 'Z'), ('Z', 'X'): (1, 'Y'), ('Z', 'Y'): (3, 'X'), ('Z', 'Z'): (0, 'I')
 }
+#TODO: FIND OUT WHAT FUNCTION CORRESPONDS TO EVALUATION OF MULT_TABLE IN DECIMAL
 
 ## CLASSES ##
 
 class Pauli(object):
     r"""
     Class representing an element of the Pauli group on :math:`n` qubits.
+    Uses augmented binary symplectic form from Phys. Rev. A 68, 042318 (2003)
     
     :param operator: String of I's, X's, Y's and Z's.
     :type operator: str
@@ -88,25 +91,77 @@ class Pauli(object):
 
         #If a phase outside of range(4) is input, we use its remainder, mod 4.
         if not( phase > -1 and phase < 4):
-            phase= phase % 4
+            phase = phase % 4
             
-        self.op = operator
-        self.ph = phase
+        #self.op = operator
+        #V2: properties are xs, zs, and phase
+        xarray=[]
+        zarray=[]
+        for letter in operator:
+            if letter=='X':
+                xarray.append(1)
+                zarray.append(0)
+            elif letter=='Y':
+                xarray.append(1)
+                zarray.append(1)
+                phase+=1
+            elif letter=='Z':
+                xarray.append(0)
+                zarray.append(1)
+        self._xs=xarray
+        self._zs=zarray
+        self._phase = phase
         
     def __hash__(self):
         # We need a hash function to store Paulis as dict keys or in sets.
-        return hash((self.op, self.ph))
+        return hash((self._phase, self._xs, self._zs))
         
     def __len__(self):
         """
         Yields the number of qubits on which the Pauli ``self`` acts.
         """
-        return len(self.op)
+        assert len(self._xs)==len(self._zs), '''The xs must act on the 
+            same number of qubits as the zs.'''
+        return len(self._xs)
+    
+    @property
+    def op(self):
+        """Returns a string with the letters corresponding to the 
+        phase-free Pauli associated with a Pauli object. This is 
+        part of the original Pauli specification, but has been
+        rendered obsolete by aBSF."""
+        output_string=''
+        for x_bit, z_bit in zip(self._xs,self._zs):
+            if x_bit == 0:
+                if z_bit == 0:
+                    output_string+='I'
+                elif z_bit == 1:
+                    output_string+='Z'
+            elif x_bit == 1:
+                if z_bit == 0:
+                    output_string+='X'
+                elif z_bit == 1:
+                    output_string+='Y'
+        return output_string
+    
+    @property
+    def ph(self):
+        """Returns an integer for which the Pauli object
+        in question can be expressed as i^(ph)*op. This is 
+        part of the original Pauli specification, but has been
+        rendered obsolete by aBSF."""
+        output_int = self._phase
+        for x_bit, z_bit in zip(self._xs,self._zs):
+            if x_bit == 1:
+                if z_bit == 1:
+                    output_int-=1
+        return output_int
                     
     def __mul__(self, other):
         """
         Multiplies two Paulis, ``self`` and ``other`` symbolically, using tabulated single-Pauli multiplication.
         """
+        #TODO: Begin here tomorrow.
         if not isinstance(other,Pauli):
             return NotImplemented 
 
