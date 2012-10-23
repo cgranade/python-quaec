@@ -36,6 +36,7 @@ from unitary_reps import pauli_as_unitary
 from singletons import Unspecified
 import  CliffordClass as cc
 import utils as u
+import numpy as np
 
 ## ALL ##
 
@@ -77,58 +78,69 @@ class Pauli(object):
     :type phase: int
     """
 
-    def __init__(self, *args):
+    def __init__(self, operator, phase=0, **kwargs):
         """
         This is the constructor for Pauli group elements. There are two ways in which it
-        is expected to be used. Either a Pauli is to be constructed from a 
+        is expected to be used. Either a Pauli is to be constructed from a string representing
+        an operator and an integer between 0 and 4 representing a phase, or it is to be 
+        constructed from two one-dimensional arrays containing the x and z information 
+        about the Pauli, and an integer containing a different phase. 
         """
-        # We unpack args, and determine if a pauli is being initialized with a string an
-        # integer, or an xz array and a phase. 
-        assert len(args)==2, "Paulis are constructed from two objects, either"
-        
-        # Operator is a string which contains I, X, Y, Z. We throw an error if it isn't.
-
-        for one_bit_operator in operator:
-            if one_bit_operator not in VALID_OPS:
-                raise ValueError("Input operators I, X, Y or Z.")
-
-        # Phase will be defined as an integer from 0 to 3. If it's not integral, we throw an error.
-        if not isinstance(phase, int):
-            raise ValueError("Input phase must be an integer, preferably 0 to 3.")
-
-        #If a phase outside of range(4) is input, we use its remainder, mod 4.
-        if not( phase > -1 and phase < 4):
-            phase = phase % 4
+        # We unpack args, and determine if a pauli is being initialized with a string and
+        # an integer, or a tuple of two integers, an integer for the phase and an integer
+        # for the number of qubits. The latter is the constructor that will be used on the
+        # back end for speed, whenever possible.
+        if len(kwargs)!=0:
+            # We use the back-end constructor if keyword arguments have been passed in:
+            self._x_array=kwargs['_x_array']
+            self._z_array=kwargs['_z_array']
+            self._bsm_phase=kwargs['_bsm_phase']
+        else:
+            # `operator' is a string which contains I, X, Y, Z. We throw an error if it isn't.
             
-        #V2: properties are x_int, z_int, and phase
-        x_int=0
-        z_int=0
-        for letter in operator[::-1]:
-            if letter=='X':
-                x_int=x_int<<1+1
-                z_int=z_int<<1
-            elif letter=='Y':
-                x_int=x_int<<1+1
-                z_int=z_int<<1+1
-                phase+=1
-            elif letter=='Z':
-                x_int=x_int<<1
-                z_int=z_int<<1+1
-        self._xs=x_int
-        self._zs=z_int
-        self._phase = phase % 4
-        
+            for one_bit_operator in operator:
+                if one_bit_operator not in VALID_OPS:
+                    raise ValueError("Input operators I, X, Y or Z.")
+
+            # Phase will be defined as an integer from 0 to 3. If it's not integral, we throw an error.
+            if not isinstance(phase, int):
+                raise ValueError("Input phase must be an integer, preferably 0 to 3.")
+
+            #If a phase outside of range(4) is input, we use its remainder, mod 4.
+            if not( phase > -1 and phase < 4):
+                phase = phase % 4
+                
+            #V2: properties are _x_array, _z_array, and _bsm_phase
+            x_array=np.array([],dtype='uint8')
+            z_array=np.array([],dtype='uint8')
+            
+            for letter in operator:
+                if letter=='X':
+                    x_array=np.append(x_array,np.array([1],dtype='uint8'))
+                    z_array=np.append(z_array,np.array([0],dtype='uint8'))
+                elif letter=='Y':
+                    x_array=np.append(x_array,np.array([1],dtype='uint8'))
+                    z_array=np.append(z_array,np.array([1],dtype='uint8'))
+                    phase+=1
+                elif letter=='Z':
+                    x_array=np.append(x_array,np.array([0],dtype='uint8'))
+                    z_array=np.append(z_array,np.array([1],dtype='uint8'))
+            
+            self._x_array=x_array
+            self._z_array=z_array
+            self._bsm_phase = phase % 4
+            
     def __hash__(self):
         # We need a hash function to store Paulis as dict keys or in sets.
-        return hash((self._phase, self._xs, self._zs))
+        return hash((self._bsm_phase, self._x_array, self._z_array))
         
     def __len__(self):
         """
         Yields the number of qubits on which the Pauli ``self`` acts.
         """
-        assert len(self._xs)==len(self._zs), '''The xs must act on the 
+        assert len(self._x_array)==len(self._z_array), '''The xs must act on the 
             same number of qubits as the zs.'''
-        return len(self._xs)
+        return len(self._x_array)
     
     @property
     def op(self):
@@ -137,7 +149,7 @@ class Pauli(object):
         part of the original Pauli specification, but has been
         rendered obsolete by aBSF."""
         output_string=''
-        for x_bit, z_bit in zip(self._xs,self._zs):
+        for x_bit, z_bit in zip(self._x_array,self._z_array):
             if x_bit == 0:
                 if z_bit == 0:
                     output_string+='I'
@@ -156,7 +168,7 @@ class Pauli(object):
         in question can be expressed as i^(ph)*op. This is 
         part of the original Pauli specification, but has been
         rendered obsolete by aBSF."""
-        output_int = self._phase
+        output_int = self._bsm_phase
         for x_bit, z_bit in zip(self._xs,self._zs):
             if x_bit == 1:
                 if z_bit == 1:
@@ -165,7 +177,8 @@ class Pauli(object):
                     
     def __mul__(self, other):
         """
-        Multiplies two Paulis, ``self`` and ``other`` symbolically, using tabulated single-Pauli multiplication.
+        Multiplies two Paulis, ``self`` and ``other`` symbolically, using
+        Dehaene and De Moor.
         """
         #TODO: Begin here tomorrow.
         if not isinstance(other,Pauli):
@@ -179,15 +192,17 @@ class Pauli(object):
 
         #We initialize a Pauli with an empty op-string, updating the operator
         #and phase using a multiplication table:    
-        newP = Pauli('', p1.ph + p2.ph)
-        for paulicounter in range(len(p1)):
-            ph, op = MULT_TABLE[(p1.op[paulicounter], p2.op[paulicounter])]
-            newP.op=newP.op+op
-            newP.ph=newP.ph+ph
+        #newP = Pauli('', p1.ph + p2.ph)
+        #for paulicounter in range(len(p1)):
+        #    ph, op = MULT_TABLE[(p1.op[paulicounter], p2.op[paulicounter])]
+        #    newP.op=newP.op+op
+        #    newP.ph=newP.ph+ph
             
-        newP.ph = newP.ph % 4
-            
-        return newP
+        #newP.ph = newP.ph % 4
+        new_x_array=np.bitwise_xor(p1._x_array,p2._x_array)
+        new_z_array=np.bitwise_xor(p1._z_array,p2._z_array)
+        new_bsm_phase=p1._bsm_phase+p2._bsm_phase+2*(np.sum(np.bitwise_and(p1._x_array,p2._z_array))%2)
+        return Pauli(_x_array=new_x_array,_z_array=new_z_array,_bsm_phase=new_bsm_phase)
 
     def __pow__(self,num):
         """
