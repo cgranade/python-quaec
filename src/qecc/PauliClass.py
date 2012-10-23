@@ -77,8 +77,15 @@ class Pauli(object):
     :type phase: int
     """
 
-    def __init__(self, operator, phase=0):
-
+    def __init__(self, *args):
+        """
+        This is the constructor for Pauli group elements. There are two ways in which it
+        is expected to be used. Either a Pauli is to be constructed from a 
+        """
+        # We unpack args, and determine if a pauli is being initialized with a string an
+        # integer, or an xz array and a phase. 
+        assert len(args)==2, "Paulis are constructed from two objects, either"
+        
         # Operator is a string which contains I, X, Y, Z. We throw an error if it isn't.
 
         for one_bit_operator in operator:
@@ -93,24 +100,23 @@ class Pauli(object):
         if not( phase > -1 and phase < 4):
             phase = phase % 4
             
-        #self.op = operator
-        #V2: properties are xs, zs, and phase
-        xarray=[]
-        zarray=[]
-        for letter in operator:
+        #V2: properties are x_int, z_int, and phase
+        x_int=0
+        z_int=0
+        for letter in operator[::-1]:
             if letter=='X':
-                xarray.append(1)
-                zarray.append(0)
+                x_int=x_int<<1+1
+                z_int=z_int<<1
             elif letter=='Y':
-                xarray.append(1)
-                zarray.append(1)
+                x_int=x_int<<1+1
+                z_int=z_int<<1+1
                 phase+=1
             elif letter=='Z':
-                xarray.append(0)
-                zarray.append(1)
-        self._xs=xarray
-        self._zs=zarray
-        self._phase = phase
+                x_int=x_int<<1
+                z_int=z_int<<1+1
+        self._xs=x_int
+        self._zs=z_int
+        self._phase = phase % 4
         
     def __hash__(self):
         # We need a hash function to store Paulis as dict keys or in sets.
