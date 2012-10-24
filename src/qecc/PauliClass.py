@@ -162,6 +162,17 @@ class Pauli(object):
                     output_string+='Y'
         return output_string
     
+    @op.setter
+    def op(self,value):
+        """
+        This setter is a little complicated, since setting op can change the
+        value of _bsm_phase. We find the difference between the number of
+        Y's in the new op and the old op, and increment the _bsm_phase by 
+        that amount. 
+        """
+        old_num_ys = len([elem for elem in self.op if elem=='Y'])
+        new_num_ys = len([elem for elem in value   if elem=='Y'])
+    
     @property
     def ph(self):
         """Returns an integer for which the Pauli object
@@ -284,7 +295,7 @@ class Pauli(object):
         :returns: The number of qubits on which the represented Pauli operator
             is supported.
         """
-        return np.sum(np.binary_or(self._x_array,self._z-array))
+        return np.sum(np.binary_or(self._x_array,self._z_array))
     
     ## PRINTING ##
             
