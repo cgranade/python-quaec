@@ -284,7 +284,7 @@ class Pauli(object):
         :returns: The number of qubits on which the represented Pauli operator
             is supported.
         """
-        return len([op for op in self.op if op != 'I'])
+        return np.sum(np.binary_or(self._x_array,self._z-array))
     
     ## PRINTING ##
             
@@ -344,7 +344,7 @@ class Pauli(object):
         :type ph: int
         :returns: This instance.
         """
-        self.ph = (self.ph + ph) % 4
+        self._bsm_phase = (self._bsm_phase + ph) % 4
         return self
 
     def permute_op(self, perm):
