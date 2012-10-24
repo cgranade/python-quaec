@@ -1035,4 +1035,7 @@ if __name__ == "__main__":
     
     print list(from_generators([P, Q, R]))
     print is_in_normalizer(Pauli('ZZX', 0), [P, Q, R])
+
+# This is Tomas just testing out the pull/commit/push sequence of operations on git. 
+# I will be doing meaningful work very soon!
     
