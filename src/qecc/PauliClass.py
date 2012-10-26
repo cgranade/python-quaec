@@ -667,6 +667,7 @@ class Pauli(object):
             if idx in region and self.op[idx]!='I':
                 wt += 1
         return wt
+    
     #TODO Marker
     def cust_wt(self,char):
         """
@@ -679,8 +680,15 @@ class Pauli(object):
         """
         if char not in VALID_OPS:
             raise ValueError('Generators cannot be selected outside I, X, Y, Z.')
-        return len([op for op in self.op if op == char])
-        
+        if char='I':
+            return np.sum(np.bitwise_and(np.bitwise_not(self._x_array),np.bitwise_not(self._z_array)))
+        elif char='X':
+            return np.sum(self._x_array)
+        elif char='Y':
+            return np.sum(np.bitwise_and(self._x_array,self._z_array))
+        elif char='Z':
+            return np.sum(self._z_array)
+
     def ct(self):
         """
         The conjugate transpose of this Pauli operator.
