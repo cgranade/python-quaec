@@ -170,28 +170,39 @@ class Pauli(object):
         Y's in the new op and the old op, and increment the _bsm_phase by 
         that amount. 
         """
-        old_num_ys = len([elem for elem in self.op if elem=='Y'])
+        old_num_ys = len(np.binary_and(self._x_array,self._z_array))
         new_num_ys = len([elem for elem in value   if elem=='Y'])
-    
+        self._bsm_phase+=new_num_ys-old_num_ys
+        for letter in value:
+            if letter=='X':
+                x_array=np.append(x_array,np.array([1],dtype='uint8'))
+                z_array=np.append(z_array,np.array([0],dtype='uint8'))
+            elif letter=='Y':
+                x_array=np.append(x_array,np.array([1],dtype='uint8'))
+                z_array=np.append(z_array,np.array([1],dtype='uint8'))
+            elif letter=='Z':
+                x_array=np.append(x_array,np.array([0],dtype='uint8'))
+                z_array=np.append(z_array,np.array([1],dtype='uint8'))
+        self._x_array=x_array
+        self._z_array=z_array
+
     @property
     def ph(self):
         """Returns an integer for which the Pauli object
         in question can be expressed as i^(ph)*op. This is 
         part of the original Pauli specification, but has been
         rendered obsolete by aBSF."""
-        output_int = self._bsm_phase
-        for x_bit, z_bit in zip(self._xs,self._zs):
-            if x_bit == 1:
-                if z_bit == 1:
-                    output_int-=1
-        return output_int
+        return self._bsm_phase-len(np.binary_and(self._x_array,self._z_array))
+        
+    @ph.setter
+    def ph(self,value):
+        self._bsm_phase=value+len(np.binary_and(self._x_array,self._z_array))
                     
     def __mul__(self, other):
         """
         Multiplies two Paulis, ``self`` and ``other`` symbolically, using
         Dehaene and De Moor.
         """
-        #TODO: Begin here tomorrow.
         if not isinstance(other,Pauli):
             return NotImplemented 
 
@@ -326,7 +337,9 @@ class Pauli(object):
         :returns: An instance representing :math:`P\otimes Q`, where :math:`P`
             is the Pauli operator represented by this instance.
         """
-        return Pauli(self.op + other.op, self.ph + other.ph)
+        return Pauli(_x_array=np.hstack((self._x_array, other._x_array)),
+            _z_array=np.hstack((self._z_array, other._z_array)),
+             _bsm_phase=self._bsm_phase + other._bsm_phase)
 
     def __and__(self,other):
         """
@@ -418,7 +431,7 @@ class Pauli(object):
         """
         #First, make sure both objects are Paulis:
         if isinstance(other, Pauli):
-            if self.op == other.op and self.ph == other.ph:
+            if self._x_array == other._x_array and self._x_array == other._x_array and self._bsm_phase == other._bsm_phase:
                 return True
             else:
                 return False
@@ -433,23 +446,13 @@ class Pauli(object):
         """
         #Check types
         if isinstance(other, Pauli):
-            if self.op == other.op and self.ph == other.ph:
+            if self._x_array == other._x_array and self._x_array == other._x_array and self._bsm_phase == other._bsm_phase:
                 return False
             else:
                 return True
         else:
             return True
-            
-    ## OTHER MAGIC METHODS ##
-
-    def __len__(self):
-        """
-        Yields the number of qubits on which the Pauli ``self`` acts.
-
-        :rtype: int
-        """
-        return len(self.op)
-    
+                
     ## CONVERSION METHODS ##
 
     def as_gens(self):
@@ -632,11 +635,19 @@ class Pauli(object):
         i^0 XIXXXIXXXXII
                 
         """
-        p_1 = ensure_pauli(p_1)
-        if isinstance(bitstring, str):
-            bitstring = map(int, bitstring)
-        
-        return reduce(and_,[(p_1.set_phase())**j for j in bitstring])
+        #p_1 = ensure_pauli(p_1)
+        #if isinstance(bitstring, str):
+        #    bitstring = map(int, bitstring)
+        #
+        #return reduce(and_,[(p_1.set_phase())**j for j in bitstring])
+        if p_1.op=='X':
+            return Pauli(_x_array=np.array(list(bitstring),dtype='uint8'), _z_array=np.zeros(len(bitstring),dtype='uint8'), _bsm_phase=0)
+        elif p_1.op=='Y':
+            return Pauli(_x_array=np.array(list(bitstring),dtype='uint8'), _z_array=np.array(list(bitstring),dtype='uint8'), _bsm_phase=np.sum(np.array(list(bitstring),dtype='uint8'))%4)
+        elif p_1.op=='Z':
+            return Pauli(_x_array=np.zeros(len(bitstring),dtype='uint8'), _z_array=np.array(list(bitstring),dtype='uint8'), _bsm_phase=0)
+        elif p_1.op=='I':
+            return Pauli(_x_array=np.zeros(len(bitstring),dtype='uint8'), _z_array=np.zeros(len(bitstring),dtype='uint8'), _bsm_phase=0)
     
     ## OTHER METHODS ##
     
@@ -656,7 +667,7 @@ class Pauli(object):
             if idx in region and self.op[idx]!='I':
                 wt += 1
         return wt
-
+    #TODO Marker
     def cust_wt(self,char):
         """
         Produces the number of qubits on which an input Pauli acts as a 
@@ -903,7 +914,7 @@ def eye_p(nq):
     :rtype: :class:`qecc.Pauli`
     :returns: A Pauli operator acting as the identity on each of ``nq`` qubits.
     """
-    return Pauli('I'*nq)
+    return Pauli(_x_array=np.zeros(nq,dtype='uint8'),_z_array=np.zeros(nq,dtype='uint8'),bsm_phase=0)
 
 def ns_mod_s(*stab_gens):
     r"""
