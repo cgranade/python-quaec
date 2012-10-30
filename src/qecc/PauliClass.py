@@ -115,7 +115,10 @@ class Pauli(object):
             z_array=np.array([],dtype='uint8')
             
             for letter in operator:
-                if letter=='X':
+                if letter=='I':
+                    x_array=np.append(x_array,np.array([0],dtype='uint8'))
+                    z_array=np.append(z_array,np.array([0],dtype='uint8'))
+                elif letter=='X':
                     x_array=np.append(x_array,np.array([1],dtype='uint8'))
                     z_array=np.append(z_array,np.array([0],dtype='uint8'))
                 elif letter=='Y':
@@ -170,11 +173,16 @@ class Pauli(object):
         Y's in the new op and the old op, and increment the _bsm_phase by 
         that amount. 
         """
-        old_num_ys = len(np.binary_and(self._x_array,self._z_array))
-        new_num_ys = len([elem for elem in value   if elem=='Y'])
-        self._bsm_phase+=new_num_ys-old_num_ys
+        old_num_ys = sum(np.bitwise_and(self._x_array,self._z_array))
+        new_num_ys = sum([elem for elem in value   if elem=='Y'])
+        self._bsm_phase+=new_num_ys-old_num_ys % 4
+        x_array=np.array([],dtype='uint8')
+        z_array=np.array([],dtype='uint8')
         for letter in value:
-            if letter=='X':
+            if letter=='I':
+                x_array=np.append(x_array,np.array([0],dtype='uint8'))
+                z_array=np.append(z_array,np.array([0],dtype='uint8'))
+            elif letter=='X':
                 x_array=np.append(x_array,np.array([1],dtype='uint8'))
                 z_array=np.append(z_array,np.array([0],dtype='uint8'))
             elif letter=='Y':
@@ -192,11 +200,11 @@ class Pauli(object):
         in question can be expressed as i^(ph)*op. This is 
         part of the original Pauli specification, but has been
         rendered obsolete by aBSF."""
-        return self._bsm_phase-len(np.binary_and(self._x_array,self._z_array))
+        return self._bsm_phase-sum(np.bitwise_and(self._x_array,self._z_array))
         
     @ph.setter
     def ph(self,value):
-        self._bsm_phase=value+len(np.binary_and(self._x_array,self._z_array))
+        self._bsm_phase=value+sum(np.bitwise_and(self._x_array,self._z_array))
                     
     def __mul__(self, other):
         """
@@ -223,8 +231,8 @@ class Pauli(object):
         #newP.ph = newP.ph % 4
         new_x_array=np.bitwise_xor(p1._x_array,p2._x_array)
         new_z_array=np.bitwise_xor(p1._z_array,p2._z_array)
-        new_bsm_phase=p1._bsm_phase+p2._bsm_phase+2*(np.sum(np.bitwise_and(p1._x_array,p2._z_array))%2)
-        return Pauli(_x_array=new_x_array,_z_array=new_z_array,_bsm_phase=new_bsm_phase)
+        new_bsm_phase=p1._bsm_phase+p2._bsm_phase+2*(sum(np.bitwise_and(p1._x_array,p2._z_array))%2)
+        return Pauli(None,_x_array=new_x_array,_z_array=new_z_array,_bsm_phase=new_bsm_phase)
 
     def __pow__(self,num):
         """
@@ -680,13 +688,13 @@ class Pauli(object):
         """
         if char not in VALID_OPS:
             raise ValueError('Generators cannot be selected outside I, X, Y, Z.')
-        if char='I':
+        if char=='I':
             return np.sum(np.bitwise_and(np.bitwise_not(self._x_array),np.bitwise_not(self._z_array)))
-        elif char='X':
+        elif char=='X':
             return np.sum(self._x_array)
-        elif char='Y':
+        elif char=='Y':
             return np.sum(np.bitwise_and(self._x_array,self._z_array))
-        elif char='Z':
+        elif char=='Z':
             return np.sum(self._z_array)
 
     def ct(self):
