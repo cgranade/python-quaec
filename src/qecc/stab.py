@@ -646,17 +646,17 @@ class StabilizerCode(object):
         cliff_xouts_left=stab_left+xs_left
         cliff_zouts_left=[Unspecified]*len(stab_left)+zs_left
         
-        cliff_left=Clifford(cliff_xouts_left,cliff_zouts_left).constraint_completions().next()
+        cliff_left=c.Clifford(cliff_xouts_left,cliff_zouts_left).constraint_completions().next()
         list_left=cliff_left.xout+cliff_left.zout
 
-        for mcset in mutually_commuting_sets(n_gens=len(stab_left)-len(stab_right),n_bits=nq_anc):
-            temp_xouts_right=pad(stab_right,lower_right=mcset)+map(lambda p: p&eye_p(nq_anc),xs_right)
-            temp_zouts_right=[Unspecified]*len(stab_left)+map(lambda p: p&eye_p(nq_anc),zs_right)
-        for completion in Clifford(temp_xouts_right,temp_zouts_right).constraint_completions():
-            if nq_in<nq_out:
-                yield gen_cliff(completion.xout+completion.zout,list_left)
+        for mcset in p.mutually_commuting_sets(n_elems=len(stab_left)-len(stab_right),n_bits=nq_anc):
+            temp_xouts_right = p.pad(stab_right,lower_right=mcset) + map(lambda elem: elem & p.eye_p(nq_anc), xs_right)
+            temp_zouts_right = [Unspecified]*len(stab_left) + map(lambda elem: elem & p.eye_p(nq_anc), zs_right)
+        for completion in c.Clifford(temp_xouts_right,temp_zouts_right).constraint_completions():
+            if nq_in < nq_out:
+                yield c.gen_cliff(completion.xout+completion.zout,list_left)
             else:
-                yield gen_cliff(list_left,completion.xout+completion.zout)
+                yield c.gen_cliff(list_left,completion.xout+completion.zout)
 
     def min_len_transcoding_clifford(self,other):
         """
