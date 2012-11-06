@@ -822,3 +822,4 @@ class StabilizerCode(object):
 
         """
         raise NotImplementedError("Coming Soon: Reed-Solomon Codes")
+

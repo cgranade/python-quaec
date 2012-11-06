@@ -51,7 +51,7 @@ def solve_commutation_constraints(
     :param commutation_constraints: A list of operators :math:`\{A_i\}` such
         that each solution :math:`P` yielded by this function must satisfy
         :math:`[A_i, P] = 0` for all :math:`i`.
-    :param commutation_constraints: A list of operators :math:`\{B_i\}` such
+    :param anticommutation_constraints: A list of operators :math:`\{B_i\}` such
         that each solution :math:`P` yielded by this function must satisfy
         :math:`\{B_i, P\} = 0` for all :math:`i`.
     :param search_in_gens: A list of operators :math:`\{N_i\}` that generate
@@ -66,7 +66,7 @@ def solve_commutation_constraints(
         when the search set is small, and cannot be expressed using its generating
         set. 
     :returns: An iterator ``it`` such that ``list(it)`` contains all operators
-        within the group :math:`G = \langle N_1, \dots, N_k \rangle\rangle`
+        within the group :math:`G = \langle N_1, \dots, N_k \rangle`
         given by ``search_in_gens``, consistent with the commutation and
         anticommutation constraints.
         
