@@ -94,7 +94,7 @@ class Pauli(object):
             # We use the back-end constructor if keyword arguments have been passed in:
             self._x_array=kwargs['_x_array']
             self._z_array=kwargs['_z_array']
-            self._bsm_phase=kwargs['_bsm_phase']
+            self._bsm_phase=kwargs['_bsm_phase'] % 4
         else:
             # `operator' is a string which contains I, X, Y, Z. We throw an error if it isn't.
             
@@ -170,7 +170,7 @@ class Pauli(object):
         Y's in the new op and the old op, and increment the _bsm_phase by 
         that amount. 
         """
-        old_num_ys = len(np.binary_and(self._x_array,self._z_array))
+        old_num_ys = np.sum(np.bitwise_and(self._x_array,self._z_array))
         new_num_ys = len([elem for elem in value   if elem=='Y'])
         self._bsm_phase+=new_num_ys-old_num_ys
         for letter in value:
@@ -192,11 +192,11 @@ class Pauli(object):
         in question can be expressed as i^(ph)*op. This is 
         part of the original Pauli specification, but has been
         rendered obsolete by aBSF."""
-        return self._bsm_phase-len(np.binary_and(self._x_array,self._z_array))
+        return (self._bsm_phase-sum(np.bitwise_and(self._x_array,self._z_array))) % 4
         
     @ph.setter
     def ph(self,value):
-        self._bsm_phase=value+len(np.binary_and(self._x_array,self._z_array))
+        self._bsm_phase=(value+np.sum(np.bitwise_and(self._x_array,self._z_array))) % 4
                     
     def __mul__(self, other):
         """
@@ -223,8 +223,8 @@ class Pauli(object):
         #newP.ph = newP.ph % 4
         new_x_array=np.bitwise_xor(p1._x_array,p2._x_array)
         new_z_array=np.bitwise_xor(p1._z_array,p2._z_array)
-        new_bsm_phase=p1._bsm_phase+p2._bsm_phase+2*(np.sum(np.bitwise_and(p1._x_array,p2._z_array))%2)
-        return Pauli(_x_array=new_x_array,_z_array=new_z_array,_bsm_phase=new_bsm_phase)
+        new_bsm_phase=(p1._bsm_phase+p2._bsm_phase+2*(np.sum(np.bitwise_and(p1._x_array,p2._z_array))%2)) % 4
+        return Pauli(None,_x_array=new_x_array,_z_array=new_z_array,_bsm_phase=new_bsm_phase)
 
     def __pow__(self,num):
         """
@@ -306,7 +306,7 @@ class Pauli(object):
         :returns: The number of qubits on which the represented Pauli operator
             is supported.
         """
-        return np.sum(np.binary_or(self._x_array,self._z_array))
+        return np.sum(np.bitwise_or(self._x_array,self._z_array))
     
     ## PRINTING ##
             
@@ -339,7 +339,7 @@ class Pauli(object):
         """
         return Pauli(_x_array=np.hstack((self._x_array, other._x_array)),
             _z_array=np.hstack((self._z_array, other._z_array)),
-             _bsm_phase=self._bsm_phase + other._bsm_phase)
+             _bsm_phase=(self._bsm_phase + other._bsm_phase) % 4)
 
     def __and__(self,other):
         """
@@ -668,7 +668,6 @@ class Pauli(object):
                 wt += 1
         return wt
     
-    #TODO Marker
     def cust_wt(self,char):
         """
         Produces the number of qubits on which an input Pauli acts as a 
@@ -680,13 +679,13 @@ class Pauli(object):
         """
         if char not in VALID_OPS:
             raise ValueError('Generators cannot be selected outside I, X, Y, Z.')
-        if char='I':
+        if char=='I':
             return np.sum(np.bitwise_and(np.bitwise_not(self._x_array),np.bitwise_not(self._z_array)))
-        elif char='X':
+        elif char=='X':
             return np.sum(self._x_array)
-        elif char='Y':
+        elif char=='Y':
             return np.sum(np.bitwise_and(self._x_array,self._z_array))
-        elif char='Z':
+        elif char=='Z':
             return np.sum(self._z_array)
 
     def ct(self):
@@ -694,7 +693,8 @@ class Pauli(object):
         The conjugate transpose of this Pauli operator.
 
         :rtype: an instance of the :class:`qecc.Pauli` class.
-        """    
+        """
+        #TODO Function not implemented with new properties; but low-priority.    
         return Pauli(self.op, 4-self.ph)
         
     def centralizer_gens(self, group_gens=None):
@@ -830,10 +830,12 @@ def com(P, Q):
     :returns: :math:`c(P, Q)`.
     :rtype: :obj:`int`
     """
+    #Return number of X/Z collisions, mod 2:
+    return (np.sum(np.bitwise_and(P._x_array,Q._z_array))+np.sum(np.bitwise_and(Q._x_array,P._z_array)))%2
     ph1, ph2 = (P*Q).ph, (Q*P).ph
     return 0 if ph1 == ph2 else 1
 
-def pauli_group(nq):
+def pauli_group(nq,incl_y_in_gens=True):
     """
     Generates an iterator onto the Pauli group of :math:`n` qubits,
     where :math:`n` is given as the argument *nq*.
@@ -844,6 +846,7 @@ def pauli_group(nq):
     :returns: An iterator such that ``list(pauli_group(nq))`` produces a list of
         all possible Pauli operators on ``nq`` qubits.
     """
+    #TODO Marker
     for op in product(VALID_OPS, repeat=nq):
         yield Pauli("".join(op), 0)
         
@@ -893,7 +896,14 @@ def elem_gen(nq, q, op):
     :rtype: qecc.Pauli
     """
     if op in VALID_OPS:
-        return Pauli('I'*q + op + 'I'*(nq-q-1))
+        x_array=np.zeros(nq,dtype='uint8')
+        z_array=np.zeros(nq,dtype='uint8')
+        #Booleans get cast to dtype of array (uint8) by itemset:
+        x_array.itemset(q,op=='X' or op=='Y')
+        z_array.itemset(q,op=='Z' or op=='Y')
+        return Pauli(None,_x_array=x_array,
+            _z_array=z_array,
+            _bsm_phase=int(op=='Y'))
     else:
         raise ValueError('Generators cannot be selected outside I, X, Y, Z.')
 
@@ -912,6 +922,7 @@ def elem_gens(nq):
     :returns: a tuple of two lists, containing :math:`X` and :math:`Z`
         generators, respectively.
     """
+    #TODO Nothing. elem_gen got fixed, so elem_gens doesn't need to be.
     return tuple(PauliList(*[elem_gen(nq,idx,P) for idx in range(nq)]) for P in ['X','Z'])
 
 def eye_p(nq):
@@ -922,7 +933,7 @@ def eye_p(nq):
     :rtype: :class:`qecc.Pauli`
     :returns: A Pauli operator acting as the identity on each of ``nq`` qubits.
     """
-    return Pauli(_x_array=np.zeros(nq,dtype='uint8'),_z_array=np.zeros(nq,dtype='uint8'),bsm_phase=0)
+    return Pauli(None,_x_array=np.zeros(nq,dtype='uint8'),_z_array=np.zeros(nq,dtype='uint8'),_bsm_phase=0)
 
 def ns_mod_s(*stab_gens):
     r"""
@@ -981,7 +992,7 @@ def mutually_commuting_sets(n_elems, n_bits=None, group_gens=None, exclude=None)
     assert len(group_gens) > 0
     
     for P in ifilterfalse(lambda q: q.wt==0 or q in from_generators(exclude),from_generators(group_gens)):
-        P = Pauli(P.op, phase=0)
+        P.ph=0
         if n_elems==1:
             yield (P,)
         else:

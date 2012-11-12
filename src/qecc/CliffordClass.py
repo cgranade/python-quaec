@@ -94,14 +94,19 @@ class Clifford(object):
     
     ## CONSTRUCTOR ##
     
-    def __init__(self, xbars, zbars):
+    def __init__(self, xbars, zbars, **kwargs):
         # Require that all specified operators be Paulis.
         # Moreover, we should warn the caller if the output phase is not either
         # 0 or 2, since such operators are not automorphisms of the Pauli group.
-        self.xout = PauliList(*xbars)
-        self.zout = PauliList(*zbars)
+        if len(kwargs)!=0:
+            self._bsm = kwargs.get('_bsm')
+            self._phase_vec = kwargs.get('_phase_vec')
         
-        for output_xz in chain(self.xout, self.zout):
+        to_col = lambda P : hstack([P._x_array, P._z_array])[..., newaxis] 
+        
+        self._bsm = BinarySymplecticMatrix(hstack(map(to_col, self.xout + self.zout)))
+        
+        for phase in map(lambda a: a.ph, xbars+zbars):
             if output_xz is not Unspecified and output_xz.ph not in [0, 2]:
                 warnings.warn(
                     'The output phase of a Clifford operator has been specified as {}, such that the operator is not a valid automorphism.\n'.format(
@@ -109,7 +114,7 @@ class Clifford(object):
                     ) +
                     'To avoid this warning, please choose all output phases to be from the set {0, 2}.'
                 )
-                
+        self._phase_vec=map(lambda a: a.ph, xbars+zbars)        
         # Prevent fully unspecified operators.
         if all([P is Unspecified for P in chain(xbars, zbars)]):
             raise ValueError("At least one output must be specified.")
@@ -126,6 +131,25 @@ class Clifford(object):
                 return len(P)
          
     ## PROPERTIES ##
+    @property
+    def xout(self):
+        pass
+        #return map(lambda x, z, ph: Pauli(phase=ph,_x_array=x,_z_array=z), ) 
+    
+    @xout.setter
+    def xout(self,value):
+        pass
+        #return
+    
+    @property
+    def zout(self):
+        pass
+        #return
+    
+    @xout.setter
+    def zout(self,value):
+        pass
+        #return
                 
     @property
     def nq(self):
