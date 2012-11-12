@@ -115,7 +115,10 @@ class Pauli(object):
             z_array=np.array([],dtype='uint8')
             
             for letter in operator:
-                if letter=='X':
+                if letter=='I':
+                    x_array=np.append(x_array,np.array([0],dtype='uint8'))
+                    z_array=np.append(z_array,np.array([0],dtype='uint8'))
+                elif letter=='X':
                     x_array=np.append(x_array,np.array([1],dtype='uint8'))
                     z_array=np.append(z_array,np.array([0],dtype='uint8'))
                 elif letter=='Y':
@@ -170,11 +173,16 @@ class Pauli(object):
         Y's in the new op and the old op, and increment the _bsm_phase by 
         that amount. 
         """
-        old_num_ys = np.sum(np.bitwise_and(self._x_array,self._z_array))
-        new_num_ys = len([elem for elem in value   if elem=='Y'])
-        self._bsm_phase+=new_num_ys-old_num_ys
+        old_num_ys = sum(np.bitwise_and(self._x_array,self._z_array))
+        new_num_ys = sum([elem for elem in value   if elem=='Y'])
+        self._bsm_phase+=new_num_ys-old_num_ys % 4
+        x_array=np.array([],dtype='uint8')
+        z_array=np.array([],dtype='uint8')
         for letter in value:
-            if letter=='X':
+            if letter=='I':
+                x_array=np.append(x_array,np.array([0],dtype='uint8'))
+                z_array=np.append(z_array,np.array([0],dtype='uint8'))
+            elif letter=='X':
                 x_array=np.append(x_array,np.array([1],dtype='uint8'))
                 z_array=np.append(z_array,np.array([0],dtype='uint8'))
             elif letter=='Y':
@@ -197,7 +205,7 @@ class Pauli(object):
     @ph.setter
     def ph(self,value):
         self._bsm_phase=(value+np.sum(np.bitwise_and(self._x_array,self._z_array))) % 4
-                    
+                   
     def __mul__(self, other):
         """
         Multiplies two Paulis, ``self`` and ``other`` symbolically, using
@@ -223,6 +231,7 @@ class Pauli(object):
         #newP.ph = newP.ph % 4
         new_x_array=np.bitwise_xor(p1._x_array,p2._x_array)
         new_z_array=np.bitwise_xor(p1._z_array,p2._z_array)
+		
         new_bsm_phase=(p1._bsm_phase+p2._bsm_phase+2*(np.sum(np.bitwise_and(p1._x_array,p2._z_array))%2)) % 4
         return Pauli(None,_x_array=new_x_array,_z_array=new_z_array,_bsm_phase=new_bsm_phase)
 
@@ -1076,7 +1085,3 @@ if __name__ == "__main__":
     
     print list(from_generators([P, Q, R]))
     print is_in_normalizer(Pauli('ZZX', 0), [P, Q, R])
-
-# This is Tomas just testing out the pull/commit/push sequence of operations on git. 
-# I will be doing meaningful work very soon!
-    
