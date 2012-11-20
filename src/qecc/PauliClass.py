@@ -440,7 +440,7 @@ class Pauli(object):
         """
         #First, make sure both objects are Paulis:
         if isinstance(other, Pauli):
-            if self._x_array == other._x_array and self._x_array == other._x_array and self._bsm_phase == other._bsm_phase:
+            if np.array_equal(self._x_array,other._x_array) and np.array_equal(self._z_array, other._z_array) and self._bsm_phase == other._bsm_phase:
                 return True
             else:
                 return False
