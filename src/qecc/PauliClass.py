@@ -135,7 +135,7 @@ class Pauli(object):
             
     def __hash__(self):
         # We need a hash function to store Paulis as dict keys or in sets.
-        return hash((self._bsm_phase, self._x_array, self._z_array))
+        return hash((self.op,self.ph))
         
     def __len__(self):
         """
@@ -777,7 +777,7 @@ def ensure_pauli(P):
     instance of :class:`qecc.Pauli`.
     """
     return P if isinstance(P, Pauli) or P is Unspecified else Pauli(P)
-        
+
 # Stolen from itertools cookbook.
 def powerset(iterable):
     """
