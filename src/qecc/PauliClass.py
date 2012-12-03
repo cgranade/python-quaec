@@ -346,7 +346,7 @@ class Pauli(object):
         :returns: An instance representing :math:`P\otimes Q`, where :math:`P`
             is the Pauli operator represented by this instance.
         """
-        return Pauli(_x_array=np.hstack((self._x_array, other._x_array)),
+        return Pauli(None,_x_array=np.hstack((self._x_array, other._x_array)),
             _z_array=np.hstack((self._z_array, other._z_array)),
              _bsm_phase=(self._bsm_phase + other._bsm_phase) % 4)
 
