@@ -104,13 +104,13 @@ class Clifford(object):
         
         to_col = lambda P : hstack([P._x_array, P._z_array])[..., newaxis] 
         
-        self._bsm = BinarySymplecticMatrix(hstack(map(to_col, self.xout + self.zout)))
+        self._bsm = BinarySymplecticMatrix(hstack(map(to_col, xbars + zbars)))
         
         for phase in map(lambda a: a.ph, xbars+zbars):
-            if output_xz is not Unspecified and output_xz.ph not in [0, 2]:
+            if phase is not Unspecified and phase not in [0, 2]:
                 warnings.warn(
                     'The output phase of a Clifford operator has been specified as {}, such that the operator is not a valid automorphism.\n'.format(
-                        output_xz.ph
+                        phase
                     ) +
                     'To avoid this warning, please choose all output phases to be from the set {0, 2}.'
                 )
