@@ -238,14 +238,14 @@ class Pauli(object):
         """ 
         if not isinstance(num,int):
             raise ValueError("Paulis can only be exponentiated with integers")
-        new_bsm_phase = (self._bsm_phase * (num % 4)) % 4
+        new_ph = (self.ph * (num % 4)) % 4
         if num % 2 == 0:
             new_bsv=bsf.eye_bsv(self.nq)
         elif num % 2 == 1:
             new_bsv=self._bsv
         else:
             raise ValueError("Unknown exponentiation error")
-        return Pauli(None,_bsv=new_bsv,_bsm_phase=new_bsm_phase)
+        return Pauli(None,_bsv=new_bsv,_bsm_phase=0).set_phase(new_ph)
 
     def __repr__(self):
         """
