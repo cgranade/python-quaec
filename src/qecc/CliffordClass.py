@@ -45,7 +45,7 @@ from copy import copy, deepcopy
 from itertools import product, chain, combinations
 from PauliClass import *
 from bsf import *
-from numpy import hstack, newaxis
+from numpy import hstack, newaxis, array
 from exceptions import *
 
 from paulicollections import PauliList
@@ -119,38 +119,42 @@ class Clifford(object):
         if all([P is Unspecified for P in chain(xbars, zbars)]):
             raise ValueError("At least one output must be specified.")
         
+    ## PROPERTIES ##
+    @property
+    def xbars(self):
+        nq=self._bsm.nq
+        zippy=zip(map(array,(zip(*self._bsm[:,:nq]))),self._phase_vec)
+        return map(lambda colph : 
+        Pauli(None,_x_array=colph[0][:nq],_z_array=colph[0][nq:],_bsm_phase = colph[1]), 
+        zippy) 
+    
+    @xbars.setter
+    def xbars(self,value):
+        pass
+    
+    @property
+    def zbars(self):
+        nq=self._bsm.nq
+        zippy=zip(map(array,(zip(*self._bsm[:,nq:]))),self._phase_vec)
+        return map(lambda colph : 
+        Pauli(None,_x_array=colph[0][:nq],_z_array=colph[0][nq:],_bsm_phase = colph[1]), 
+        zippy)
         
+    @zbars.setter
+    def zout(self,value):
+        pass
+    
     ## SEQUENCE PROTOCOL ##
 
     def __len__(self):
         """
         Yields the number of qubits on which the Clifford ``self`` acts.
         """
-        for P in self.xout + self.zout:
-            if P is not Unspecified:
-                return len(P)
-         
-    ## PROPERTIES ##
-    @property
-    def xout(self):
-        pass
-        #return map(lambda x, z, ph: Pauli(phase=ph,_x_array=x,_z_array=z), ) 
+        return self._bsm.nq
+        #for P in self.xbars + self.zbars:
+        #    if P is not Unspecified:
+        #        return len(P)            
     
-    @xout.setter
-    def xout(self,value):
-        pass
-        #return
-    
-    @property
-    def zout(self):
-        pass
-        #return
-    
-    @xout.setter
-    def zout(self,value):
-        pass
-        #return
-                
     @property
     def nq(self):
         """
@@ -186,14 +190,14 @@ class Clifford(object):
             return self.str_sparse()
         
         left_side_x,left_side_z=elem_gens(len(self))
-        right_side=self.xout+self.zout
+        right_side=self.xbars+self.zbars
         return '\n'.join(
                 '{gen.op} |-> {outsign}{out}'.format(
                     gen=gen,
                     out=out.op if out is not Unspecified else "Unspecified",
                     outsign=PHASES[out.ph] if out is not Unspecified else ""
                     )
-                for gen, out in zip(left_side_x + left_side_z, self.xout + self.zout)
+                for gen, out in zip(left_side_x + left_side_z, right_side)
             )
             
     def str_sparse(self):
@@ -202,7 +206,7 @@ class Clifford(object):
         intended for use in the case where many of the outputs have small
         support.
         """
-        out = zip(KINDS, map(enumerate, [self.xout, self.zout]))
+        out = zip(KINDS, map(enumerate, [self.xbars, self.zbars]))
         nq = len(self)
         outstr = "\n".join(
             [
@@ -522,9 +526,9 @@ def cnot(nq,ctrl,targ):
     #Initialize to the identity Clifford:
     cnotto=eye_c(nq)
     #Wherever ctrl has an X, put an X on targ:
-    cnotto.xout[ctrl].op=replace_one_character(cnotto.xout[ctrl].op,targ,'X')
+    cnotto.xbars[ctrl].op=replace_one_character(cnotto.xbars[ctrl].op,targ,'X')
     #Wherever targ has a Z, put a Z on ctrl:
-    cnotto.zout[targ].op=replace_one_character(cnotto.zout[targ].op,ctrl,'Z')
+    cnotto.zbars[targ].op=replace_one_character(cnotto.zbars[targ].op,ctrl,'Z')
     return cnotto
     
 def cz(nq, q1, q2):

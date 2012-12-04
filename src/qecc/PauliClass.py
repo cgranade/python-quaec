@@ -92,8 +92,7 @@ class Pauli(object):
         # back end for speed, whenever possible.
         if len(kwargs)!=0:
             # We use the back-end constructor if keyword arguments have been passed in:
-            self._x_array=kwargs['_x_array']
-            self._z_array=kwargs['_z_array']
+            self._bsv=kwargs['_bsv']
             self._bsm_phase=kwargs['_bsm_phase'] % 4
         else:
             # `operator' is a string which contains I, X, Y, Z. We throw an error if it isn't.
@@ -129,8 +128,7 @@ class Pauli(object):
                     x_array=np.append(x_array,np.array([0],dtype='uint8'))
                     z_array=np.append(z_array,np.array([1],dtype='uint8'))
             
-            self._x_array=x_array
-            self._z_array=z_array
+            self._bsv=bsf.BinarySymplecticVector(x_array,z_array)
             self._bsm_phase = phase % 4
             
     def __hash__(self):
@@ -141,9 +139,7 @@ class Pauli(object):
         """
         Yields the number of qubits on which the Pauli ``self`` acts.
         """
-        assert len(self._x_array)==len(self._z_array), '''The xs must act on the 
-            same number of qubits as the zs.'''
-        return len(self._x_array)
+        return len(self._bsv)
     
     @property
     def op(self):
@@ -152,7 +148,7 @@ class Pauli(object):
         part of the original Pauli specification, but has been
         rendered obsolete by aBSF."""
         output_string=''
-        for x_bit, z_bit in zip(self._x_array,self._z_array):
+        for x_bit, z_bit in zip(self._bsv._x,self._bsv._z):
             if x_bit == 0:
                 if z_bit == 0:
                     output_string+='I'
@@ -173,7 +169,7 @@ class Pauli(object):
         Y's in the new op and the old op, and increment the _bsm_phase by 
         that amount. 
         """
-        old_num_ys = sum(np.bitwise_and(self._x_array,self._z_array))
+        old_num_ys = sum(np.bitwise_and(self._bsv._x,self._bsv._z))
         new_num_ys = sum([elem for elem in value   if elem=='Y'])
         self._bsm_phase+=new_num_ys-old_num_ys % 4
         x_array=np.array([],dtype='uint8')
@@ -191,8 +187,7 @@ class Pauli(object):
             elif letter=='Z':
                 x_array=np.append(x_array,np.array([0],dtype='uint8'))
                 z_array=np.append(z_array,np.array([1],dtype='uint8'))
-        self._x_array=x_array
-        self._z_array=z_array
+        self._bsv=bsf.BinarySymplecticVector(x_array,z_array)
 
     @property
     def ph(self):
@@ -200,11 +195,11 @@ class Pauli(object):
         in question can be expressed as i^(ph)*op. This is 
         part of the original Pauli specification, but has been
         rendered obsolete by aBSF."""
-        return (self._bsm_phase-sum(np.bitwise_and(self._x_array,self._z_array))) % 4
+        return (self._bsm_phase-self._bsv._ys) % 4
         
     @ph.setter
     def ph(self,value):
-        self._bsm_phase=(value+np.sum(np.bitwise_and(self._x_array,self._z_array))) % 4
+        self._bsm_phase=(value+self._bsv._ys) % 4
                    
     def __mul__(self, other):
         """
@@ -229,25 +224,28 @@ class Pauli(object):
         #    newP.ph=newP.ph+ph
             
         #newP.ph = newP.ph % 4
-        new_x_array=np.bitwise_xor(p1._x_array,p2._x_array)
-        new_z_array=np.bitwise_xor(p1._z_array,p2._z_array)
+        new_x_array=np.bitwise_xor(p1._bsv._x,p2._bsv._x)
+        new_z_array=np.bitwise_xor(p1._bsv._z,p2._bsv._z)
 		
         new_bsm_phase=(p1._bsm_phase+p2._bsm_phase+2*(np.sum(np.bitwise_and(p1._x_array,p2._z_array))%2)) % 4
-        return Pauli(None,_x_array=new_x_array,_z_array=new_z_array,_bsm_phase=new_bsm_phase)
+        return Pauli(None,_bsv=bsf.BinarySymplecticVector(new_x_array,new_z_array),_bsm_phase=new_bsm_phase)
 
     def __pow__(self,num):
         """
         Exponentiates a Pauli ``self`` by an integer ``num``, using the fact 
-        that every element of the Pauli group squares to the identity. 
-        """
+        that every element of the Pauli group squares to the identity, with a
+        plus or minus sign. 
+        """ 
         if not isinstance(num,int):
             raise ValueError("Paulis can only be exponentiated with integers")
-        elif num % 2 == 0:
-            return eye_p(len(self))
+        new_bsm_phase = (self._bsm_phase * (num % 4)) % 4
+        if num % 2 == 0:
+            new_bsv=bsf.eye_bsv(self.nq)
         elif num % 2 == 1:
-            return self
+            new_bsv=self._bsv
         else:
             raise ValueError("Unknown exponentiation error")
+        return Pauli(None,_bsv=new_bsv,_bsm_phase=new_bsm_phase)
 
     def __repr__(self):
         """

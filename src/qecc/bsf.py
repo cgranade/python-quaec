@@ -28,7 +28,7 @@ import itertools
 import string
 from exceptions import *
 
-from numpy import s_, array, nonzero, logical_xor, bitwise_xor, bitwise_not, logical_and, bitwise_and, logical_not, all, matrix, hstack, vstack, zeros, eye, dot, empty
+from numpy import s_, array, nonzero, logical_xor, bitwise_xor, bitwise_not, logical_and, bitwise_and, logical_not, all, matrix, hstack, vstack, zeros, eye, dot, empty, sum
 from numpy.linalg import det
 
 from PauliClass import *
@@ -47,7 +47,7 @@ __all__ = [
     'BinarySymplecticVector',
 #    'bitstring_to_letterstring',
     'parity', 'bitwise_inner_product', 'all_pauli_bsvs', 'constrained_set',
-    'commute', 'xz_switch',
+    'commute', 'xz_switch','eye_bsv',
     
     'BinarySymplecticMatrix',
     'is_bsm_valid', 'bsmzeros', 'array_to_pauli', 'directsum'
@@ -81,12 +81,12 @@ class BinarySymplecticVector(object):
     def __init__(self,*args):
         if len(args) == 1:
             nq = len(args[0])/2
-            self._x = array(args[0][0:nq], dtype=int)
-            self._z = array(args[0][nq:2*nq], dtype=int)
+            self._x = array(args[0][0:nq], dtype='uint8')
+            self._z = array(args[0][nq:2*nq], dtype='uint8')
         elif len(args) == 2:
             xstring,zstring = args
-            self._x=array(list(xstring), dtype='int')
-            self._z=array(list(zstring), dtype='int')
+            self._x=array(list(xstring), dtype='uint8')
+            self._z=array(list(zstring), dtype='uint8')
         else:
             raise ValueError('Wrong number of args.')
 
@@ -131,6 +131,14 @@ class BinarySymplecticVector(object):
         
         """
         return self._z
+
+    @property
+    def _ys(self):
+        """
+        Returns the number of Y's in a given BSV. Often needed for 
+        calculating Pauli/Clifford phases.
+        """
+        return sum(bitwise_and(self._x,self._z))
 
     ## OTHER METHODS ##
 
@@ -230,6 +238,13 @@ def all_pauli_bsvs(nq):
     for idx_x in itertools.product([0,1],repeat=nq):
         for idx_z in itertools.product([0,1],repeat=nq):
             yield(BinarySymplecticVector(idx_x,idx_z))
+
+def eye_bsv(nq):
+    """
+    Returns the binary symplectic vector representing the identity Pauli
+    on nq qubits.
+    """
+    return BinarySymplecticVector([0]*nq,[0]*nq)
 
 def constrained_set(pauli_array_input,logical_array_input):
     r"""
@@ -681,7 +696,7 @@ def bsmzeros(nq):
     :rtype: BinarySymplecticMatrix
     """
     return BinarySymplecticMatrix(
-        zeros((2 * (nq),) * 2, dtype=int))
+        zeros((2 * (nq),) * 2, dtype='uint8'))
 
 def array_to_pauli(bsv_array):
     """
@@ -715,7 +730,7 @@ if __name__ == "__main__":
     # Should print:
     #     ( 1 1 0 | 0 1 1 )
     
-    print bsf_P.x.astype('int')
+    print bsf_P.x.astype('uint8')
     #     array([1, 1, 0])
     
     bsf_cnot = cnot_gt(2, 0, 1).as_bsm()
