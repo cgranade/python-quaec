@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import qecc as q
 
 def test_bsm_reductions():

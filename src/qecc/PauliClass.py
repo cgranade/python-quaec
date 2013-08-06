@@ -62,7 +62,6 @@ MULT_TABLE = {
     ('Y', 'I'): (0, 'Y'), ('Y', 'X'): (3, 'Z'), ('Y', 'Y'): (0, 'I'), ('Y', 'Z'): (1, 'X'),
     ('Z', 'I'): (0, 'Z'), ('Z', 'X'): (1, 'Y'), ('Z', 'Y'): (3, 'X'), ('Z', 'Z'): (0, 'I')
 }
-#TODO: FIND OUT WHAT FUNCTION CORRESPONDS TO EVALUATION OF MULT_TABLE IN DECIMAL
 
 ## CLASSES ##
 
@@ -123,13 +122,13 @@ class Pauli(object):
                 elif letter=='Y':
                     x_array=np.append(x_array,np.array([1],dtype='uint8'))
                     z_array=np.append(z_array,np.array([1],dtype='uint8'))
-                    phase+=1
                 elif letter=='Z':
                     x_array=np.append(x_array,np.array([0],dtype='uint8'))
                     z_array=np.append(z_array,np.array([1],dtype='uint8'))
             
-            self._bsv=bsf.BinarySymplecticVector(x_array,z_array)
-            self._bsm_phase = phase % 4
+            bsv=bsf.BinarySymplecticVector(x_array,z_array)
+            self._bsv=bsv
+            self._bsm_phase = int(phase+bsv._ys) % 4
             
     def __hash__(self):
         # We need a hash function to store Paulis as dict keys or in sets.
@@ -169,9 +168,9 @@ class Pauli(object):
         Y's in the new op and the old op, and increment the _bsm_phase by 
         that amount. 
         """
-        old_num_ys = sum(np.bitwise_and(self._bsv._x,self._bsv._z))
+        old_num_ys = self._bsv._ys
         new_num_ys = sum([elem for elem in value   if elem=='Y'])
-        self._bsm_phase+=new_num_ys-old_num_ys % 4
+        self._bsm_phase+=int(new_num_ys-old_num_ys) % 4
         x_array=np.array([],dtype='uint8')
         z_array=np.array([],dtype='uint8')
         for letter in value:
@@ -195,11 +194,11 @@ class Pauli(object):
         in question can be expressed as i^(ph)*op. This is 
         part of the original Pauli specification, but has been
         rendered obsolete by aBSF."""
-        return (self._bsm_phase-self._bsv._ys) % 4
+        return int(self._bsm_phase-self._bsv._ys) % 4
         
     @ph.setter
     def ph(self,value):
-        self._bsm_phase=(value+self._bsv._ys) % 4
+        self._bsm_phase=int(value+self._bsv._ys) % 4
                    
     def __mul__(self, other):
         """
@@ -227,7 +226,7 @@ class Pauli(object):
         new_x_array=np.bitwise_xor(p1._bsv._x,p2._bsv._x)
         new_z_array=np.bitwise_xor(p1._bsv._z,p2._bsv._z)
 		
-        new_bsm_phase=(p1._bsm_phase+p2._bsm_phase+2*(np.sum(np.bitwise_and(p1._x_array,p2._z_array))%2)) % 4
+        new_bsm_phase=int(p1._bsm_phase+p2._bsm_phase+2*(np.sum(np.bitwise_and(p1._bsv._x,p2._bsv._z))%2)) % 4
         return Pauli(None,_bsv=bsf.BinarySymplecticVector(new_x_array,new_z_array),_bsm_phase=new_bsm_phase)
 
     def __pow__(self,num):
@@ -238,7 +237,7 @@ class Pauli(object):
         """ 
         if not isinstance(num,int):
             raise ValueError("Paulis can only be exponentiated with integers")
-        new_ph = (self.ph * (num % 4)) % 4
+        new_ph = int(self.ph * (num % 4)) % 4
         if num % 2 == 0:
             new_bsv=bsf.eye_bsv(self.nq)
         elif num % 2 == 1:
@@ -313,7 +312,7 @@ class Pauli(object):
         :returns: The number of qubits on which the represented Pauli operator
             is supported.
         """
-        return np.sum(np.bitwise_or(self._x_array,self._z_array))
+        return np.sum(np.bitwise_or(self._bsv._x,self._bsv._z))
     
     ## PRINTING ##
             
@@ -344,8 +343,7 @@ class Pauli(object):
         :returns: An instance representing :math:`P\otimes Q`, where :math:`P`
             is the Pauli operator represented by this instance.
         """
-        return Pauli(None,_x_array=np.hstack((self._x_array, other._x_array)),
-            _z_array=np.hstack((self._z_array, other._z_array)),
+        return Pauli(None,_bsv=self._bsv & other._bsv,
              _bsm_phase=(self._bsm_phase + other._bsm_phase) % 4)
 
     def __and__(self,other):
@@ -438,10 +436,7 @@ class Pauli(object):
         """
         #First, make sure both objects are Paulis:
         if isinstance(other, Pauli):
-            if np.array_equal(self._x_array,other._x_array) and np.array_equal(self._z_array, other._z_array) and self._bsm_phase == other._bsm_phase:
-                return True
-            else:
-                return False
+            return self._bsv == other._bsv and self._bsm_phase == other._bsm_phase
         else:
             return False
 
@@ -453,10 +448,7 @@ class Pauli(object):
         """
         #Check types
         if isinstance(other, Pauli):
-            if self._x_array == other._x_array and self._x_array == other._x_array and self._bsm_phase == other._bsm_phase:
-                return False
-            else:
-                return True
+            return not(self._bsv == other._bsv and self._bsm_phase == other._bsm_phase)
         else:
             return True
                 
@@ -490,23 +482,7 @@ class Pauli(object):
         :return: A binary symplectic vector representing this Pauli operator.
         :rtype:  BinarySymplecticVector
         """
-        nq = len(self)
-        exes=''
-        zeds=''
-        for idx_q in range(nq):
-            if self.op[idx_q]=='X':
-                exes=exes+'1'
-                zeds=zeds+'0'
-            elif self.op[idx_q]=='Y':
-                exes=exes+'1'
-                zeds=zeds+'1'
-            elif self.op[idx_q]=='Z':
-                exes=exes+'0'
-                zeds=zeds+'1'
-            elif self.op[idx_q]=='I':
-                exes=exes+'0'
-                zeds=zeds+'0' 
-        return bsf.BinarySymplecticVector(exes,zeds)
+        return self._bsv
 
     def as_circuit(self):
         """ Transforms an n-qubit Pauli to a serial circuit on 
@@ -642,6 +618,7 @@ class Pauli(object):
         i^0 XIXXXIXXXXII
                 
         """
+        #TODO Start Here Next
         #p_1 = ensure_pauli(p_1)
         #if isinstance(bitstring, str):
         #    bitstring = map(int, bitstring)
@@ -838,9 +815,7 @@ def com(P, Q):
     :rtype: :obj:`int`
     """
     #Return number of X/Z collisions, mod 2:
-    return (np.sum(np.bitwise_and(P._x_array,Q._z_array))+np.sum(np.bitwise_and(Q._x_array,P._z_array)))%2
-    ph1, ph2 = (P*Q).ph, (Q*P).ph
-    return 0 if ph1 == ph2 else 1
+    return (np.sum(np.bitwise_and(P._bsv._x,Q._bsv._z))+np.sum(np.bitwise_and(Q._bsv._x,P._bsv._z)))%2
 
 def pauli_group(nq,incl_y_in_gens=True):
     """
@@ -908,8 +883,7 @@ def elem_gen(nq, q, op):
         #Booleans get cast to dtype of array (uint8) by itemset:
         x_array.itemset(q,op=='X' or op=='Y')
         z_array.itemset(q,op=='Z' or op=='Y')
-        return Pauli(None,_x_array=x_array,
-            _z_array=z_array,
+        return Pauli(None,_bsv=bsf.BinarySymplecticVector(x_array,z_array),
             _bsm_phase=int(op=='Y'))
     else:
         raise ValueError('Generators cannot be selected outside I, X, Y, Z.')
@@ -940,7 +914,7 @@ def eye_p(nq):
     :rtype: :class:`qecc.Pauli`
     :returns: A Pauli operator acting as the identity on each of ``nq`` qubits.
     """
-    return Pauli(None,_x_array=np.zeros(nq,dtype='uint8'),_z_array=np.zeros(nq,dtype='uint8'),_bsm_phase=0)
+    return Pauli(None,_bsv=bsf.BinarySymplecticVector(np.zeros(2*nq,dtype='uint8')),_bsm_phase=0)
 
 def ns_mod_s(*stab_gens):
     r"""

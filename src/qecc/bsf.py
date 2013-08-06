@@ -28,7 +28,7 @@ import itertools
 import string
 from exceptions import *
 
-from numpy import s_, array, nonzero, logical_xor, bitwise_xor, bitwise_not, logical_and, bitwise_and, logical_not, all, matrix, hstack, vstack, zeros, eye, dot, empty, sum
+from numpy import s_, array, nonzero, logical_xor, bitwise_xor, bitwise_not, logical_and, bitwise_and, logical_not, all, matrix, hstack, vstack, zeros, eye, dot, empty, array_equal
 from numpy.linalg import det
 
 from PauliClass import *
@@ -44,6 +44,7 @@ import circuit
 ## ALL ##
 
 __all__ = [
+    'BSVView',
     'BinarySymplecticVector',
 #    'bitstring_to_letterstring',
     'parity', 'bitwise_inner_product', 'all_pauli_bsvs', 'constrained_set',
@@ -57,39 +58,12 @@ __all__ = [
 
 VALID_BITS=range(2)
 
-class BinarySymplecticVector(object):
-    """
-    Encapsulates a binary symplectic vector representing an element of the Pauli
-    group on :math:`n` qubits.
+class BSVView(object):
     
-    A new :class:`BinarySymplecticVector` can be constructed using either a
-    single NumPy array containing both the :math:`X` and :math:`Z` parts of the
-    binary symplectic vector. Alternatively, a new vector can be instantiated
-    using two NumPy arrays. For example, the following two invocations are
-    equivalent:
-    
-    >>> import qecc
-    >>> import numpy as np
-    >>> bsv = qecc.BinarySymplecticVector(np.array([1, 0, 0, 0, 0, 0]))
-    >>> bsv = qecc.BinarySymplecticVector(np.array([1, 0, 0]), np.array([0, 0, 0]))
-    
-    The :obj:`len` of a :class:`BinarySymplecticVector` is defined as the number
-    of qubits upon which the represented Pauli operator acts, and is thus half
-    of the length of a single array containing the same data.
-    """
-
-    def __init__(self,*args):
-        if len(args) == 1:
-            nq = len(args[0])/2
-            self._x = array(args[0][0:nq], dtype='uint8')
-            self._z = array(args[0][nq:2*nq], dtype='uint8')
-        elif len(args) == 2:
-            xstring,zstring = args
-            self._x=array(list(xstring), dtype='uint8')
-            self._z=array(list(zstring), dtype='uint8')
-        else:
-            raise ValueError('Wrong number of args.')
-
+    def __init__(self,x,z):
+        self._x=x
+        self._z=z
+        
     ## MAGIC METHODS ##
     
     def __len__(self):
@@ -148,7 +122,7 @@ class BinarySymplecticVector(object):
         the copy do not affect this instance. For more details, see the
         :meth:`numpy.ndarray.copy` method.
         """
-        return BinarySymplecticVector(self._x.copy(), self._z.copy())
+        return BSVView(self._x.copy(), self._z.copy())
 
     def as_pauli(self):
         """
@@ -163,13 +137,7 @@ class BinarySymplecticVector(object):
         i^0 IXXYZ
         
         """
-        exes=bitstring_to_letterstring(self._x,'X')
-        zeds=bitstring_to_letterstring(self._z,'Z')
-        zedley=Pauli(zeds)
-        exeley=Pauli(exes)
-        assert type(zedley) is type(exeley)
-        pauli=zedley*exeley
-        return Pauli(pauli.op,0)
+        return Pauli(None,_bsv=self,_bsm_phase=0)
         
     def bsip(self,other):
         r"""
@@ -185,7 +153,64 @@ class BinarySymplecticVector(object):
         
         """
         return int(not(commute(self,other)))
-        
+    
+    def __and__(self,other):
+        """
+        Returns the "tensor product" of two binary symplectic vectors.
+        """
+        return BSVView(hstack((self._x,other._x)),hstack((self._z,other._z)))
+
+class BinarySymplecticVector(BSVView):
+    """
+    Encapsulates a binary symplectic vector representing an element of the Pauli
+    group on :math:`n` qubits.
+    
+    A new :class:`BinarySymplecticVector` can be constructed using either a
+    single NumPy array containing both the :math:`X` and :math:`Z` parts of the
+    binary symplectic vector. Alternatively, a new vector can be instantiated
+    using two NumPy arrays. For example, the following two invocations are
+    equivalent:
+    
+    >>> import qecc
+    >>> import numpy as np
+    >>> bsv = qecc.BinarySymplecticVector(np.array([1, 0, 0, 0, 0, 0]))
+    >>> bsv = qecc.BinarySymplecticVector(np.array([1, 0, 0]), np.array([0, 0, 0]))
+    
+    The :obj:`len` of a :class:`BinarySymplecticVector` is defined as the number
+    of qubits upon which the represented Pauli operator acts, and is thus half
+    of the length of a single array containing the same data.
+    """
+
+    def __init__(self,*args):
+        if len(args) == 1:
+            nq = len(args[0])/2
+            super(BinarySymplecticVector, self).__init__(
+                array(args[0][0:nq], dtype='uint8'),
+                array(args[0][nq:2*nq], dtype='uint8'))
+        elif len(args) == 2:
+            xstring,zstring = args
+            super(BinarySymplecticVector, self).__init__(
+                array(list(xstring), dtype='uint8'),
+                array(list(zstring), dtype='uint8'))
+        else:
+            raise ValueError('Wrong number of args.')
+            
+    def copy(self):
+        """
+        Returns a copy of the binary symplectic vector such that mutations of
+        the copy do not affect this instance. For more details, see the
+        :meth:`numpy.ndarray.copy` method.
+        """
+        return BinarySymplecticVector(self._x.copy(), self._z.copy())
+    
+    #TODO: Determine if the method underneath is a good idea.
+    def __and__(self,other):
+        """
+        Returns the "tensor product" of two binary symplectic vectors.
+        """
+        return BinarySymplecticVector(hstack((self._x,other._x)),hstack((self._z,other._z)))
+
+
 #FUNCTIONS FOR BSV CLASS     
 
 def bitstring_to_letterstring(bitstring,letter):
@@ -429,7 +454,7 @@ class BinarySymplecticMatrix(object):
 
     def __mul__(self,other):
         return BinarySymplecticMatrix(dot(self._arr, other._arr)%2)
-
+    
     def __repr__(self):
         # TODO: We could make this a bit
         #       fancier by putting lines between
@@ -722,6 +747,18 @@ def directsum(A, B):
         vstack([zeros((sA[0], sB[1])), B])
     ])
 
+class BSMView(object):
+    
+    def __init__(self, arr, slice_fn):
+        self._arr = arr
+        self._sl_fn = sl_fn
+    
+    def __getitem__(self,slice_obj):
+        return self._arr.__getitem__(self._sl_fn(slice_obj))
+    
+    def __setitem__(self,slice_obj,new_value):
+        return self._arr.__setitem__(self,slice_obj,new_value)
+        
 ## EXAMPLE USAGE ##
         
 if __name__ == "__main__":

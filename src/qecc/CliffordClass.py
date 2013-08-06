@@ -25,7 +25,7 @@
 
 ## RELOAD FIX ##
 # This is a pretty poor way of fixing it, but should work for now.
-    
+
 import PauliClass as _pc
 import bsf as _bsf
 import utils as u
@@ -45,7 +45,7 @@ from copy import copy, deepcopy
 from itertools import product, chain, combinations
 from PauliClass import *
 from bsf import *
-from numpy import hstack, newaxis, array
+from numpy import hstack, newaxis, array, s_
 from exceptions import *
 
 from paulicollections import PauliList
@@ -102,7 +102,7 @@ class Clifford(object):
             self._bsm = kwargs.get('_bsm')
             self._phase_vec = kwargs.get('_phase_vec')
         
-        to_col = lambda P : hstack([P._x_array, P._z_array])[..., newaxis] 
+        to_col = lambda P : hstack([P._bsv._x,P._bsv._z])[..., newaxis] 
         
         self._bsm = BinarySymplecticMatrix(hstack(map(to_col, xbars + zbars)))
         
@@ -114,36 +114,42 @@ class Clifford(object):
                     ) +
                     'To avoid this warning, please choose all output phases to be from the set {0, 2}.'
                 )
-        self._phase_vec=map(lambda a: a.ph, xbars+zbars)        
+        
+        self._phase_vec=map(lambda a: a._bsm_phase, xbars+zbars)        
         # Prevent fully unspecified operators.
         if all([P is Unspecified for P in chain(xbars, zbars)]):
             raise ValueError("At least one output must be specified.")
+    
+    def _bars_as_view(self, sl):
         
+        zippy=zip(map(lambda col: _bsf.BSVView(col[:self._bsm.nq],col[self._bsm.nq:]),self._bsm.__getitem__((s_[:],sl)).T),self._phase_vec.__getitem__(sl))
+        
+        return map(lambda colph : 
+            Pauli(None,_bsv=colph[0],_bsm_phase = colph[1]),
+            zippy) 
+    
+    
     ## PROPERTIES ##
     @property
     def xbars(self):
-        nq=self._bsm.nq
-        zippy=zip(map(array,(zip(*self._bsm[:,:nq]))),self._phase_vec)
-        return map(lambda colph : 
-        Pauli(None,_x_array=colph[0][:nq],_z_array=colph[0][nq:],_bsm_phase = colph[1]), 
-        zippy) 
+        return self._bars_as_view(s_[:self._bsm.nq])
     
-    @xbars.setter
-    def xbars(self,value):
-        pass
+    #@xbars.setter
+    #def xbars(self,value):
+    #    self.xbars = value
     
     @property
     def zbars(self):
-        nq=self._bsm.nq
-        zippy=zip(map(array,(zip(*self._bsm[:,nq:]))),self._phase_vec)
-        return map(lambda colph : 
-        Pauli(None,_x_array=colph[0][:nq],_z_array=colph[0][nq:],_bsm_phase = colph[1]), 
-        zippy)
+        return self._bars_as_view(s_[self._bsm.nq:])
         
-    @zbars.setter
-    def zout(self,value):
-        pass
+    #@zbars.setter
+    #def zout(self,value):
+    #    print "zbars setter being called"
+    #    self.zbars = value
     
+    @property
+    def pauli_phases(self):
+        return map(lambda a: a.ph, self.xbars+self.zbars)
     ## SEQUENCE PROTOCOL ##
 
     def __len__(self):
@@ -151,10 +157,7 @@ class Clifford(object):
         Yields the number of qubits on which the Clifford ``self`` acts.
         """
         return self._bsm.nq
-        #for P in self.xbars + self.zbars:
-        #    if P is not Unspecified:
-        #        return len(P)            
-    
+        
     @property
     def nq(self):
         """
@@ -169,7 +172,7 @@ class Clifford(object):
         Returns the number of unspecifed outputs of this :class:`qecc.Clifford`
         object.
         """
-        return len([P for P in chain(self.xout, self.zout) if P is Unspecified])
+        return len([P for P in chain(self.xbars, self.zbars) if P is Unspecified])
         
     ## PRINTING ##
 
@@ -228,12 +231,17 @@ class Clifford(object):
             above. Otherwise, if the operator is not a valid Clifford operator,
             diagnostic information will be printed.
         """
-        if any(P.ph not in [0, 2] for P in chain(self.xout, self.zout) if P is not Unspecified):
+        
+        if any(P.ph not in [0, 2] for P in chain(self.xbars, self.zbars) if P is not Unspecified):
             if not quiet:
                 print "At least one output operator has a phase other than 0 or 2."
                 
             return False
-        
+        if self._bsm.is_valid():
+            return True
+        else:
+            return False
+            """    
         for P in sum(elem_gens(len(self)), []):
             for Q in sum(elem_gens(len(self)), []):
                 UP = self.conjugate_pauli(P)
@@ -250,7 +258,7 @@ class Clifford(object):
                     return False
                     
         return True
-        
+        """
     def inv(self):
         r"""
         Calculates the inverse :math:`C^{-1}` of this Clifford operator
@@ -293,12 +301,12 @@ class Clifford(object):
             #For every X/Z the input Pauli contains, multiply by the
             # corresponding output Pauli from self. 
             if op == 'X':
-                rolling_pauli=rolling_pauli*self.xout[idx]
+                rolling_pauli=rolling_pauli*self.xbars[idx]
             elif op == 'Z':
-                rolling_pauli=rolling_pauli*self.zout[idx]
+                rolling_pauli=rolling_pauli*self.zbars[idx]
             elif op == 'Y':
                 #Y = iXZ:
-                rolling_pauli=rolling_pauli*self.xout[idx]*self.zout[idx]
+                rolling_pauli=rolling_pauli*self.xbars[idx]*self.zbars[idx]
                 rolling_pauli.mul_phase(1)
         return rolling_pauli 
         
@@ -325,7 +333,7 @@ class Clifford(object):
 
     def __eq__(self,other):
         if isinstance(other, Clifford):
-            return all([P == Q for P, Q in zip(self.xout + self.zout, other.xout + other.zout)])
+            return all([P == Q for P, Q in zip(self.xbars + self.zbars, other.xbars + other.zbars)])
         else:
             return False
             
@@ -342,7 +350,7 @@ class Clifford(object):
             return NotImplemented 
         Xs=[]
         Zs=[]
-        for ex, zed in zip(other.xout,other.zout):
+        for ex, zed in zip(other.xbars,other.zbars):
             Xs.append(self.conjugate_pauli(ex))
             Zs.append(self.conjugate_pauli(zed))
         return Clifford(Xs,Zs)
@@ -372,11 +380,11 @@ class Clifford(object):
         zedones=[]
         zedtwos=[]
         for idx in range(nq_self):
-            exones.append(self.xout[idx] & id_other_size)
-            zedones.append(self.zout[idx] & id_other_size)
+            exones.append(self.xbars[idx] & id_other_size)
+            zedones.append(self.zbars[idx] & id_other_size)
         for idx in range(nq_other):
-            extwos.append(id_self_size & other.xout[idx])
-            zedtwos.append(id_self_size & other.zout[idx])
+            extwos.append(id_self_size & other.xbars[idx])
+            zedtwos.append(id_self_size & other.zbars[idx])
         return Clifford(exones+extwos,zedones+zedtwos)
 
     ## CONSTRAINT SOLVING ##
@@ -420,7 +428,7 @@ class Clifford(object):
         
         # Start by finding the first unspecified output.
         nq = len(self)
-        X_bars, Z_bars = self.xout, self.zout
+        X_bars, Z_bars = self.xbars, self.zbars
         P_bars = map(copy, [X_bars, Z_bars]) # <- Useful for indexing by kinds.
         XZ_pairs = zip(X_bars, Z_bars)
         try:
@@ -476,7 +484,7 @@ class Clifford(object):
             v = P.as_bsv()
             out = hstack([v.x, v.z])[..., newaxis]
             return out
-        return BinarySymplecticMatrix(hstack(map(to_col, self.xout + self.zout)))
+        return BinarySymplecticMatrix(hstack(map(to_col, self.xbars + self.zbars)))
         
     def as_unitary(self):
         """
@@ -541,8 +549,8 @@ def cz(nq, q1, q2):
     #Initialize to the identity Clifford:
     gate = eye_c(nq)
     #Wherever ctrl or targ get an X, map to XZ:
-    gate.xout[q1].op = replace_one_character(gate.xout[q1].op, q2, 'Z')
-    gate.xout[q2].op = replace_one_character(gate.xout[q2].op, q1, 'Z')
+    gate.xbars[q1].op = replace_one_character(gate.xbars[q1].op, q2, 'Z')
+    gate.xbars[q2].op = replace_one_character(gate.xbars[q2].op, q1, 'Z')
     return gate
     
 def hadamard(nq,q):
@@ -581,8 +589,8 @@ def swap(nq, q1, q2):
     p[q1], p[q2] = p[q2], p[q1]
     
     gate = eye_c(nq)
-    gate.xout = permutation(gate.xout, p)
-    gate.zout = permutation(gate.zout, p)
+    gate.xbars = permutation(gate.xbars, p)
+    gate.zbars = permutation(gate.zbars, p)
     return gate
     
 def pauli_gate(pauli):
@@ -622,10 +630,10 @@ def paulify(cliff_in):
     
     """
     
-    nq=len(cliff_in.xout) #Determine number of qubits.
+    nq=cliff_in._bsm.nq #Determine number of qubits.
     test_ex,test_zed=elem_gens(nq) #Get paulis to compare.
     """If the Paulis input to the Clifford are only altered in phase, then the Clifford is also a Pauli."""
-    for ex_clif,zed_clif,ex_test,zed_test in zip(cliff_in.xout, cliff_in.zout,test_ex,test_zed):
+    for ex_clif,zed_clif,ex_test,zed_test in zip(cliff_in.xbars, cliff_in.zbars,test_ex,test_zed):
         if ex_clif.op != ex_test.op or zed_clif.op != zed_test.op:
             print "Clifford is not Pauli."
             return cliff_in
@@ -634,10 +642,10 @@ def paulify(cliff_in):
         zedact=eye_p(nq) #Initialize accumulators
         """If a negative sign appears on a given generator, assign a Pauli to that qubit that conjugates the generator to a minus sign, e.g. ZXZ = -X """
         for idx_x in range(nq):
-            if cliff_in.xout[idx_x].ph==2:
+            if cliff_in.xbars[idx_x].ph==2:
                 exact.op = replace_one_character(exact.op, idx_x, 'Z')
         for idx_z in range(nq):
-            if cliff_in.zout[idx_z].ph==2:
+            if cliff_in.zbars[idx_z].ph==2:
                 zedact.op = replace_one_character(zedact.op, idx_z, 'X')
         return Pauli((exact*zedact).op)
 
@@ -714,16 +722,16 @@ def transcoding_cliffords(stab_in,xs_in,zs_in,stab_out,xs_out,zs_out):
     cliff_zouts_left=[Unspecified]*len(stab_left)+zs_left
     
     cliff_left=Clifford(cliff_xouts_left,cliff_zouts_left).constraint_completions().next()
-    list_left=cliff_left.xout+cliff_left.zout
+    list_left=cliff_left.xbars+cliff_left.zbars
 
     for mcset in mutually_commuting_sets(n_elems=len(stab_left)-len(stab_right),n_bits=nq_anc):
         temp_xouts_right=pad(stab_right,lower_right=mcset)+map(lambda p: p&eye_p(nq_anc),xs_right)
         temp_zouts_right=[Unspecified]*len(stab_left)+map(lambda p: p&eye_p(nq_anc),zs_right)
     for completion in Clifford(temp_xouts_right,temp_zouts_right).constraint_completions():
         if nq_in<nq_out:
-            yield gen_cliff(completion.xout+completion.zout,list_left)
+            yield gen_cliff(completion.xbars+completion.zbars,list_left)
         else:
-            yield gen_cliff(list_left,completion.xout+completion.zout)
+            yield gen_cliff(list_left,completion.xbars+completion.zbars)
 
 @u.deprecated("Deprecated, see min_len_transcoding_clifford in StabilizerCode")
 def min_len_transcoding_clifford(paulis_in,paulis_out):
@@ -750,9 +758,9 @@ def clifford_group(nq, consider_phases=False):
             C = Clifford([P] + [Unspecified]*(nq -1), [Unspecified]*nq)
             for completion in C.constraint_completions():
                 if consider_phases:
-                    P_bars = [completion.xout, completion.zout]
+                    P_bars = [completion.xbars, completion.zbars]
                     # phase_array is chosen to disregard global phases by
-                    # absorbing them into xout[0].
+                    # absorbing them into xbars[0].
                     for phase_array in product([0, 2], repeat=2*nq):
                         for idx_kind, idx_qubit in product(range(2), range(nq)):
                             P_bars[idx_kind][idx_qubit].ph = phase_array[nq*idx_kind + idx_qubit]
