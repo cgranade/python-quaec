@@ -45,7 +45,7 @@ from copy import copy, deepcopy
 from itertools import product, chain, combinations
 from PauliClass import *
 from bsf import *
-from numpy import hstack, newaxis, array, s_
+from numpy import hstack, newaxis, array, s_, eye, vstack, zeros
 from exceptions import *
 
 from paulicollections import PauliList
@@ -101,28 +101,30 @@ class Clifford(object):
         if len(kwargs)!=0:
             self._bsm = kwargs.get('_bsm')
             self._phase_vec = kwargs.get('_phase_vec')
-        
-        to_col = lambda P : hstack([P._bsv._x,P._bsv._z])[..., newaxis] 
-        
-        self._bsm = BinarySymplecticMatrix(hstack(map(to_col, xbars + zbars)))
-        
-        for phase in map(lambda a: a.ph, xbars+zbars):
-            if phase is not Unspecified and phase not in [0, 2]:
-                warnings.warn(
-                    'The output phase of a Clifford operator has been specified as {}, such that the operator is not a valid automorphism.\n'.format(
-                        phase
-                    ) +
-                    'To avoid this warning, please choose all output phases to be from the set {0, 2}.'
-                )
-        
-        self._phase_vec=map(lambda a: a._bsm_phase, xbars+zbars)        
-        # Prevent fully unspecified operators.
-        if all([P is Unspecified for P in chain(xbars, zbars)]):
-            raise ValueError("At least one output must be specified.")
+        else:
+            to_col = lambda P : hstack([P._bsv._x,P._bsv._z])[..., newaxis] 
+            
+            self._bsm = BinarySymplecticMatrix(hstack(map(to_col, xbars + zbars)))
+            
+            for phase in map(lambda a: a.ph, xbars+zbars):
+                if phase is not Unspecified and phase not in [0, 2]:
+                    warnings.warn(
+                        'The output phase of a Clifford operator has been specified as {}, such that the operator is not a valid automorphism.\n'.format(
+                            phase
+                        ) +
+                        'To avoid this warning, please choose all output phases to be from the set {0, 2}.'
+                    )
+            
+            self._phase_vec=map(lambda a: a._bsm_phase, xbars+zbars)        
+            # Prevent fully unspecified operators.
+            if all([P is Unspecified for P in chain(xbars, zbars)]):
+                raise ValueError("At least one output must be specified.")
     
     def _bars_as_view(self, sl):
         
-        zippy=zip(map(lambda col: _bsf.BSVView(col[:self._bsm.nq],col[self._bsm.nq:]),self._bsm.__getitem__((s_[:],sl)).T),self._phase_vec.__getitem__(sl))
+        zippy=zip(map(lambda col: _bsf.BSVView(col[:self._bsm.nq],col[self._bsm.nq:]),
+        self._bsm.__getitem__((s_[:],sl)).T),
+        self._phase_vec.__getitem__(sl))
         
         return map(lambda colph : 
             Pauli(None,_bsv=colph[0],_bsm_phase = colph[1]),
@@ -134,6 +136,7 @@ class Clifford(object):
     def xbars(self):
         return self._bars_as_view(s_[:self._bsm.nq])
     
+    #FIXME xbars.setter no longer works
     #@xbars.setter
     #def xbars(self,value):
     #    self.xbars = value
@@ -141,7 +144,8 @@ class Clifford(object):
     @property
     def zbars(self):
         return self._bars_as_view(s_[self._bsm.nq:])
-        
+    
+    #FIXME zbars.setter no longer works    
     #@zbars.setter
     #def zout(self,value):
     #    print "zbars setter being called"
@@ -480,11 +484,15 @@ class Clifford(object):
         
         :rtype: :class:`qecc.BinarySymplecticMatrix`
         """
+        #Version 1 Code, commented out for testing
+        """
         def to_col(P):
             v = P.as_bsv()
             out = hstack([v.x, v.z])[..., newaxis]
             return out
         return BinarySymplecticMatrix(hstack(map(to_col, self.xbars + self.zbars)))
+        """
+        return self._bsm
         
     def as_unitary(self):
         """
@@ -531,6 +539,9 @@ def cnot(nq,ctrl,targ):
 
     :rtype: :class:`qecc.Clifford`
     """
+    
+    #Obsolete Version 1 Code:
+    """
     #Initialize to the identity Clifford:
     cnotto=eye_c(nq)
     #Wherever ctrl has an X, put an X on targ:
@@ -538,6 +549,19 @@ def cnot(nq,ctrl,targ):
     #Wherever targ has a Z, put a Z on ctrl:
     cnotto.zbars[targ].op=replace_one_character(cnotto.zbars[targ].op,ctrl,'Z')
     return cnotto
+    """
+    
+    temp_mat = eye(nq, dtype=int)
+    temp_mat[targ, ctrl] = 1
+    
+    bsm = BinarySymplecticMatrix(
+    vstack(
+    (hstack((temp_mat, zeros((nq,nq),dtype=int))),
+     hstack((zeros((nq,nq),dtype=int), temp_mat.T)))
+          )
+    )
+    
+    return Clifford(None, None, _bsm = bsm) 
     
 def cz(nq, q1, q2):
     """
@@ -549,8 +573,8 @@ def cz(nq, q1, q2):
     #Initialize to the identity Clifford:
     gate = eye_c(nq)
     #Wherever ctrl or targ get an X, map to XZ:
-    gate.xbars[q1].op = replace_one_character(gate.xbars[q1].op, q2, 'Z')
-    gate.xbars[q2].op = replace_one_character(gate.xbars[q2].op, q1, 'Z')
+    gate._bsm[q2+nq, q1] = 1
+    gate._bsm[q1+nq, q2] = 1
     return gate
     
 def hadamard(nq,q):
@@ -585,12 +609,13 @@ def swap(nq, q1, q2):
 
     :rtype: :class:`qecc.Clifford`
     """
-    p = range(nq)
-    p[q1], p[q2] = p[q2], p[q1]
-    
     gate = eye_c(nq)
-    gate.xbars = permutation(gate.xbars, p)
-    gate.zbars = permutation(gate.zbars, p)
+    #remove elements of BSM which don't belong
+    gate._bsm[q1,q1] = 0; gate._bsm[q2,q2] = 0;
+    gate._bsm[q1+nq,q1+nq] = 0; gate._bsm[q2+nq,q2+nq] = 0
+    #add some that do
+    gate._bsm[q1,q2] = 1; gate._bsm[q2,q1] = 1;
+    gate._bsm[q1+nq,q2+nq] = 1; gate._bsm[q2+nq,q1+nq] = 1
     return gate
     
 def pauli_gate(pauli):
