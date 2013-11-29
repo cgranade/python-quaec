@@ -90,6 +90,15 @@ class Clifford(object):
     :param zbars: See ``xbars``.
     :type xbars: list of :class:`qecc.Pauli` instances
     :type zbars: list of :class:`qecc.Pauli` instances
+    
+    There is an alternate set of parameters which can be used to represent a
+    Clifford:
+    
+    :param _bsm: an instance of the `qecc.BinarySymplecticMatrix` class on `n`
+        qubits
+    :param _phase_vec: an array of integers, either 0 or 2, indicating whether
+        conjugating the specified generator incurs a minus sign 
+        (phase shift of 2)
     """
     
     ## CONSTRUCTOR ##
@@ -153,7 +162,8 @@ class Clifford(object):
     
     @property
     def pauli_phases(self):
-        return map(lambda a: a.ph, self.xbars+self.zbars)
+        return self._phase_vec
+        #return map(lambda a: a.ph, self.xbars+self.zbars)
     ## SEQUENCE PROTOCOL ##
 
     def __len__(self):
@@ -176,6 +186,7 @@ class Clifford(object):
         Returns the number of unspecifed outputs of this :class:`qecc.Clifford`
         object.
         """
+        #FIXME unspecified Paulis can't yet be columns in a BSM.
         return len([P for P in chain(self.xbars, self.zbars) if P is Unspecified])
         
     ## PRINTING ##
@@ -236,7 +247,7 @@ class Clifford(object):
             diagnostic information will be printed.
         """
         
-        if any(P.ph not in [0, 2] for P in chain(self.xbars, self.zbars) if P is not Unspecified):
+        if any(phase not in [0, 2] for phase in self._phase_vec):
             if not quiet:
                 print "At least one output operator has a phase other than 0 or 2."
                 
@@ -245,24 +256,7 @@ class Clifford(object):
             return True
         else:
             return False
-            """    
-        for P in sum(elem_gens(len(self)), []):
-            for Q in sum(elem_gens(len(self)), []):
-                UP = self.conjugate_pauli(P)
-                UQ = self.conjugate_pauli(Q)
-                
-                if UP is not Unspecified and UQ is not Unspecified and com(UP, UQ) != com(P, Q):
-                    if not quiet:
-                        print "c({P}, {Q}) == {cPQ}, but c(U({P}), U({Q})) == c({UP}, {UQ}) == {cUPUQ}.".format(
-                                P=P, Q=Q,
-                                cPQ=com(P,Q),
-                                UP=UP, UQ=UQ,
-                                cUPUQ=com(UP, UQ)
-                            )
-                    return False
-                    
-        return True
-        """
+       
     def inv(self):
         r"""
         Calculates the inverse :math:`C^{-1}` of this Clifford operator
@@ -271,7 +265,7 @@ class Clifford(object):
         # Since BSM doesn't consider phases, what we get is the inverse up to
         # a Pauli correction. Since Pauli operators are self inverse, we can
         # find the correction as (almost_inv * self).
-        almost_inv = self.as_bsm().inv().as_clifford()
+        almost_inv = self._bsm.inv().as_clifford()
         return almost_inv * self * almost_inv
         
 
@@ -299,6 +293,8 @@ class Clifford(object):
             except TypeError:
                 # Nope. Wasn't iterable. Raise an error.
                 raise TypeError("Cliffords conjugate Paulis.")
+        #Obsolete Version 1 Code
+        """
         #Initialize the output Pauli to the identity:
         rolling_pauli=Pauli('I'*len(pauli), phase=pauli.ph)
         for idx,op in enumerate(pauli.op):
@@ -313,6 +309,8 @@ class Clifford(object):
                 rolling_pauli=rolling_pauli*self.xbars[idx]*self.zbars[idx]
                 rolling_pauli.mul_phase(1)
         return rolling_pauli 
+        """
+        #New, BSM-oriented Version 1.1 Code
         
     def __call__(self, other):
         if isinstance(other, Pauli):
@@ -337,7 +335,7 @@ class Clifford(object):
 
     def __eq__(self,other):
         if isinstance(other, Clifford):
-            return all([P == Q for P, Q in zip(self.xbars + self.zbars, other.xbars + other.zbars)])
+            return array_equiv(self._bsm, other._bsm) and array_equiv(self._phase_vec, other._phase_vec)
         else:
             return False
             
