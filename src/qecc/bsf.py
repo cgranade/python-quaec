@@ -34,6 +34,8 @@ from numpy.linalg import det
 from PauliClass import *
 from CliffordClass import *
 
+from qecc.singletons import EmptyClifford
+
 import utils as u
 
 import bsf_decomp
@@ -661,7 +663,10 @@ class BinarySymplecticMatrix(object):
         left, right = bsf_decomp.circuit_decomposition_part1(self.copy())
         circ = circuit.Circuit(*(right + list(reversed(left))))
         if validate:
-            assert all(circ.as_clifford().as_bsm()._arr == self._arr), "Decomposition failed to produce desired BSM."
+            if all(self._arr == eye(self.nq * 2)):
+                assert circ.as_clifford() is EmptyClifford, "Decomposition of an empty circuit did not produce an empty Clifford."
+            else:
+                assert all(circ.as_clifford().as_bsm()._arr == self._arr), "Decomposition failed to produce desired BSM."
         return circ
         
         

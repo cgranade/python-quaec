@@ -53,6 +53,12 @@ class EmptyCliffordType(SingletonBase):
     
     def __repr__(self):
         return "EmptyClifford"
+        
+    def __mul__(self, other):
+        # We want an EmptyClifford (a Clifford on zero qubits) to act as
+        # an identity when multiplied by Cliffords of any size, so that an
+        # empty Circuit has a sensible meaning.
+        return other
     
 EmptyClifford = EmptyCliffordType()
     
