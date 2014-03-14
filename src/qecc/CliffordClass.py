@@ -459,13 +459,20 @@ class Clifford(object):
         """
         return clifford_as_unitary(self)
         
-    def circuit_decomposition(self):
+    def circuit_decomposition(self, include_pauli=True):
         """
         Returns a :class:`qecc.Circuit` object consisting of the circuit decomposition of 
         `self.as_bsm()` and a :class:`qecc.Pauli` object which ensures the output phases
         of the :class:`qecc.Clifford` object are preserved.
+        
+        :param bool include_pauli: If `True`, Pauli locations are added at the
+            end of the returned circuit. If `False`, the returned `Circuit`
+            is correct only up to a Pauli operator at the end.
+        :rtype: `Circuit`
         """
-        pauli_correct = paulify((self.as_bsm().circuit_decomposition().as_clifford())*self.inv()).as_circuit()
+        pauli_correct = paulify(
+            (self.as_bsm().circuit_decomposition().as_clifford())*self.inv()
+        ).as_circuit() if include_pauli else ()
         return (self.as_bsm().circuit_decomposition())+pauli_correct
       
         
