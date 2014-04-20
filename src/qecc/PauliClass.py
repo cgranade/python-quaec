@@ -894,10 +894,10 @@ def pad(setP, n_eb=0, lower_right=None):
     :param lower_right: list of `qecc.Pauli` operators, acting on `n_eb` qubits.
     :rtype: list of :class:`qecc.Pauli` objects.
     Example:
-    >>>import qecc as q
-    >>>pauli_set=map(q.Pauli,['XXX','YIY','ZZI'])
-    >>>q.pad(pauli_set,n_eb=2,lower_right=map(q.Pauli,['IX','ZI']))
-    [i^0 XXXII, i^0 YIYII, i^0, ZZIII, i^0 IIIIX, i^0 IIIZI]
+    >>> import qecc as q
+    >>> pauli_set=map(q.Pauli,['XXX','YIY','ZZI'])
+    >>> q.pad(pauli_set,n_eb=2,lower_right=map(q.Pauli,['IX','ZI']))
+    [i^0 XXXII, i^0 YIYII, i^0 ZZIII, i^0 IIIIX, i^0 IIIZI]
 
     """
     

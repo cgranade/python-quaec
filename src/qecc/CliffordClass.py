@@ -586,17 +586,17 @@ def paulify(cliff_in):
     if possible.
     :rtype: :class:`qecc.Pauli`
     Example:
-    >>>import qecc as q
-    >>>cliff=q.Clifford([q.Pauli('XI',2),q.Pauli('IX')],map(q.Pauli,['ZI','IZ']))
-    >>>q.paulify(cliff)
+    >>> import qecc as q
+    >>> cliff=q.Clifford([q.Pauli('XI',2),q.Pauli('IX')],map(q.Pauli,['ZI','IZ']))
+    >>> q.paulify(cliff)
     i^0 ZI
     
     Converting a Pauli into a Clifford and back again will erase
     the phase:
-    >>>import qecc as q
-    >>>paul=q.Pauli('YZ',3)
-    >>>cliff=q.pauli_gate(paul)
-    >>>q.paulify(cliff)
+    >>> import qecc as q
+    >>> paul=q.Pauli('YZ',3)
+    >>> cliff=q.pauli_gate(paul)
+    >>> q.paulify(cliff)
     i^0 YZ
     
     """

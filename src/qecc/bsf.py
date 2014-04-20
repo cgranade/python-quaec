@@ -225,7 +225,7 @@ def all_pauli_bsvs(nq):
 
     :returns: an iterator that yields the binary symplectic representations of each element of the Pauli group :math:`\mathcal{P}_n`.
 
-    >>> list(q.all_pauli_bsvs(1))
+    >>> list(all_pauli_bsvs(1))
     [( 0 | 0 ), ( 0 | 1 ), ( 1 | 0 ), ( 1 | 1 )]
     
     """
