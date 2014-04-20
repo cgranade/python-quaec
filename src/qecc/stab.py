@@ -540,9 +540,9 @@ class StabilizerCode(object):
         
         :param list perm: A list containing 'X','Y',  and 'Z' in any order,
             indicating which permutation is to be applied.
-            
-        >>> new_stab = q.StabilizerCode.bit_flip_code(1).permute_gen_ops('ZYX')
-        >>> assert new_stab.group_generators == q.StabilizerCode.phase_flip_code(1).group_generators
+        
+        >>> new_stab = StabilizerCode.bit_flip_code(1).permute_gen_ops('ZYX')
+        >>> assert new_stab.group_generators == StabilizerCode.phase_flip_code(1).group_generators
         """
         
         new_group_generators=pc.PauliList()        

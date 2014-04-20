@@ -107,7 +107,11 @@ class AllPredicate(Predicate):
     
     Given two predicates ``p`` and ``q``,
     
-    >>> p_and_q = qecc.AllPredicate(p, q)
+    >>> p = lambda: True
+    >>> q = lambda: False
+    >>> p_and_q = AllPredicate(p, q)
+    >>> p_and_q () == p () & q ()
+    True
     
     is equivalent to ``p_and_q = p & q``.
     """
@@ -130,7 +134,12 @@ class AnyPredicate(Predicate):
     
     Given two predicates ``p`` and ``q``,
     
-    >>> p_or_q = qecc.AllPredicate(p, q)
+    >>> p = lambda: True
+    >>> q = lambda: False
+    >>> p_or_q = AnyPredicate(p, q)
+    >>> p_or_q () == p () | q ()
+    True
+    
     
     is equivalent to ``p_and_q = p | q``.
     """
