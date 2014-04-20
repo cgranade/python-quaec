@@ -309,7 +309,7 @@ class Circuit(list):
         """
         Returns the number of qubits on which this circuit acts.
         """
-        return max(loc.nq for loc in self)
+        return max(loc.nq for loc in self) if self else 0
         
     @property
     def size(self):

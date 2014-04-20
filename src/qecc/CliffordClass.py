@@ -130,14 +130,16 @@ class Clifford(object):
     @property
     def nq(self):
         """
-        Returns the number of qubits on which a :class:`qecc.Clifford` object acts.
+        Returns the number of qubits on which this :class:`qecc.Clifford` object
+        acts.
         """
         return len(self)
         
     @property
     def n_unspecified(self):
         """
-        Returns the number of unspecifed outputs of a :class:`qec.Clifford` object.
+        Returns the number of unspecifed outputs of this :class:`qecc.Clifford`
+        object.
         """
         return len([P for P in chain(self.xout, self.zout) if P is Unspecified])
         
@@ -172,8 +174,9 @@ class Clifford(object):
             
     def str_sparse(self):
         """
-        Provides a compact representation for :class:`qecc.Clifford` objects in the case
-        where many of the outputs have small support. 
+        Provides a compact representation for :class:`qecc.Clifford` objects,
+        intended for use in the case where many of the outputs have small
+        support.
         """
         out = zip(KINDS, map(enumerate, [self.xout, self.zout]))
         nq = len(self)
@@ -244,7 +247,7 @@ class Clifford(object):
         :returns: Representation of the Pauli operator 
             :math:`CPC^{\dagger}`, where :math:`C` is the Clifford operator
             represented by this instance.
-        :rtype: qecc.Pauli
+        :rtype: :class:`qecc.Pauli`
         """
         
         if not isinstance(pauli,Pauli):
@@ -456,13 +459,20 @@ class Clifford(object):
         """
         return clifford_as_unitary(self)
         
-    def circuit_decomposition(self):
+    def circuit_decomposition(self, include_pauli=True):
         """
-        Returns a :class:`qecc>Circuit` object consisting of the circuit decomposition of 
+        Returns a :class:`qecc.Circuit` object consisting of the circuit decomposition of 
         `self.as_bsm()` and a :class:`qecc.Pauli` object which ensures the output phases
         of the :class:`qecc.Clifford` object are preserved.
+        
+        :param bool include_pauli: If `True`, Pauli locations are added at the
+            end of the returned circuit. If `False`, the returned `Circuit`
+            is correct only up to a Pauli operator at the end.
+        :rtype: `Circuit`
         """
-        pauli_correct = paulify((self.as_bsm().circuit_decomposition().as_clifford())*self.inv()).as_circuit()
+        pauli_correct = paulify(
+            (self.as_bsm().circuit_decomposition().as_clifford())*self.inv()
+        ).as_circuit() if include_pauli else ()
         return (self.as_bsm().circuit_decomposition())+pauli_correct
       
         
@@ -638,9 +648,8 @@ def generic_clifford(paulis_in, paulis_out):
     zouts=paulis_out[nq:2*nq]
     
     G    = Clifford(xouts,zouts)
-    H    = Clifford(xins,zins)    
-    Hinv = (H.as_bsm().inv().as_clifford())
-    return G*Hinv
+    H    = Clifford(xins,zins)
+    return G*H.inv()
     
 # For backwards compatibility, we define gen_cliff as an alias.
 gen_cliff = generic_clifford

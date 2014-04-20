@@ -35,6 +35,7 @@ def array_swap(A, B):
     temp = A.copy()
     A[...] = B
     B[...] = temp
+    del temp
     
 def inv_dict(d):
     return dict(imap(reversed, d.iteritems()))
@@ -75,7 +76,7 @@ def deprecated(explanation='Deprecated'):
 def ensure_args_pauli(func):
     @wraps(func)
     def pauli_tested_func(*args):
-        map(PC.ensure_pauli, args)
+        args = map(PC.ensure_pauli, args)
         func(*args)
     return pauli_tested_func
             

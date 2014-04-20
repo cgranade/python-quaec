@@ -1,0 +1,11 @@
+language: python
+python:
+# FIXME: reenable once 2.6 support is added.
+#  - "2.6"
+  - "2.7"
+# command to install dependencies
+# TODO: add requirements.txt. install: "pip install -r requirements.txt"
+install: "pip install"
+# command to run tests
+script: nosetests -w src
+

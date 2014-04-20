@@ -603,7 +603,7 @@ class Pauli(object):
         :param group_gens: Either ``None`` or a list of generators :math:`G_i`.
             If not ``None``, the returned centralizer :math:`\mathrm{C}(P)` is
             a subgroup of the group :math:`\langle G_i \rangle_{i=1}^k`.
-        :type group_gens: list of qecc.Pauli instances
+        :type group_gens: list of :class:`qecc.Pauli` instances
         :returns: A list of elements :math:`P_i` of the Pauli group such that
             :math:`\mathrm{C}(P) = \langle P_i \rangle_{i=1}^{n}`, where
             :math:`n` is the number of unique generators of the centralizer.
@@ -722,7 +722,7 @@ def com(P, Q):
     :type Q: qecc.Pauli
     
     :returns: :math:`c(P, Q)`.
-    :rtype: int
+    :rtype: :obj:`int`
     """
     ph1, ph2 = (P*Q).ph, (Q*P).ph
     return 0 if ph1 == ph2 else 1
@@ -813,7 +813,7 @@ def eye_p(nq):
     Given a number of qubits, returns the identity Pauli on that many qubits.
 
     :param int nq: Number of qubits upon which the returned Pauli acts.
-    :rtype: qecc.Pauli
+    :rtype: :class:`qecc.Pauli`
     :returns: A Pauli operator acting as the identity on each of ``nq`` qubits.
     """
     return Pauli('I'*nq)
