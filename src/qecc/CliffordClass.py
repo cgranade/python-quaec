@@ -477,6 +477,11 @@ class Clifford(object):
       
         
 ## FUNCTIONS ##
+
+def _check_index(nq, q):
+    if q >= nq:
+        raise IndexError("Qubit index {} out of range {}.".format(q, nq))
+
 def eye_c(nq):
     """
     Yields the identity Clifford, defined to map every generator of the 
@@ -495,19 +500,22 @@ def replace_one_character(string,location,new_character):
     """
     return string[:location]+new_character+string[location+1:]
     
-def cnot(nq,ctrl,targ):
+def cnot(nq, ctrl, targ):
     """
     Yields the ``nq``-qubit CNOT Clifford controlled on ``ctrl``,
     acting a Pauli :math:`X` on ``targ``.
 
     :rtype: :class:`qecc.Clifford`
     """
+    _check_index(nq, ctrl)
+    _check_index(nq, targ)
+
     #Initialize to the identity Clifford:
-    cnotto=eye_c(nq)
+    cnotto = eye_c(nq)
     #Wherever ctrl has an X, put an X on targ:
-    cnotto.xout[ctrl].op=replace_one_character(cnotto.xout[ctrl].op,targ,'X')
+    cnotto.xout[ctrl].op = replace_one_character(cnotto.xout[ctrl].op,targ,'X')
     #Wherever targ has a Z, put a Z on ctrl:
-    cnotto.zout[targ].op=replace_one_character(cnotto.zout[targ].op,ctrl,'Z')
+    cnotto.zout[targ].op = replace_one_character(cnotto.zout[targ].op,ctrl,'Z')
     return cnotto
     
 def cz(nq, q1, q2):
@@ -517,6 +525,9 @@ def cz(nq, q1, q2):
 
     :rtype: :class:`qecc.Clifford`
     """
+    _check_index(nq, q1)
+    _check_index(nq, q2)
+
     #Initialize to the identity Clifford:
     gate = eye_c(nq)
     #Wherever ctrl or targ get an X, map to XZ:
@@ -524,22 +535,26 @@ def cz(nq, q1, q2):
     gate.xout[q2].op = replace_one_character(gate.xout[q2].op, q1, 'Z')
     return gate
     
-def hadamard(nq,q):
+def hadamard(nq, q):
     """
     Yields the ``nq``-qubit Clifford, switching :math:`X` and :math:`Z`
     on qubit ``q``, yielding a minus sign on :math:`Y`.
 
     :rtype: :class:`qecc.Clifford`
     """
+    _check_index(nq, q)
     #Switch a Z and an X in the identity Clifford:
+    if q >= nq:
+        raise IndexError("Qubit index {} out of range {}.".format(q, nq))
     return eye_c(q) & Clifford([Pauli('Z')],[Pauli('X')]) & eye_c(nq-q-1)
 
-def phase(nq,q):
+def phase(nq, q):
     r"""
     Yields the :math:`\frac{\pi}{4}_z`-rotation Clifford, acting on qubit ``q``.
 
     :rtype: :class:`qecc.Clifford`
     """
+    _check_index(nq, q)
     return eye_c(q) & Clifford([Pauli('Y')],[Pauli('Z')]) & eye_c(nq-q-1)
     
 def permutation(lst, p):
@@ -556,6 +571,9 @@ def swap(nq, q1, q2):
 
     :rtype: :class:`qecc.Clifford`
     """
+    _check_index(nq, q1)
+    _check_index(nq, q2)
+    
     p = range(nq)
     p[q1], p[q2] = p[q2], p[q1]
     
