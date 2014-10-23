@@ -273,6 +273,53 @@ class Clifford(object):
                 rolling_pauli=rolling_pauli*self.xout[idx]*self.zout[idx]
                 rolling_pauli.mul_phase(1)
         return rolling_pauli 
+
+
+    def on(self, pauli, *idx_qubits): 
+        r""" 
+        Apply this Clifford operation to the qubit(s) in the list :math:'q_i'.
+        Works for 1- and 2- qubit Cliffords.
+
+        :arg pauli: Representation of the Pauli operator on which we will apply this Clifford.
+        :type pauli: qecc.Pauli
+        :arg qi: A list containing the qubits we want to act on (either 1 or 2 elements). 
+        :type qi: list
+        :returns: The resultant Pauli operator after this Clifford object is 
+            applied to the qubit(s) in :math:`q_i`.
+        :rtype: :class:`qecc.Pauli`
+        """
+        # Check that the qi are valid indices
+        if any(qi not in range(0, pauli.nq) for qi in idx_qubits):
+            raise ValueError("Qubit index out of range")
+
+        # Make sure the number of Paulis we are acting on matches the size of the Clifford.
+        if len(idx_qubits) != self.nq: 
+            raise ValueError("Clifford cannot act on the requested Paulis")
+
+        # Single-qubit Clifford
+        if len(idx_qubits) == 1:
+            C = eye_c(idx_qubits[0]) & self & eye_c(pauli.nq - idx_qubits[0] - 1)
+            return C(pauli)
+
+        # 2-qubit Clifford
+        elif len(idx_qubits) == 2:
+            q1, q2 = min(idx_qubits), max(idx_qubits)
+
+            swap_to_adjacent = swap(pauli.nq, q1 + 1, q2)
+
+            pauli = swap_to_adjacent(pauli) # Swap q2 into adjacent position
+
+            C = eye_c(q1) & self & eye_c(pauli.nq - q1 - 2) # Apply operation
+            pauli = C(pauli)
+
+            pauli = swap_to_adjacent(pauli) # Swap back to original position
+
+            return pauli
+
+        # Arbitrary size Clifford
+        else:
+            return NotImplemented
+
         
     def __call__(self, other):
         if isinstance(other, Pauli):
