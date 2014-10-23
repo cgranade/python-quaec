@@ -275,12 +275,12 @@ class Clifford(object):
         return rolling_pauli 
 
 
-    def on(self, pauli, qi): # Written by Olivia! :)
+    def on(self, pauli, *idx_qubits): 
         r""" 
         Apply this Clifford operation to the qubit(s) in the list :math:'q_i'.
         Works for 1- and 2- qubit Cliffords.
 
-        :arg pauli: Just a Pauli.
+        :arg pauli: Representation of the Pauli operator on which we will apply this Clifford.
         :type pauli: qecc.Pauli
         :arg qi: A list containing the qubits we want to act on (either 1 or 2 elements). 
         :type qi: list
@@ -288,38 +288,37 @@ class Clifford(object):
             applied to the qubit(s) in :math:`q_i`.
         :rtype: :class:`qecc.Pauli`
         """
-        # Check that the qi are valid index
-        for qubit in qi:
-            if qubit not in range(0, pauli.nq):
-                raise ValueError("Qubit index out of range")
+        # Check that the qi are valid indices
+        if any(qi not in range(0, pauli.nq) for qi in idx_qubits):
+            raise ValueError("Qubit index out of range")
 
         # Make sure the number of Paulis we are acting on matches the size of the Clifford.
-        if len(qi) != self.nq: 
+        if len(idx_qubits) != self.nq: 
             raise ValueError("Clifford cannot act on the requested Paulis")
 
         # Single-qubit Clifford
-        if len(qi) == 1:
-            C = eye_c(qi[0]) & self & eye_c(pauli.nq - qi[0] - 1)
+        if len(idx_qubits) == 1:
+            C = eye_c(idx_qubits[0]) & self & eye_c(pauli.nq - idx_qubits[0] - 1)
             return C(pauli)
 
         # 2-qubit Clifford
-        elif len(qi) == 2:
-            q1, q2 = min(qi), max(qi)
+        elif len(idx_qubits) == 2:
+            q1, q2 = min(idx_qubits), max(idx_qubits)
 
-            # Do swaps to get the two qubits adjacent, by moving the higher one inwards
-            for q2temp in range(q2, q1 + 1, -1):
-                next_swap = swap(pauli.nq, q2temp, q2temp - 1)
-                pauli = next_swap(pauli)
+            swap_to_adjacent = swap(pauli.nq, q1 + 1, q2)
 
-            C = eye_c(q1) & self & eye_c(pauli.nq - q1 - 2)
+            pauli = swap_to_adjacent(pauli) # Swap q2 into adjacent position
+
+            C = eye_c(q1) & self & eye_c(pauli.nq - q1 - 2) # Apply operation
             pauli = C(pauli)
 
-            for q2temp in range(q1 + 1, q2):
-                next_swap = swap(pauli.nq, q2temp, q2temp + 1)
-                pauli = next_swap(pauli)
+            pauli = swap_to_adjacent(pauli) # Swap back to original position
 
             return pauli
 
+        # Arbitrary size Clifford
+        else:
+            return NotImplemented
 
         
     def __call__(self, other):
