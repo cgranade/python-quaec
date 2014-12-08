@@ -459,7 +459,13 @@ class BinarySymplecticMatrix(object):
         self._arr.__setitem__(sliceobj, val)
 
     def __mul__(self, other):
-        return BinarySymplecticMatrix(dot(self._arr, other._arr) % 2)
+        if isinstance(other, BinarySymplecticMatrix):
+            return BinarySymplecticMatrix(dot(self._arr, other._arr) % 2)
+        elif isinstance(other, BinarySymplecticVector):
+            return BinarySymplecticMatrix(dot(self._arr, other._arr) % 2)
+        else:
+            raise TypeError("Illegal multiplier for "+\
+                "BinarySymplecticMatrix: {}".format(type(other)))
     
     def __repr__(self):
         # TODO: We could make this a bit
