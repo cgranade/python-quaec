@@ -56,13 +56,13 @@ __all__ = [
 
 ## CLASSES ##
 
-VALID_BITS=range(2)
+VALID_BITS = range(2)
 
 class BSVView(object):
     
-    def __init__(self,x,z):
-        self._x=x
-        self._z=z
+    def __init__(self, x, z):
+        self._x = x
+        self._z = z
         
     ## MAGIC METHODS ##
     
@@ -71,17 +71,21 @@ class BSVView(object):
         return len(self._x)
 
     def __repr__(self):
-        return "( {ex} | {zed} )".format(ex=" ".join(map(str, self._x)), zed=" ".join(map(str, self._z)))
+        vec_str = lambda vec: " ".join(map(str, vec))
+        return "( {ex} | {zed} )".format(ex = vec_str(self._x), 
+                                            zed = vec_str(self._z))
 
     def __eq__(self,other):
-        return all([a[0] == a[1] for a in zip(self._x+self._z, other._x + other._z)])
+        return all([a[0] == a[1] for a in zip(self._x + self._z,
+                                                other._x + other._z)])
         
     ## PROPERTIES ##
 
     @property
     def x(self):
         """
-        Array containing the :math:`X` part of the binary symplectic vector.
+        Array containing the :math:`X` part of the binary symplectic 
+        vector.
         
         :rtype: :class:`numpy.ndarray`, shape ``(2 * nq, )``.
 
@@ -95,7 +99,8 @@ class BSVView(object):
     @property
     def z(self):
         """
-        Array containing the :math:`Z` part of the binary symplectic vector.
+        Array containing the :math:`Z` part of the binary symplectic 
+        vector.
         
         :rtype: :class:`numpy.ndarray`, shape ``(nq, )``.
 
@@ -112,7 +117,7 @@ class BSVView(object):
         Returns the number of Y's in a given BSV. Often needed for 
         calculating Pauli/Clifford phases.
         """
-        return sum(bitwise_and(self._x,self._z))
+        return sum(bitwise_and(self._x, self._z))
 
     ## OTHER METHODS ##
 
@@ -137,7 +142,7 @@ class BSVView(object):
         i^0 IXXYZ
         
         """
-        return Pauli(None,_bsv=self,_bsm_phase=0)
+        return Pauli(None, _bsv = self, _bsm_phase = 0)
         
     def bsip(self,other):
         r"""
@@ -152,13 +157,14 @@ class BSVView(object):
         1
         
         """
-        return int(not(commute(self,other)))
+        return int(not(commute(self, other)))
     
     def __and__(self,other):
         """
         Returns the "tensor product" of two binary symplectic vectors.
         """
-        return BSVView(hstack((self._x,other._x)),hstack((self._z,other._z)))
+        return BSVView(hstack((self._x,other._x)), 
+                        hstack((self._z,other._z)))
 
 class BinarySymplecticVector(BSVView):
     """
@@ -181,17 +187,17 @@ class BinarySymplecticVector(BSVView):
     of the length of a single array containing the same data.
     """
 
-    def __init__(self,*args):
+    def __init__(self, *args):
         if len(args) == 1:
-            nq = len(args[0])/2
+            nq = len(args[0]) / 2
             super(BinarySymplecticVector, self).__init__(
-                array(args[0][0:nq], dtype='uint8'),
-                array(args[0][nq:2*nq], dtype='uint8'))
+                array(args[0][0 : nq], dtype = 'uint8'),
+                array(args[0][nq : 2 * nq], dtype = 'uint8'))
         elif len(args) == 2:
             xstring,zstring = args
             super(BinarySymplecticVector, self).__init__(
-                array(list(xstring), dtype='uint8'),
-                array(list(zstring), dtype='uint8'))
+                array(list(xstring), dtype = 'uint8'),
+                array(list(zstring), dtype = 'uint8'))
         else:
             raise ValueError('Wrong number of args.')
             
@@ -208,12 +214,13 @@ class BinarySymplecticVector(BSVView):
         """
         Returns the "tensor product" of two binary symplectic vectors.
         """
-        return BinarySymplecticVector(hstack((self._x,other._x)),hstack((self._z,other._z)))
+        return BinarySymplecticVector(hstack((self._x,other._x)),
+                                        hstack((self._z,other._z)))
 
 
-#FUNCTIONS FOR BSV CLASS     
+#FUNCTIONS FOR BSV CLASS
 
-def bitstring_to_letterstring(bitstring,letter):
+def bitstring_to_letterstring(bitstring, letter):
     """Internal function, replaces all instances of 1 in ``bitstring``
     with the letter in ``letter``.
     :param list bitstring: a list or tuple, whose entries are 0 or 1. 
@@ -223,12 +230,12 @@ def bitstring_to_letterstring(bitstring,letter):
     >>> 
     
     """
-    outstring=''
+    outstring = ''
     for idx in range(len(bitstring)):
-        if bitstring[idx]==0:
-            outstring=outstring+('I')
-        elif bitstring[idx]==1:
-            outstring=outstring+(letter)
+        if bitstring[idx] == 0:
+            outstring += ('I')
+        elif bitstring[idx] == 1:
+            outstring += letter
     return outstring
 
 def parity(bitarray):
@@ -237,7 +244,7 @@ def parity(bitarray):
     :returns: True if bitarray is of odd parity, False if it is of even parity.
     :rtype: bool
     """
-    return reduce(logical_xor,bitarray)
+    return reduce(logical_xor, bitarray)
 
 def bitwise_inner_product(v1,v2):
     """
@@ -260,18 +267,18 @@ def all_pauli_bsvs(nq):
     [( 0 | 0 ), ( 0 | 1 ), ( 1 | 0 ), ( 1 | 1 )]
     
     """
-    for idx_x in itertools.product([0,1],repeat=nq):
-        for idx_z in itertools.product([0,1],repeat=nq):
-            yield(BinarySymplecticVector(idx_x,idx_z))
+    for idx_x in itertools.product([0, 1], repeat = nq):
+        for idx_z in itertools.product([0, 1], repeat = nq):
+            yield(BinarySymplecticVector(idx_x, idx_z))
 
 def eye_bsv(nq):
     """
     Returns the binary symplectic vector representing the identity Pauli
     on nq qubits.
     """
-    return BinarySymplecticVector([0]*nq,[0]*nq)
+    return BinarySymplecticVector([0]*nq, [0]*nq)
 
-def constrained_set(pauli_array_input,logical_array_input):
+def constrained_set(pauli_array_input, logical_array_input):
     r"""
     Given a set of constraints of the form :math:`P_i \odot Q = b_i`, with
     each :math:`P_i` a Pauli operator and each :math:`b_i` a bit, yields an
@@ -290,7 +297,7 @@ def constrained_set(pauli_array_input,logical_array_input):
     
     """
     
-    nq=len(pauli_array_input[0].x)
+    nq = len(pauli_array_input[0].x)
     #output_array=[]
     logical_bookkeeping_array=[]
     for current_pauli in all_pauli_bsvs(nq):
@@ -354,7 +361,6 @@ class BinarySymplecticMatrix(object):
         upon.
         """
         return len(self._arr)/2
-            
     @property
     def xx(self):
         """
@@ -452,8 +458,8 @@ class BinarySymplecticMatrix(object):
     def __setitem__(self, sliceobj, val):
         self._arr.__setitem__(sliceobj, val)
 
-    def __mul__(self,other):
-        return BinarySymplecticMatrix(dot(self._arr, other._arr)%2)
+    def __mul__(self, other):
+        return BinarySymplecticMatrix(dot(self._arr, other._arr) % 2)
     
     def __repr__(self):
         # TODO: We could make this a bit

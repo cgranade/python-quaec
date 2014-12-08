@@ -311,6 +311,12 @@ class Clifford(object):
         return rolling_pauli 
         """
         #New, BSM-oriented Version 1.1 Code
+        new_bsv = self._bsm * other._bsv
+        xz_vec = other._bsv._x + other._bsv._z
+        new_bsm_phase = other._bsm_phase + \
+            sum([self.phase_vec[idx] if xz_vec[idx]])
+
+        return Pauli(_bsv = new_bsv, _bsm_phase = new_bsm_phase)
         
     def __call__(self, other):
         if isinstance(other, Pauli):
