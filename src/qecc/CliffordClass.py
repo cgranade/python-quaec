@@ -45,7 +45,7 @@ from copy import copy, deepcopy
 from itertools import product, chain, combinations
 from PauliClass import *
 from bsf import *
-from numpy import hstack, newaxis, array, s_, eye, vstack, zeros
+from numpy import hstack, newaxis, array, s_, eye, vstack, zeros, ones
 from exceptions import *
 
 from paulicollections import PauliList
@@ -567,7 +567,7 @@ def cnot(nq,ctrl,targ):
           )
     )
     
-    return Clifford(None, None, _bsm = bsm) 
+    return Clifford(None, None, _bsm = bsm, _phase_vec=ones(2*nq, dtype=int)) 
     
 def cz(nq, q1, q2):
     """
