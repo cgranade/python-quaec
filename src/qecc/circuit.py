@@ -23,15 +23,30 @@
 ##
 
 ## IMPORTS ##
+from sys import version_info
+if version_info[0] == 3:
+    PY3 = True
+    from importlib import reload
+elif version_info[0] == 2:
+    PY3 = False
+else:
+    raise EnvironmentError("sys.version_info refers to a version of "
+        "Python neither 2 nor 3. This is not permitted. "
+        "sys.version_info = {}".format(version_info))
 
 from copy import copy
 from operator import add, mul
-
-import PauliClass as pc
-import CliffordClass as cc
-
-import utils as u
 import itertools as it
+from functools import reduce
+
+if PY3:
+    from . import PauliClass as pc
+    from . import CliffordClass as cc
+    from . import utils as u
+else:
+    import PauliClass as pc
+    import CliffordClass as cc
+    import utils as u
 
 ## ALL ##
 
@@ -142,7 +157,7 @@ class Location(object):
         :returns: The location represented by the given QuASM source.
         """
         parts = source.split()
-        return Location(parts[0], *map(int, parts[1:]))
+        return Location(parts[0], *list(map(int, parts[1:])))
         
     ## PROPERTIES ##
         
@@ -269,7 +284,7 @@ class Circuit(list):
     def __init__(self, *locs):
         # Circuit(('CNOT', 0, 2), ('H', 1)) works, but
         # Circuit('CNOT', 0, 2) doesn't work.
-        list.__init__(self, map(ensure_loc, locs))
+        list.__init__(self, list(map(ensure_loc, locs)))
 
     ## SEQUENCE PROTOCOL ##
             
@@ -341,7 +356,7 @@ class Circuit(list):
         else:
             it = iter(source.split('\n'))
             
-        return Circuit(*map(Location.from_quasm, it))
+        return Circuit(*list(map(Location.from_quasm, it)))
 
     ## PRETTY PRINTING ##
             
@@ -382,7 +397,7 @@ class Circuit(list):
         .. _QCViewer: http://qcirc.iqc.uwaterloo.ca/index.php?n=Projects.QCViewer
         """
             
-        header = '.v ' + qubits_str(range(self.nq), qubit_names) + '\n'
+        header = '.v ' + qubits_str(list(range(self.nq)), qubit_names) + '\n'
         header += '.i ' + qubits_str(inputs, qubit_names) + '\n'
         header += '.o ' + qubits_str(outputs, qubit_names) + '\n'
             
@@ -427,7 +442,7 @@ class Circuit(list):
                 else:
                     raise NotImplementedError("Location kind {0.kind} not supported by this method.".format(loc))
 
-                hidden_qubits.update(range(min(loc.qubits), max(loc.qubits)+1))
+                hidden_qubits.update(list(range(min(loc.qubits), max(loc.qubits)+1)))
                 
             trans_cells.append(col)
             
@@ -483,7 +498,7 @@ class Circuit(list):
                 # TODO: add two-qubit gates.
                 q = loc.qubits[0]
                 
-                for idx_future in xrange(start_at + 1, len(self)):
+                for idx_future in range(start_at + 1, len(self)):
                     if q in self[idx_future].qubits:
                         # Check that the kind matches.
                         if self[idx_future].kind == loc.kind:
@@ -504,7 +519,7 @@ class Circuit(list):
         """
         # FIXME: this is inefficient as hell right now.
         try:
-            idx = (idx for idx in range(len(self)) if self[idx].kind == 'CZ').next()
+            idx = next((idx for idx in range(len(self)) if self[idx].kind == 'CZ'))
             q = self[idx].qubits
             self[idx] = Location('CNOT', *q)
             self.insert(idx + 1, ('H', q[1]))
@@ -632,7 +647,7 @@ def possible_output_faults(circuitlist):
         ``circuitlist``.
     """
     outputs = iter([])
-    for timestep_idx in xrange(len(circuitlist)):
+    for timestep_idx in range(len(circuitlist)):
         outputs = it.imap(
                       lambda fault: propagate_fault(
                       circuitlist[timestep_idx+1:],fault),

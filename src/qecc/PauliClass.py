@@ -23,19 +23,47 @@
 ##
 
 ## IMPORTS ##
-from __future__ import division
-from itertools import product, chain, permutations, combinations, ifilter, ifilterfalse, imap, starmap, izip
+
+from sys import version_info
+if version_info[0] == 3:
+    PY3 = True
+    from importlib import reload
+elif version_info[0] == 2:
+    PY3 = False
+else:
+    raise EnvironmentError("sys.version_info refers to a version of "
+        "Python neither 2 nor 3. This is not permitted. "
+        "sys.version_info = {}".format(version_info))
+
+from itertools import product, chain, permutations, combinations, starmap
+if PY3:
+    from itertools import filterfalse
+else:
+    from itertools import ifilterfalse as filterfalse
+    
 from copy import copy
-import bsf
 from operator import mul, and_, add
 
-import pred
-from circuit import Circuit, Location
-from paulicollections import PauliList
-from unitary_reps import pauli_as_unitary
-from singletons import Unspecified
-import  CliffordClass as cc
-import utils as u
+if PY3:
+    from . import bsf
+    from . import pred
+    from .circuit import Circuit, Location
+    from .paulicollections import PauliList
+    from .unitary_reps import pauli_as_unitary
+    from .singletons import Unspecified
+    from . import  CliffordClass as cc
+    from . import utils as u
+else:
+    import bsf
+    import pred
+    from circuit import Circuit, Location
+    from paulicollections import PauliList
+    from unitary_reps import pauli_as_unitary
+    from singletons import Unspecified
+    import  CliffordClass as cc
+    import utils as u
+
+from functools import reduce
 
 ## ALL ##
 
@@ -52,7 +80,7 @@ __all__ = [
 
 VALID_OPS = ['I', 'X', 'Y', 'Z']
 __all__ += VALID_OPS
-VALID_PHS = range(4)
+VALID_PHS = list(range(4))
 
 MULT_TABLE = {
     ('I', 'I'): (0, 'I'), ('I', 'X'): (0, 'X'), ('I', 'Y'): (0, 'Y'), ('I', 'Z'): (0, 'Z'),
@@ -470,7 +498,7 @@ class Pauli(object):
         
         return reduce(and_, (
             ensure_pauli(sparse_pauli[idx]) if idx in sparse_pauli else I
-            for idx in xrange(nq)
+            for idx in range(nq)
             ))
         
 
@@ -547,7 +575,7 @@ class Pauli(object):
         """
         p_1 = ensure_pauli(p_1)
         if isinstance(bitstring, str):
-            bitstring = map(int, bitstring)
+            bitstring = list(map(int, bitstring))
         
         return reduce(and_,[(p_1.set_phase())**j for j in bitstring])
     
@@ -681,7 +709,7 @@ def paulis_by_weight(nq, wt):
     :param int wt: The weight of each returned Pauli. 
     """
     def error_by_idxs(idxs, err_string):
-        return reduce(mul, starmap(elem_gen, zip([nq]*len(idxs), idxs, err_string)))
+        return reduce(mul, starmap(elem_gen, list(zip([nq]*len(idxs), idxs, err_string))))
         
     if wt == 0:
         return iter([eye_p(nq)])
@@ -690,7 +718,7 @@ def paulis_by_weight(nq, wt):
     else:
         return chain(
             paulis_by_weight(nq, wt - 1),
-            (error_by_idxs(idxs, err_string) for err_string in product('XYZ', repeat=wt) for idxs in combinations(range(nq), wt))
+            (error_by_idxs(idxs, err_string) for err_string in product('XYZ', repeat=wt) for idxs in combinations(list(range(nq)), wt))
         )
 
 def restricted_pauli_group(qubits_tpl,nq):
@@ -698,7 +726,7 @@ def restricted_pauli_group(qubits_tpl,nq):
     Outputs an iterator onto the Pauli group on the qubits specified in
     qubits_tpl, given the total number of qubits nq. 
     """
-    return imap(lambda pauli: embed(pauli,qubits_tpl,nq), pauli_group(len(qubits_tpl)))
+    return map(lambda pauli: embed(pauli,qubits_tpl,nq), pauli_group(len(qubits_tpl)))
 
 def embed(pauli,qubits_tpl,nq):
     """
@@ -771,7 +799,7 @@ def is_in_normalizer(pauli, stab):
     stab_group = from_generators(stab)
     com_vec = [com(pauli, stab_elem) for stab_elem in stab_group]
     
-    return all(map(lambda x: x == 0, com_vec))
+    return all([x == 0 for x in com_vec])
 
 def elem_gen(nq, q, op):
     """
@@ -829,7 +857,7 @@ def ns_mod_s(*stab_gens):
     """
     nq = len(stab_gens[0])
     
-    return ifilter(
+    return filter(
         pred.commutes_with(*stab_gens) & ~pred.in_group_generated_by(*stab_gens),
         pauli_group(nq)
         )
@@ -874,7 +902,7 @@ def mutually_commuting_sets(n_elems, n_bits=None, group_gens=None, exclude=None)
     
     assert len(group_gens) > 0
     
-    for P in ifilterfalse(lambda q: q.wt==0 or q in from_generators(exclude),from_generators(group_gens)):
+    for P in filterfalse(lambda q: q.wt==0 or q in from_generators(exclude),from_generators(group_gens)):
         P = Pauli(P.op, phase=0)
         if n_elems==1:
             yield (P,)
@@ -940,9 +968,9 @@ def clifford_bottoms(c_top):
     possible_zs=[]
     for jj in range(nq):
         applicable_centralizer_gens=PauliList(*(c_top[:jj]+c_top[jj+1:])).centralizer_gens()
-        possible_zs.append(filter(lambda a:com(a,c_top[jj])==1,from_generators(applicable_centralizer_gens)))
+        possible_zs.append([a for a in from_generators(applicable_centralizer_gens) if com(a,c_top[jj])==1])
     for possible_set in product(*possible_zs):
-        if all(imap(lambda twolist: pred.commutes_with(twolist[0])(twolist[1]),combinations(possible_set,2))):
+        if all(map(lambda twolist: pred.commutes_with(twolist[0])(twolist[1]),combinations(possible_set,2))):
             yield possible_set
 
 def remove_phase(pauli):
@@ -955,8 +983,8 @@ if __name__ == "__main__":
     Q = Pauli('YXI', 0)
     R = Pauli('XXI', 0)
     
-    print list(pauli_group(2))
+    print(list(pauli_group(2)))
     
-    print list(from_generators([P, Q, R]))
-    print is_in_normalizer(Pauli('ZZX', 0), [P, Q, R])
+    print(list(from_generators([P, Q, R])))
+    print(is_in_normalizer(Pauli('ZZX', 0), [P, Q, R]))
     

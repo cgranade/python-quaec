@@ -23,10 +23,24 @@
 ##
 
 ## IMPORTS ##
+from sys import version_info
+if version_info[0] == 3:
+    PY3 = True
+    from importlib import reload
+elif version_info[0] == 2:
+    PY3 = False
+else:
+    raise EnvironmentError("sys.version_info refers to a version of "
+        "Python neither 2 nor 3. This is not permitted. "
+        "sys.version_info = {}".format(version_info))
 
 import operator as op
-import PauliClass as pc
 import itertools as it
+
+if PY3:
+    from . import PauliClass as pc
+else:
+    import PauliClass as pc
 
 ## ALL ##
 
@@ -191,7 +205,7 @@ class PauliMembershipPredicate(SetMembershipPredicate):
     
     def __init__(self, S, ignore_phase=True):
         super(PauliMembershipPredicate, self).__init__(
-            map(lambda P: pc.Pauli(P.op), S) if ignore_phase else S)
+            [pc.Pauli(P.op) for P in S] if ignore_phase else S)
         self.ignore_phase = ignore_phase
         
     def __call__(self, P):
@@ -206,7 +220,7 @@ def commutes_with(*paulis):
     Returns a predicate that checks whether a Pauli ``P`` commutes with each of
     a given list of Pauli operators.
     """
-    paulis = map(pc.ensure_pauli, paulis)
+    paulis = list(map(pc.ensure_pauli, paulis))
 
     def pred_fn(P):
         # Using imap here instead of map allows all() to short-circuit.
@@ -220,7 +234,7 @@ def in_group_generated_by(*paulis):
     a given list of generators.
     """
     # Warning: This is inefficient for large groups!
-    paulis = map(pc.ensure_pauli, paulis)
+    paulis = list(map(pc.ensure_pauli, paulis))
     
     return PauliMembershipPredicate(pc.from_generators(paulis), ignore_phase=True)
         
@@ -235,17 +249,17 @@ if __name__ == "__main__":
     not_p   = ~p
     
     for test in [2, 4, -1]:
-        print test, p(test), q(test), p_and_q(test), p_or_q(test), not_p(test)
+        print(test, p(test), q(test), p_and_q(test), p_or_q(test), not_p(test))
         
-    print filter(p_and_q, range(-4,5))
+    print(list(filter(p_and_q, list(range(-4,5)))))
     
     S = set([1, 2, 3])
     in_S = SetMembershipPredicate(S)
     
-    print map(in_S, range(-1, 5))
+    print(list(map(in_S, list(range(-1, 5)))))
     
-    print filter(
+    print(list(filter(
         commutes_with('XX', 'ZZ') & ~in_group_generated_by('XX'),
         pc.pauli_group(2)
-        )
+        )))
     

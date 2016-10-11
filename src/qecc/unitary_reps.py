@@ -24,12 +24,27 @@
 ##
 
 ## IMPORTS ##
+from sys import version_info
+if version_info[0] == 3:
+    PY3 = True
+    from importlib import reload
+elif version_info[0] == 2:
+    PY3 = False
+else:
+    raise EnvironmentError("sys.version_info refers to a version of "
+        "Python neither 2 nor 3. This is not permitted. "
+        "sys.version_info = {}".format(version_info))
 
 from functools import wraps
 
 import operator as op
 
-import  PauliClass as pc
+if PY3:
+    from . import  PauliClass as pc
+else:
+    import  PauliClass as pc
+
+from functools import reduce
 
 try:
     import numpy as np
@@ -81,7 +96,7 @@ def mutual_eigenspace(arrays, desired_eigval=1, thresh=1e-7):
 
     # Assumes square matrices of the same size.
     proj = np.eye(arrays[0].shape[0])
-    proj = reduce(np.dot, map(proj_for_array, arrays), proj)
+    proj = reduce(np.dot, list(map(proj_for_array, arrays)), proj)
     eigvals, eigvecs = la.eig(proj)
     return eigvecs.T[np.abs(eigvals - 1) < thresh]
         
@@ -101,11 +116,11 @@ def clifford_as_unitary(C):
     nq = len(C)
     dim = 2**nq
     U = np.zeros((dim,dim), dtype='complex')
-    psi_0 = mutual_eigenspace(map(pauli_as_unitary, C.zout)).T
-    for b in xrange(dim):
+    psi_0 = mutual_eigenspace(list(map(pauli_as_unitary, C.zout))).T
+    for b in range(dim):
         bits = '{{0:0>{nq}b}}'.format(nq=nq).format(b)
-        Xb   = reduce(op.mul, (C.xout[idx] for idx in xrange(nq) if bits[idx] == '1'), pc.eye_p(nq)).as_unitary()
-        for a in xrange(dim):
+        Xb   = reduce(op.mul, (C.xout[idx] for idx in range(nq) if bits[idx] == '1'), pc.eye_p(nq)).as_unitary()
+        for a in range(dim):
             bra_a = np.zeros((1, dim))
             bra_a[0, a] = 1
             U[a, b] = reduce(np.dot, [bra_a, Xb, psi_0])[0,0]

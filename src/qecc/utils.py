@@ -23,11 +23,25 @@
 ##
 
 ## IMPORTS #####################################################################
+from sys import version_info
+if version_info[0] == 3:
+    PY3 = True
+    from importlib import reload
+elif version_info[0] == 2:
+    PY3 = False
+else:
+    raise EnvironmentError("sys.version_info refers to a version of "
+        "Python neither 2 nor 3. This is not permitted. "
+        "sys.version_info = {}".format(version_info))
 
-from itertools import imap
 from functools import wraps
-import PauliClass as PC
 import warnings
+
+if PY3:
+    from . import PauliClass as PC
+else:
+    import PauliClass as PC
+
 
 ## FUNCTIONS ###################################################################
 
@@ -38,7 +52,7 @@ def array_swap(A, B):
     del temp
     
 def inv_dict(d):
-    return dict(imap(reversed, d.iteritems()))
+    return dict(map(reversed, iter(d.items())))
     
 # FIXME: Once more LaTeX utils have been written, start a new latex.py and
 #         put this function in that module.
@@ -46,7 +60,7 @@ def latex_array_contents(cells):
     return " \\\\\n            ".join(" & ".join(row) for row in cells)
      
 def transpose(lol):
-    return map(list, zip(*lol))
+    return list(map(list, list(zip(*lol))))
 
 ## DECORATORS ##################################################################
 
@@ -76,7 +90,7 @@ def deprecated(explanation='Deprecated'):
 def ensure_args_pauli(func):
     @wraps(func)
     def pauli_tested_func(*args):
-        args = map(PC.ensure_pauli, args)
+        args = list(map(PC.ensure_pauli, args))
         func(*args)
     return pauli_tested_func
             
@@ -88,4 +102,4 @@ if __name__ == "__main__":
     A = array([1, 2])
     B = array([3, 4])
     array_swap(A, B)
-    print A, B
+    print(A, B)

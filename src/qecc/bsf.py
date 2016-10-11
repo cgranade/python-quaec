@@ -24,24 +24,41 @@
 
 ## IMPORTS ##
 
+from sys import version_info
+if version_info[0] == 3:
+    PY3 = True
+    from importlib import reload
+elif version_info[0] == 2:
+    PY3 = False
+else:
+    raise EnvironmentError("sys.version_info refers to a version of "
+        "Python neither 2 nor 3. This is not permitted. "
+        "sys.version_info = {}".format(version_info))
+
 import itertools
 import string
-from exceptions import *
-
 from numpy import s_, array, nonzero, logical_xor, bitwise_xor, bitwise_not, logical_and, bitwise_and, logical_not, all, matrix, hstack, vstack, zeros, eye, dot, empty
 from numpy.linalg import det
-
-from PauliClass import *
-from CliffordClass import *
-
 from qecc.singletons import EmptyClifford
 
-import utils as u
+if PY3:
+    from .exceptions import *
+    from .PauliClass import *
+    from .CliffordClass import *
+    from . import utils as u
+    from . import bsf_decomp
+    from . import circuit
+else:
+    from exceptions import *
+    from PauliClass import *
+    from CliffordClass import *
+    import utils as u
+    import bsf_decomp
+    import circuit
 
-import bsf_decomp
+from functools import reduce
 reload(bsf_decomp)
 
-import circuit
 
 ## ALL ##
 
@@ -57,7 +74,7 @@ __all__ = [
 
 ## CLASSES ##
 
-VALID_BITS=range(2)
+VALID_BITS=list(range(2))
 
 class BinarySymplecticVector(object):
     """
@@ -256,7 +273,7 @@ def constrained_set(pauli_array_input,logical_array_input):
     #output_array=[]
     logical_bookkeeping_array=[]
     for current_pauli in all_pauli_bsvs(nq):
-        logical_bookkeeping_array = map(current_pauli.bsip, pauli_array_input)
+        logical_bookkeeping_array = list(map(current_pauli.bsip, pauli_array_input))
         if logical_bookkeeping_array == logical_array_input:
             # output_array.append(current_pauli)
             yield current_pauli
@@ -623,15 +640,15 @@ class BinarySymplecticMatrix(object):
         """
         if check_validity and not self.is_valid():
             raise InvalidCliffordError('Matrix cannot be converted.')
-        return Clifford(map(array_to_pauli,self.xc.T),map(array_to_pauli,self.zc.T))
+        return Clifford(list(map(array_to_pauli,self.xc.T)),list(map(array_to_pauli,self.zc.T)))
 
     def is_valid(self):
         """
         Checks the satisfaction of the symplectic condition on a 
         :class:`qecc.BinarySymplecticMatrix` object.
         """
-        xrows = map(BinarySymplecticVector, self.xc.T)
-        zrows = map(BinarySymplecticVector, self.zc.T)
+        xrows = list(map(BinarySymplecticVector, self.xc.T))
+        zrows = list(map(BinarySymplecticVector, self.zc.T))
         
         for idx_j in range(len(xrows)):
             for idx_k in range(len(zrows)):
@@ -716,20 +733,20 @@ def directsum(A, B):
         
 if __name__ == "__main__":
     bsf_P = Pauli('XYZ').as_bsv()
-    print bsf_P
+    print(bsf_P)
     # Should print:
     #     ( 1 1 0 | 0 1 1 )
     
-    print bsf_P.x.astype('int')
+    print(bsf_P.x.astype('int'))
     #     array([1, 1, 0])
     
     bsf_cnot = cnot_gt(2, 0, 1).as_bsm()
-    print bsf_cnot
+    print(bsf_cnot)
     #     ( 1 1 | 0 0
     #       0 1 | 0 0
     #       ----+----
     #       0 0 | 1 1
     #       0 0 | 0 1 )
     
-    print int(bsf_cnot.xx[0,1])
+    print(int(bsf_cnot.xx[0,1]))
     #     1

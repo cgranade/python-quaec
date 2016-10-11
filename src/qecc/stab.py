@@ -23,22 +23,40 @@
 ##
 
 ## IMPORTS ##
+from sys import version_info
+if version_info[0] == 3:
+    PY3 = True
+    from importlib import reload
+elif version_info[0] == 2:
+    PY3 = False
+else:
+    raise EnvironmentError("sys.version_info refers to a version of "
+        "Python neither 2 nor 3. This is not permitted. "
+        "sys.version_info = {}".format(version_info))
 
 import operator as op
 import itertools as it
 import math
-
-import PauliClass as p # Sorry for the confusing notation here.
-import CliffordClass as c
-import paulicollections as pc
-import constraint_solvers as cs
-import circuit as circuit
-import utils as u
-
 from collections import defaultdict
-from singletons import EmptyClifford, Unspecified
-
 import warnings
+from functools import reduce
+
+if PY3:
+    from . import PauliClass as p # Sorry for the confusing notation here.
+    from . import CliffordClass as c
+    from . import paulicollections as pc
+    from . import constraint_solvers as cs
+    from . import circuit as circuit
+    from . import utils as u
+    from .singletons import EmptyClifford, Unspecified
+else:
+    import PauliClass as p # Sorry for the confusing notation here.
+    import CliffordClass as c
+    import paulicollections as pc
+    import constraint_solvers as cs
+    import circuit as circuit
+    import utils as u
+    from singletons import EmptyClifford, Unspecified
 
 ## ALL ##
 
@@ -98,11 +116,11 @@ class StabilizerCode(object):
         The number of physical qubits into which this code encodes.
         """
         try:
-            return len(iter(
+            return len(next(iter(
                 gen
                 for gen in self.group_generators + self.logical_xs + self.logical_zs
                 if gen is not Unspecified
-            ).next())
+            )))
         except StopIteration:
             return 0
         
@@ -227,7 +245,7 @@ class StabilizerCode(object):
             synd = fmt.format(synd)
             
         # Ensures synd is a list of integers by mapping int onto the list.
-        synd=map(int, synd)
+        synd=list(map(int, synd))
         
         # Check that the syndrome is all zeros and ones.
         acceptable_syndrome = all([bit == 0 or bit == 1 for bit in synd])
@@ -243,10 +261,10 @@ class StabilizerCode(object):
             #We loop over all possible weights. As soon as we find an operator
             #that satisfies the commutation and anti-commutation constraints,
             #we return it:
-            low_weight_ops=map(p.remove_phase,
+            low_weight_ops=list(map(p.remove_phase,
                                cs.solve_commutation_constraints(coms,anti_coms,
                                search_in_set=p.paulis_by_weight(self.nq,
-                               op_weight)))
+                               op_weight))))
             if low_weight_ops:
                 break 
         return low_weight_ops[0]
@@ -325,7 +343,7 @@ class StabilizerCode(object):
                 return "Z"
         
         if for_enc is None:
-            encoder = self.encoding_cliffords().next()
+            encoder = next(self.encoding_cliffords())
         else:
             encoder = for_enc
         decoder = encoder.inv()
@@ -356,15 +374,15 @@ class StabilizerCode(object):
         
         if as_dict:
             outdict = dict()
-            keyfn = lambda (syndrome, recovery): recovery
-            data = sorted(syndrome_dict.items(), key=keyfn)
+            keyfn = lambda syndrome_recovery: syndrome_recovery[1]
+            data = sorted(list(syndrome_dict.items()), key=keyfn)
             for recovery, syndrome_group in it.groupby(data, keyfn):
                 outdict[recovery] = [syn[0] for syn in syndrome_group]
             
             return decoder, outdict
             
         else:
-            recovery_list = pc.PauliList(syndrome_dict[syndrome] for syndrome in it.product(range(2), repeat=self.n_constraints))
+            recovery_list = pc.PauliList(syndrome_dict[syndrome] for syndrome in it.product(list(range(2)), repeat=self.n_constraints))
             
             return decoder, recovery_list
 
@@ -401,7 +419,7 @@ class StabilizerCode(object):
                 # Swap so that it lies at the front.
                 idx = self_gens.index(best_gen)
                 if not quiet and idx != idx_generator:
-                    print 'Swap move: {} <-> {}'.format(idx_generator, idx)
+                    print('Swap move: {} <-> {}'.format(idx_generator, idx))
                 self_gens[idx_generator], self_gens[idx] = self_gens[idx], self_gens[idx_generator]
                 
             else:
@@ -409,11 +427,11 @@ class StabilizerCode(object):
                 # as needed.
                 if self_gens[idx_generator] in best_gen_decomp:
                     if not quiet:
-                        print 'Set move: {}  =  {}'.format(idx_generator, best_gen)
+                        print('Set move: {}  =  {}'.format(idx_generator, best_gen))
                     self_gens[idx_generator] = best_gen
                 else:
                     if not quiet:
-                        print 'Mul move: {} *=  {}'.format(idx_generator, best_gen)
+                        print('Mul move: {} *=  {}'.format(idx_generator, best_gen))
                     self_gens[idx_generator] *= best_gen
                     
         return self
@@ -492,7 +510,7 @@ class StabilizerCode(object):
         
         return sum((
                 self.measure_gen_onto_ancilla(idx_gen).relabel_qubits({self.nq: self.nq + idx_gen})
-                for idx_gen in xrange(len(self.group_generators))
+                for idx_gen in range(len(self.group_generators))
             ),
             circuit.Circuit()
         )
@@ -593,7 +611,7 @@ class StabilizerCode(object):
         # Each of the stabilizer generators due to the outer (L1) code can be
         # found by computing the block-logical operator across multiple L0
         # blocks, as implemented by StabilizerCode.block_logical_pauli.
-        new_generators += map(self.block_logical_pauli, other.group_generators)
+        new_generators += list(map(self.block_logical_pauli, other.group_generators))
             
         # In the same way, the logical operators are also found by mapping L1
         # operators onto L0 qubits.
@@ -602,8 +620,8 @@ class StabilizerCode(object):
         # done.
         
         return StabilizerCode(new_generators,
-            logical_xs=map(self.block_logical_pauli, other.logical_xs),
-            logical_zs=map(self.block_logical_pauli, other.logical_zs)
+            logical_xs=list(map(self.block_logical_pauli, other.logical_xs)),
+            logical_zs=list(map(self.block_logical_pauli, other.logical_zs))
         )
     ## TRANSCODING ##
     def transcoding_cliffords(self,other):
@@ -646,12 +664,12 @@ class StabilizerCode(object):
         cliff_xouts_left=stab_left+xs_left
         cliff_zouts_left=[Unspecified]*len(stab_left)+zs_left
         
-        cliff_left=c.Clifford(cliff_xouts_left,cliff_zouts_left).constraint_completions().next()
+        cliff_left=next(c.Clifford(cliff_xouts_left,cliff_zouts_left).constraint_completions())
         list_left=cliff_left.xout+cliff_left.zout
 
         for mcset in p.mutually_commuting_sets(n_elems=len(stab_left)-len(stab_right),n_bits=nq_anc):
-            temp_xouts_right = p.pad(stab_right,lower_right=mcset) + map(lambda elem: elem & p.eye_p(nq_anc), xs_right)
-            temp_zouts_right = [Unspecified]*len(stab_left) + map(lambda elem: elem & p.eye_p(nq_anc), zs_right)
+            temp_xouts_right = p.pad(stab_right,lower_right=mcset) + [elem & p.eye_p(nq_anc) for elem in xs_right]
+            temp_zouts_right = [Unspecified]*len(stab_left) + [elem & p.eye_p(nq_anc) for elem in zs_right]
         for completion in c.Clifford(temp_xouts_right,temp_zouts_right).constraint_completions():
             if nq_in < nq_out:
                 yield c.gen_cliff(completion.xout+completion.zout,list_left)
@@ -663,7 +681,7 @@ class StabilizerCode(object):
         Searches the iterator provided by `transcoding_cliffords` for the shortest
         circuit decomposition.
         """
-        circuit_iter=map(lambda p: p.as_bsm().circuit_decomposition(), self.transcoding_cliffords(other))
+        circuit_iter=[p.as_bsm().circuit_decomposition() for p in self.transcoding_cliffords(other)]
         return min(*circuit_iter)
 
     ## COMMON CODES ##

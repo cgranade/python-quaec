@@ -23,12 +23,26 @@
 ##
 
 ## IMPORTS ##
+from sys import version_info
+if version_info[0] == 3:
+    PY3 = True
+    from importlib import reload
+elif version_info[0] == 2:
+    PY3 = False
+else:
+    raise EnvironmentError("sys.version_info refers to a version of "
+        "Python neither 2 nor 3. This is not permitted. "
+        "sys.version_info = {}".format(version_info))
+if PY3:
+    from . import PauliClass as pc
+    from .singletons import Unspecified
+    from . import unitary_reps
+else:
+    import PauliClass as pc
+    from singletons import Unspecified
+    import unitary_reps
 
-import PauliClass as pc
 from collections import Sequence
-from singletons import Unspecified
-
-import unitary_reps
 
 ## ALL ##
 
@@ -55,11 +69,11 @@ class PauliList(list):
             if isinstance(single_arg, str):
                 paulis = [pc.Pauli(single_arg)]
             elif isinstance(single_arg, Sequence) or hasattr(single_arg, '__iter__'):
-                paulis = map(pc.ensure_pauli, single_arg)
+                paulis = list(map(pc.ensure_pauli, single_arg))
             else:
-                paulis = map(pc.ensure_pauli, paulis)
+                paulis = list(map(pc.ensure_pauli, paulis))
         else:
-            paulis = map(pc.ensure_pauli, paulis)
+            paulis = list(map(pc.ensure_pauli, paulis))
             
         # FIXME: figure out why super(list, self).__init__ doesn't work.
         list.__init__(self, paulis)

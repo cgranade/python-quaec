@@ -28,6 +28,7 @@
 __all__ = ['EmptyClifford', 'Unspecified']
 
 ## METACLASSES ##
+from six import with_metaclass
 
 # The following metaclass is borrowed from:
 # http://stackoverflow.com/questions/6760685/creating-a-singleton-in-python
@@ -45,11 +46,10 @@ class SingletonBase(object):
     def __copy__(self): return self
     def __deepcopy__(self, memo): return self
 
-class EmptyCliffordType(SingletonBase):
+class EmptyCliffordType(with_metaclass(Singleton, SingletonBase)):
     """
     TODO
     """
-    __metaclass__ = Singleton
     
     def __repr__(self):
         return "EmptyClifford"
@@ -62,11 +62,10 @@ class EmptyCliffordType(SingletonBase):
     
 EmptyClifford = EmptyCliffordType()
     
-class UnspecifiedType(SingletonBase):
+class UnspecifiedType(with_metaclass(Singleton, SingletonBase)):
     """
     Marks that a given constraint is unspecified.
     """
-    __metaclass__ = Singleton
     
     def __repr__(self):
         return "Unspecified"

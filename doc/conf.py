@@ -74,8 +74,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'QuaEC'
-copyright = u'2012, Chris Granade and Ben Criger. Licensed under the Creative Commons NonCommercial-ShareAlike 3.0 Unported License'
+project = 'QuaEC'
+copyright = '2012, Chris Granade and Ben Criger. Licensed under the Creative Commons NonCommercial-ShareAlike 3.0 Unported License'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -213,8 +213,8 @@ htmlhelp_basename = 'QuaECdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'QuaEC.tex', u'QuaEC Documentation',
-   u'Chris Granade and Ben Criger', 'manual'),
+  ('index', 'QuaEC.tex', 'QuaEC Documentation',
+   'Chris Granade and Ben Criger', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -233,8 +233,8 @@ latex_documents = [
 
 # Additional stuff for the LaTeX preamble.
 latex_preamble = '''
-\usepackage{amsmath}
-\usepackage{amsfonts}
+\\usepackage{amsmath}
+\\usepackage{amsfonts}
 '''
 
 # Documents to append as an appendix to all manuals.
@@ -249,18 +249,18 @@ latex_preamble = '''
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'quaec', u'QuaEC Documentation',
-     [u'Chris Granade and Ben Criger'], 1)
+    ('index', 'quaec', 'QuaEC Documentation',
+     ['Chris Granade and Ben Criger'], 1)
 ]
 
 
 # -- Options for Epub output ---------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'QuaEC'
-epub_author = u'Chris Granade and Ben Criger'
-epub_publisher = u'Chris Granade and Ben Criger'
-epub_copyright = u'2012, Chris Granade and Ben Criger'
+epub_title = 'QuaEC'
+epub_author = 'Chris Granade and Ben Criger'
+epub_publisher = 'Chris Granade and Ben Criger'
+epub_copyright = '2012, Chris Granade and Ben Criger'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.

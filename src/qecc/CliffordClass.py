@@ -25,10 +25,27 @@
 
 ## RELOAD FIX ##
 # This is a pretty poor way of fixing it, but should work for now.
-    
-import PauliClass as _pc
-import bsf as _bsf
-import utils as u
+from sys import version_info
+if version_info[0] == 3:
+    PY3 = True
+    from importlib import reload
+elif version_info[0] == 2:
+    PY3 = False
+else:
+    raise EnvironmentError("sys.version_info refers to a version of "
+        "Python neither 2 nor 3. This is not permitted. "
+        "sys.version_info = {}".format(version_info))
+
+if PY3:
+    from . import PauliClass as _pc
+    from . import bsf as _bsf
+    from . import utils as u
+else:
+    import PauliClass as _pc
+    import bsf as _bsf
+    import utils as u
+
+from functools import reduce
 
 try:
     reload(_pc)
@@ -43,17 +60,17 @@ import operator as op
 
 from copy import copy, deepcopy
 from itertools import product, chain, combinations
-from PauliClass import *
-from bsf import *
+from .PauliClass import *
+from .bsf import *
 from numpy import hstack, newaxis
-from exceptions import *
+from .exceptions import *
 
-from paulicollections import PauliList
+from .paulicollections import PauliList
 
-from constraint_solvers import solve_commutation_constraints
-from unitary_reps import clifford_as_unitary
+from .constraint_solvers import solve_commutation_constraints
+from .unitary_reps import clifford_as_unitary
 
-from singletons import EmptyClifford, Unspecified
+from .singletons import EmptyClifford, Unspecified
 
 import warnings
 
@@ -71,7 +88,7 @@ __all__ = [
 ## CONSTANTS ##
 
 VALID_OPS = ['I', 'X', 'Y', 'Z']
-VALID_PHS = range(4)
+VALID_PHS = list(range(4))
 KINDS = ['X', 'Z']
 PHASES = [" +", "+i", " -", "-i"]
 
@@ -178,7 +195,7 @@ class Clifford(object):
         intended for use in the case where many of the outputs have small
         support.
         """
-        out = zip(KINDS, map(enumerate, [self.xout, self.zout]))
+        out = list(zip(KINDS, list(map(enumerate, [self.xout, self.zout]))))
         nq = len(self)
         outstr = "\n".join(
             [
@@ -202,7 +219,7 @@ class Clifford(object):
         """
         if any(P.ph not in [0, 2] for P in chain(self.xout, self.zout) if P is not Unspecified):
             if not quiet:
-                print "At least one output operator has a phase other than 0 or 2."
+                print("At least one output operator has a phase other than 0 or 2.")
                 
             return False
         
@@ -213,12 +230,12 @@ class Clifford(object):
                 
                 if UP is not Unspecified and UQ is not Unspecified and com(UP, UQ) != com(P, Q):
                     if not quiet:
-                        print "c({P}, {Q}) == {cPQ}, but c(U({P}), U({Q})) == c({UP}, {UQ}) == {cUPUQ}.".format(
+                        print("c({P}, {Q}) == {cPQ}, but c(U({P}), U({Q})) == c({UP}, {UQ}) == {cUPUQ}.".format(
                                 P=P, Q=Q,
                                 cPQ=com(P,Q),
                                 UP=UP, UQ=UQ,
                                 cUPUQ=com(UP, UQ)
-                            )
+                            ))
                     return False
                     
         return True
@@ -255,7 +272,7 @@ class Clifford(object):
             try:
                 dummy = iter(pauli)
                 # Yep. It was an iterable.
-                return map(self.conjugate_pauli, pauli)
+                return list(map(self.conjugate_pauli, pauli))
             except TypeError:
                 # Nope. Wasn't iterable. Raise an error.
                 raise TypeError("Cliffords conjugate Paulis.")
@@ -282,7 +299,7 @@ class Clifford(object):
             return self.conjugate_pauli(Pauli(other))
             
         elif isinstance(other, PauliList):
-            return PauliList(*map(self, other))
+            return PauliList(*list(map(self, other)))
             
         elif isinstance(other, stab.StabilizerCode):
             return stab.StabilizerCode(
@@ -388,20 +405,20 @@ class Clifford(object):
             raise InvalidCliffordError("The specified constraints are invalid or are contradictory.")
         
         # Useful constants.
-        XKIND, ZKIND = range(2)
+        XKIND, ZKIND = list(range(2))
         
         # Start by finding the first unspecified output.
         nq = len(self)
         X_bars, Z_bars = self.xout, self.zout
-        P_bars = map(copy, [X_bars, Z_bars]) # <- Useful for indexing by kinds.
-        XZ_pairs = zip(X_bars, Z_bars)
+        P_bars = list(map(copy, [X_bars, Z_bars])) # <- Useful for indexing by kinds.
+        XZ_pairs = list(zip(X_bars, Z_bars))
         try:
-            unspecified_idx, unspecified_kind = iter(
+            unspecified_idx, unspecified_kind = next(iter(
                 (idx, kind)
                 for idx, kind
-                in product(xrange(nq), range(2))
+                in product(range(nq), list(range(2)))
                 if XZ_pairs[idx][kind] is Unspecified
-            ).next()
+            ))
         except StopIteration:
             # If there are no unspecified constraints, then self is the only
             # satisfying completion.
@@ -410,7 +427,7 @@ class Clifford(object):
         
         # We must always commute with disjoint qubits.
         commutation_constraints = reduce(op.add,
-            (XZ_pairs[idx] for idx in xrange(nq) if idx != unspecified_idx),
+            (XZ_pairs[idx] for idx in range(nq) if idx != unspecified_idx),
             tuple()
             )
             
@@ -419,8 +436,8 @@ class Clifford(object):
         
         # Filter out Unspecified constraints.
         specified_pred = lambda P: P is not Unspecified
-        commutation_constraints = filter(specified_pred, commutation_constraints)
-        anticommutation_constraints = filter(specified_pred, anticommutation_constraints)
+        commutation_constraints = list(filter(specified_pred, commutation_constraints))
+        anticommutation_constraints = list(filter(specified_pred, anticommutation_constraints))
         
         # Now we iterate over satisfactions of the constraints, yielding
         # all satisfactions of the remaining constraints recursively.
@@ -448,7 +465,7 @@ class Clifford(object):
             v = P.as_bsv()
             out = hstack([v.x, v.z])[..., newaxis]
             return out
-        return BinarySymplecticMatrix(hstack(map(to_col, self.xout + self.zout)))
+        return BinarySymplecticMatrix(hstack(list(map(to_col, self.xout + self.zout))))
         
     def as_unitary(self):
         """
@@ -556,7 +573,7 @@ def swap(nq, q1, q2):
 
     :rtype: :class:`qecc.Clifford`
     """
-    p = range(nq)
+    p = list(range(nq))
     p[q1], p[q2] = p[q2], p[q1]
     
     gate = eye_c(nq)
@@ -606,7 +623,7 @@ def paulify(cliff_in):
     """If the Paulis input to the Clifford are only altered in phase, then the Clifford is also a Pauli."""
     for ex_clif,zed_clif,ex_test,zed_test in zip(cliff_in.xout, cliff_in.zout,test_ex,test_zed):
         if ex_clif.op != ex_test.op or zed_clif.op != zed_test.op:
-            print "Clifford is not Pauli."
+            print("Clifford is not Pauli.")
             return cliff_in
         #If the Clifford is Pauli, determine which by examining operators with altered phases.
         exact=eye_p(nq)
@@ -692,12 +709,12 @@ def transcoding_cliffords(stab_in,xs_in,zs_in,stab_out,xs_out,zs_out):
     cliff_xouts_left=stab_left+xs_left
     cliff_zouts_left=[Unspecified]*len(stab_left)+zs_left
     
-    cliff_left=Clifford(cliff_xouts_left,cliff_zouts_left).constraint_completions().next()
+    cliff_left=next(Clifford(cliff_xouts_left,cliff_zouts_left).constraint_completions())
     list_left=cliff_left.xout+cliff_left.zout
 
     for mcset in mutually_commuting_sets(n_elems=len(stab_left)-len(stab_right),n_bits=nq_anc):
-        temp_xouts_right=pad(stab_right,lower_right=mcset)+map(lambda p: p&eye_p(nq_anc),xs_right)
-        temp_zouts_right=[Unspecified]*len(stab_left)+map(lambda p: p&eye_p(nq_anc),zs_right)
+        temp_xouts_right=pad(stab_right,lower_right=mcset)+[p&eye_p(nq_anc) for p in xs_right]
+        temp_zouts_right=[Unspecified]*len(stab_left)+[p&eye_p(nq_anc) for p in zs_right]
     for completion in Clifford(temp_xouts_right,temp_zouts_right).constraint_completions():
         if nq_in<nq_out:
             yield gen_cliff(completion.xout+completion.zout,list_left)
@@ -706,7 +723,7 @@ def transcoding_cliffords(stab_in,xs_in,zs_in,stab_out,xs_out,zs_out):
 
 @u.deprecated("Deprecated, see min_len_transcoding_clifford in StabilizerCode")
 def min_len_transcoding_clifford(paulis_in,paulis_out):
-    circuit_iter=map(lambda p: p.as_bsm().circuit_decomposition(), transcoding_cliffords(paulis_in,paulis_out))
+    circuit_iter=[p.as_bsm().circuit_decomposition() for p in transcoding_cliffords(paulis_in,paulis_out)]
     return min(*circuit_iter)
     
 def clifford_group(nq, consider_phases=False):
@@ -733,7 +750,7 @@ def clifford_group(nq, consider_phases=False):
                     # phase_array is chosen to disregard global phases by
                     # absorbing them into xout[0].
                     for phase_array in product([0, 2], repeat=2*nq):
-                        for idx_kind, idx_qubit in product(range(2), range(nq)):
+                        for idx_kind, idx_qubit in product(list(range(2)), list(range(nq))):
                             P_bars[idx_kind][idx_qubit].ph = phase_array[nq*idx_kind + idx_qubit]
                         yield Clifford(*P_bars)
                 else:
@@ -744,4 +761,4 @@ def clifford_group(nq, consider_phases=False):
 # defined /before/ we import stab, even though it's used before.
 # The easiest way to ensure this is to import at the end, even though that's
 # bad style, in general.
-import stab
+from . import stab

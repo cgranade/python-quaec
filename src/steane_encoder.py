@@ -15,7 +15,7 @@ def error_to_pauli(error):
 
 if __name__ == "__main__":
     stab_code = q.StabilizerCode.steane_code()
-    enc = stab_code.encoding_cliffords().next()
+    enc = next(stab_code.encoding_cliffords())
     dec = enc.inv()
 
     #print "Encoder circuit:"
@@ -33,21 +33,21 @@ if __name__ == "__main__":
     #print "========================================================================"
 
     faults = [q.elem_gen(7, idx, P) for idx in range(7) for P in ['X', 'Y', 'Z']]
-    synd_meas = [q.elem_gen(7, idx, kind) for idx, kind in zip(range(1,7), 'ZZZZZZ')]
+    synd_meas = [q.elem_gen(7, idx, kind) for idx, kind in zip(list(range(1,7)), 'ZZZZZZ')]
 
     stab = q.StabilizerCode.unencoded_state(nq_logical=1, nq_ancilla=6)
 
-    print "Initial stabilizer code:"
-    print stab
+    print("Initial stabilizer code:")
+    print(stab)
 
-    print "Encoding:"
-    print enc(stab)
+    print("Encoding:")
+    print(enc(stab))
 
 
-    print "Using syndrome measurement operators:"
+    print("Using syndrome measurement operators:")
     for idx, meas in enumerate(synd_meas):
-        print '\t{}\t{}'.format(idx, meas.str_sparse(incl_ph=False))
-    print ''
+        print('\t{}\t{}'.format(idx, meas.str_sparse(incl_ph=False)))
+    print('')
         
     recovery = defaultdict(lambda: q.I.as_clifford())
         
@@ -64,11 +64,11 @@ if __name__ == "__main__":
     #print "Recovery operators for all weight-1 errors:"
 
     inv_recovery = defaultdict(list)
-    for syndrome in product(range(2), repeat=6):
+    for syndrome in product(list(range(2)), repeat=6):
         inv_recovery[error_to_pauli(recovery[syndrome])].append(syndrome)
         
     for recovery_operator in ['I', 'X', 'Y', 'Z']:
         syndromes = inv_recovery[recovery_operator]
-        print "{}: {}".format(recovery_operator, ", ".join([
+        print("{}: {}".format(recovery_operator, ", ".join([
             "".join(map(str, syndrome)) for syndrome in syndromes
-        ]))
+        ])))

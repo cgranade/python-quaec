@@ -30,11 +30,25 @@ __all__ = [
 ]
 
 ## IMPORTS ##
+from sys import version_info
+if version_info[0] == 3:
+    PY3 = True
+    from importlib import reload
+elif version_info[0] == 2:
+    PY3 = False
+else:
+    raise EnvironmentError("sys.version_info refers to a version of "
+        "Python neither 2 nor 3. This is not permitted. "
+        "sys.version_info = {}".format(version_info))
 
-import PauliClass as pc
-from paulicollections import PauliList
-from pred import AllPredicate
-from itertools import ifilter
+if PY3:
+    from . import PauliClass as pc
+    from .paulicollections import PauliList
+    from .pred import AllPredicate
+else:
+    import PauliClass as pc
+    from paulicollections import PauliList
+    from pred import AllPredicate
 
 ## FUNCTIONS ##
 
@@ -101,16 +115,10 @@ def solve_commutation_constraints(
     #We default to executing a brute-force search if the search set is
     #explicitly specified:
     if search_in_set is not None:
-        commutation_predicate = AllPredicate(*map(
-            lambda acc: (lambda P: pc.com(P, acc) == 0),
-            commutation_constraints
-            ))
-        commuters = filter(commutation_predicate, search_in_set)
-        anticommutation_predicate = AllPredicate(*map(
-            lambda acc: (lambda P: pc.com(P, acc) == 1),
-            anticommutation_constraints
-            ))
-        return filter(anticommutation_predicate, commuters)
+        commutation_predicate = AllPredicate(*[(lambda P: pc.com(P, acc) == 0) for acc in commutation_constraints])
+        commuters = list(filter(commutation_predicate, search_in_set))
+        anticommutation_predicate = AllPredicate(*[(lambda P: pc.com(P, acc) == 1) for acc in anticommutation_constraints])
+        return list(filter(anticommutation_predicate, commuters))
 
     # We finish putting arguments in the right form by defaulting to searching
     # over the pc.Pauli group on $n$ qubits.
@@ -125,10 +133,7 @@ def solve_commutation_constraints(
     
     # Finally, we return a filter iterator on the elements of the given
     # centralizer that selects elements which anticommute appropriately.
-    anticommutation_predicate = AllPredicate(*map(
-        lambda acc: (lambda P: pc.com(P, acc) == 1),
-        anticommutation_constraints
-        ))
+    anticommutation_predicate = AllPredicate(*[(lambda P: pc.com(P, acc) == 1) for acc in anticommutation_constraints])
     assert len(search_in_gens) > 0
-    return ifilter(anticommutation_predicate, pc.from_generators(search_in_gens))
+    return filter(anticommutation_predicate, pc.from_generators(search_in_gens))
 

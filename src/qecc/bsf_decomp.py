@@ -23,18 +23,33 @@
 ##
 
 ## IMPORTS ##
+from sys import version_info
+if version_info[0] == 3:
+    PY3 = True
+    from importlib import reload
+elif version_info[0] == 2:
+    PY3 = False
+else:
+    raise EnvironmentError("sys.version_info refers to a version of "
+        "Python neither 2 nor 3. This is not permitted. "
+        "sys.version_info = {}".format(version_info))
 
 import itertools
 import string
-from exceptions import *
-
 import numpy as np
 
-import PauliClass as pc
-import CliffordClass as cc
-import bsf
-
-import utils as u
+if PY3:
+    from .exceptions import *
+    from . import PauliClass as pc
+    from . import CliffordClass as cc
+    from . import bsf
+    from . import utils as u
+else:
+    from exceptions import *
+    import PauliClass as pc
+    import CliffordClass as cc
+    import bsf
+    import utils as u
 
 ## FUNCTIONS ##
 
@@ -50,7 +65,7 @@ def circuit_decomposition_part1(bsm):
     left_gateseq = []
     right_gateseq = []
     
-    for pivot in xrange(bsm.nq):
+    for pivot in range(bsm.nq):
         
         ## PROCEDURE 6.5 ##
         
@@ -144,7 +159,7 @@ def circuit_decomposition_part1(bsm):
     # STEP 10.
     bsm.right_H_all()
 
-    appropriate_Hs=map(lambda idx: ("H",idx), list(Hs_on))
+    appropriate_Hs=[("H",idx) for idx in list(Hs_on)]
 
     gateseq_8910=appropriate_Hs + gateseq_8910 + appropriate_Hs
 
@@ -156,7 +171,7 @@ def circuit_decomposition_part1(bsm):
     # we are not too worried about the slowdown.
     # Moreover, this check doesn't occur in any inner loops, hopefully.
     if not np.all(bsm._arr == np.eye(2 * bsm.nq)):
-        print bsm._arr
+        print(bsm._arr)
         raise RuntimeError("Internal error in bsf_decomp.py; decomposition did not produce identity.")
 
     return left_gateseq, right_gateseq
