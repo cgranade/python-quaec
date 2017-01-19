@@ -37,8 +37,6 @@ else:
         "Python neither 2 nor 3. This is not permitted. "
         "sys.version_info = {}".format(version_info))
 
-__version__ = (1, 0, 1)
-
 # All of the modules must be completely imported before we can start importing
 # specific names, due to circular dependencies between the various modules.
 if PY3:
@@ -52,6 +50,7 @@ if PY3:
     from . import circuit as _circ
     from . import constraint_solvers as _cs
     from . import stab as _stab
+    from . import version_stub as _vers
 else:
     import singletons as _sing
     import PauliClass as _pc
@@ -63,8 +62,10 @@ else:
     import circuit as _circ
     import constraint_solvers as _cs
     import stab as _stab
+    import version_stub as _vers
 
-__modules = [_pc, _pc, _cc, _bsf, _xpts, _p, _circ, _cs, _stab]
+__version__ = _vers.version
+__modules = [_pc, _pc, _cc, _bsf, _xpts, _p, _circ, _cs, _stab, _vers]
 # Note that we exclude _sing here to prevent changing the id of each singleton.
 
 # Note that the utils module is not exposed, as we wish for that module to
