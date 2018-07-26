@@ -99,7 +99,7 @@ class BinarySymplecticVector(object):
 
     def __init__(self,*args):
         if len(args) == 1:
-            nq = len(args[0])/2
+            nq = int(len(args[0]) / 2)
             self._x = array(args[0][0:nq], dtype=int)
             self._z = array(args[0][nq:2*nq], dtype=int)
         elif len(args) == 2:
@@ -332,7 +332,7 @@ class BinarySymplecticMatrix(object):
         Returns the number of qubits that the binary symplectic matrix acts
         upon.
         """
-        return len(self._arr)/2
+        return int(len(self._arr) / 2)
             
     @property
     def xx(self):
