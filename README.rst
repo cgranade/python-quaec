@@ -26,4 +26,4 @@ More Information
 ================
 
 Full documentation on **QuaEC** is available on GitHub at
-`http://cgranade.github.com/python-quaec/ <http://cgranade.github.com/python-quaec/>`_.
+`http://cgranade.com/python-quaec/ <http://cgranade.com/python-quaec/>`_.
