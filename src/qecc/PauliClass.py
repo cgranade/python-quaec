@@ -537,17 +537,17 @@ class Pauli(object):
         for ex_clif,zed_clif,ex_test,zed_test in zip(cliff_in.xout, cliff_in.zout,test_ex,test_zed):
             if ex_clif.op != ex_test.op or zed_clif.op != zed_test.op:
                 raise ValueError("Clifford is not Pauli.")
-            #If the Clifford is Pauli, determine which by examining operators with altered phases.
-            exact=eye_p(nq)
-            zedact=eye_p(nq) #Initialize accumulators
-            """If a negative sign appears on a given generator, assign a Pauli to that qubit that conjugates the generator to a minus sign, e.g. ZXZ = -X """
-            for idx_x in range(nq):
-                if cliff_in.xout[idx_x].ph==2:
-                    exact.op = cc.replace_one_character(exact.op, idx_x, 'Z')
-            for idx_z in range(nq):
-                if cliff_in.zout[idx_z].ph==2:
-                    zedact.op = cc.replace_one_character(zedact.op, idx_z, 'X')
-            return Pauli((exact*zedact).op)
+        #If the Clifford is Pauli, determine which by examining operators with altered phases.
+        exact=eye_p(nq)
+        zedact=eye_p(nq) #Initialize accumulators
+        """If a negative sign appears on a given generator, assign a Pauli to that qubit that conjugates the generator to a minus sign, e.g. ZXZ = -X """
+        for idx_x in range(nq):
+            if cliff_in.xout[idx_x].ph==2:
+                exact.op = cc.replace_one_character(exact.op, idx_x, 'Z')
+        for idx_z in range(nq):
+            if cliff_in.zout[idx_z].ph==2:
+                zedact.op = cc.replace_one_character(zedact.op, idx_z, 'X')
+        return Pauli((exact*zedact).op)
 
     @staticmethod
     def from_string(bitstring, p_1):
