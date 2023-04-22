@@ -28,7 +28,7 @@ S = <i^0 ZZI, i^0 IZZ>
 Xbars = PauliList(i^0 XXX)
 Zbars = PauliList(i^0 ZZZ)
 
-For convienence, several static methods are provided to create instances for
+For convenience, several static methods are provided to create instances for
 well-known stabilizer codes.
 
 >>> stab = q.StabilizerCode.perfect_5q_code()
@@ -73,7 +73,7 @@ Z[2] |->  +Z[0] Z[1] Z[2] X[3]
 Z[3] |->  -Z[0] Y[1] Z[3] Y[4]
 Z[4] |->  -Z[0] Z[1] X[2] Z[3] Z[4]
 
-Stabilizer codes may be combined by the tensor product (reprsented in QuaEC by
+Stabilizer codes may be combined by the tensor product (represented in QuaEC by
 ``&``), or by concatenation:
 
 >>> print stab & stab

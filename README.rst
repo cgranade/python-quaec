@@ -3,7 +3,7 @@ Welcome to QuaEC
 ================
 
 **QuaEC** is a library for working with quantum error correction, including
-support for efficiently maniuplating Pauli and Clifford operators. **QuaEC** is
+support for efficiently manipulating Pauli and Clifford operators. **QuaEC** is
 (ideally) supported anywhere Python and NumPy/SciPy are supported.
 
 Installing QuaEC
