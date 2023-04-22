@@ -37,12 +37,16 @@ if PY3:
     from . import PauliClass as pc
     from .singletons import Unspecified
     from . import unitary_reps
+    if version_info[1] >= 10: # Python 3.10+
+        from collections.abc import Sequence
+    else:
+        from collections import Sequence
 else:
     import PauliClass as pc
     from singletons import Unspecified
     import unitary_reps
+    from collections import Sequence 
 
-from collections import Sequence
 
 ## ALL ##
 
